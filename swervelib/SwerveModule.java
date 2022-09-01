@@ -1,4 +1,4 @@
-package com.swervedrivespecialties.swervelib;
+package frc.robot.lightningUtil.swervelib;
 
 public interface SwerveModule {
     double getDriveVelocity();

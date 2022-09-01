@@ -1,4 +1,4 @@
-package com.swervedrivespecialties.swervelib.ctre;
+package frc.robot.lightningUtil.swervelib.ctre;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
@@ -6,8 +6,8 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.CANCoderStatusFrame;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
-import com.swervedrivespecialties.swervelib.AbsoluteEncoder;
-import com.swervedrivespecialties.swervelib.AbsoluteEncoderFactory;
+import frc.robot.lightningUtil.swervelib.AbsoluteEncoder;
+import frc.robot.lightningUtil.swervelib.AbsoluteEncoderFactory;
 
 import edu.wpi.first.wpilibj.Timer;
 

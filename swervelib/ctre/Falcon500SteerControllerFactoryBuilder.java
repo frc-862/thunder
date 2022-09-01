@@ -1,9 +1,9 @@
-package com.swervedrivespecialties.swervelib.ctre;
+package frc.robot.lightningUtil.swervelib.ctre;
 
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
-import com.swervedrivespecialties.swervelib.*;
+import frc.robot.lightningUtil.swervelib.*;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 
 public final class Falcon500SteerControllerFactoryBuilder {

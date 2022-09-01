@@ -1,4 +1,4 @@
-package com.swervedrivespecialties.swervelib;
+package frc.robot.lightningUtil.swervelib;
 
 public final class SdsModuleConfigurations {
     public static final ModuleConfiguration MK3_STANDARD = new ModuleConfiguration(

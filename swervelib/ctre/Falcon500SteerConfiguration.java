@@ -1,8 +1,8 @@
-package com.swervedrivespecialties.swervelib.ctre;
+package frc.robot.lightningUtil.swervelib.ctre;
 
 import java.util.Objects;
 
-import com.swervedrivespecialties.swervelib.CanPort;
+import frc.robot.lightningUtil.swervelib.CanPort;
 
 public class Falcon500SteerConfiguration<EncoderConfiguration> {
     private final CanPort motorPort;

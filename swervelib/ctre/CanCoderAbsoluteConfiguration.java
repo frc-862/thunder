@@ -1,6 +1,6 @@
-package com.swervedrivespecialties.swervelib.ctre;
+package frc.robot.lightningUtil.swervelib.ctre;
 
-import com.swervedrivespecialties.swervelib.CanPort;
+import frc.robot.lightningUtil.swervelib.CanPort;
 
 public class CanCoderAbsoluteConfiguration {
     private final CanPort port;

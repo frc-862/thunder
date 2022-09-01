@@ -1,8 +1,8 @@
-package com.swervedrivespecialties.swervelib.rev;
+package frc.robot.lightningUtil.swervelib.rev;
 
 import com.revrobotics.*;
 import com.revrobotics.CANSparkMax.ControlType;
-import com.swervedrivespecialties.swervelib.*;
+import frc.robot.lightningUtil.swervelib.*;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 
 public final class NeoSteerControllerFactoryBuilder {
