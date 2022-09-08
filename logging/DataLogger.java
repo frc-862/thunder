@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import com.lightningrobotics.common.util.Loop;
+import frc.robot.lightningUtil.logging.Loop;
 
 public class DataLogger implements Loop {
     private static final int max_lines = 15000;
@@ -88,8 +88,8 @@ public class DataLogger implements Loop {
         }
 
         String valueList = fieldValues.parallelStream()
-                           .map(fn -> fn.get())
-                           .collect(Collectors.joining(","));
+                .map(fn -> fn.get())
+                .collect(Collectors.joining(","));
 
         // System.out.println(valueList);
         writer.logRawString(valueList);
@@ -101,21 +101,22 @@ public class DataLogger implements Loop {
     }
 
     private static boolean foundDS = false;
+
     public static void checkBaseFileName() {
-        if (foundDS) return;
+        if (foundDS)
+            return;
 
         var matchType = DriverStation.getMatchType();
         if (matchType != DriverStation.MatchType.None) {
             String newName = String.format("%s-%s-%d",
-                            DriverStation.getEventName(), matchType.toString(), DriverStation.getMatchNumber()
-                                            );
+                    DriverStation.getEventName(), matchType.toString(), DriverStation.getMatchNumber());
 
             if (!Objects.equals(newName, baseFName)) {
                 setBaseFileName(newName);
                 foundDS = true;
             }
         }
-        
+
     }
 
     public static void setBaseFileName(String fname) {
@@ -124,6 +125,7 @@ public class DataLogger implements Loop {
     }
 
     private File cachedLogFileName = null;
+
     private File logFileName() {
         if (cachedLogFileName != null)
             return cachedLogFileName;
@@ -147,7 +149,7 @@ public class DataLogger implements Loop {
         base = new File(base, "log");
         System.out.println("Log to " + base);
 
-        //noinspection ResultOfMethodCallIgnored
+        // noinspection ResultOfMethodCallIgnored
         base.mkdirs();
 
         String name_format = baseFName + "-%05d-dl.log";
