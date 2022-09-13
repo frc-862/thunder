@@ -1,11 +1,11 @@
-package frc.robot.lightningUtil.swervelib.rev;
+package frc.lightningUtil.swervelib.rev;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import frc.robot.lightningUtil.swervelib.DriveController;
-import frc.robot.lightningUtil.swervelib.DriveControllerFactory;
-import frc.robot.lightningUtil.swervelib.ModuleConfiguration;
+import frc.lightningUtil.swervelib.DriveController;
+import frc.lightningUtil.swervelib.DriveControllerFactory;
+import frc.lightningUtil.swervelib.ModuleConfiguration;
 
 public final class NeoDriveControllerFactoryBuilder {
     private double nominalVoltage = Double.NaN;
@@ -56,7 +56,8 @@ public final class NeoDriveControllerFactoryBuilder {
 
             // Setup encoder
             RelativeEncoder encoder = motor.getEncoder();
-            double positionConversionFactor = Math.PI * moduleConfiguration.getWheelDiameter() * moduleConfiguration.getDriveReduction();
+            double positionConversionFactor = Math.PI * moduleConfiguration.getWheelDiameter()
+                    * moduleConfiguration.getDriveReduction();
             encoder.setPositionConversionFactor(positionConversionFactor);
             encoder.setVelocityConversionFactor(positionConversionFactor / 60.0);
 

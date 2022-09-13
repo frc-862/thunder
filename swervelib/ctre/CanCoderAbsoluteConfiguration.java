@@ -1,6 +1,6 @@
-package frc.robot.lightningUtil.swervelib.ctre;
+package frc.lightningUtil.swervelib.ctre;
 
-import frc.robot.lightningUtil.swervelib.CanPort;
+import frc.lightningUtil.swervelib.CanPort;
 
 public class CanCoderAbsoluteConfiguration {
     private final CanPort port;
@@ -11,7 +11,7 @@ public class CanCoderAbsoluteConfiguration {
         this.offset = offset;
     }
 
-	public CanCoderAbsoluteConfiguration(int port, double offset) {
+    public CanCoderAbsoluteConfiguration(int port, double offset) {
         this.port = new CanPort(port);
         this.offset = offset;
     }

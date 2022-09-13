@@ -1,4 +1,4 @@
-package frc.robot.lightningUtil.swervelib;
+package frc.lightningUtil.swervelib;
 
 @FunctionalInterface
 public interface AbsoluteEncoderFactory<Configuration> {

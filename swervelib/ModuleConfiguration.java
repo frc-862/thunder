@@ -1,13 +1,16 @@
-package frc.robot.lightningUtil.swervelib;
+package frc.lightningUtil.swervelib;
 
 import java.util.Objects;
 
 /**
  * A swerve module configuration.
  * <p>
- * A configuration represents a unique mechanical configuration of a module. For example, the Swerve Drive Specialties
- * Mk3 swerve module has two configurations, standard and fast, and therefore should have two configurations
- * ({@link SdsModuleConfigurations#MK3_STANDARD} and {@link SdsModuleConfigurations#MK3_FAST} respectively).
+ * A configuration represents a unique mechanical configuration of a module. For
+ * example, the Swerve Drive Specialties
+ * Mk3 swerve module has two configurations, standard and fast, and therefore
+ * should have two configurations
+ * ({@link SdsModuleConfigurations#MK3_STANDARD} and
+ * {@link SdsModuleConfigurations#MK3_FAST} respectively).
  */
 public class ModuleConfiguration {
     private final double wheelDiameter;
@@ -21,17 +24,21 @@ public class ModuleConfiguration {
      * Creates a new module configuration.
      *
      * @param wheelDiameter  The diameter of the module's wheel in meters.
-     * @param driveReduction The overall drive reduction of the module. Multiplying motor rotations by this value
+     * @param driveReduction The overall drive reduction of the module. Multiplying
+     *                       motor rotations by this value
      *                       should result in wheel rotations.
-     * @param driveInverted  Whether the drive motor should be inverted. If there is an odd number of gea reductions
+     * @param driveInverted  Whether the drive motor should be inverted. If there is
+     *                       an odd number of gea reductions
      *                       this is typically true.
-     * @param steerReduction The overall steer reduction of the module. Multiplying motor rotations by this value
+     * @param steerReduction The overall steer reduction of the module. Multiplying
+     *                       motor rotations by this value
      *                       should result in rotations of the steering pulley.
-     * @param steerInverted  Whether the steer motor should be inverted. If there is an odd number of gear reductions
+     * @param steerInverted  Whether the steer motor should be inverted. If there is
+     *                       an odd number of gear reductions
      *                       this is typically true.
      */
     public ModuleConfiguration(double wheelDiameter, double driveReduction, boolean driveInverted,
-                               double steerReduction, boolean steerInverted) {
+            double steerReduction, boolean steerInverted) {
         this.wheelDiameter = wheelDiameter;
         this.driveReduction = driveReduction;
         this.driveInverted = driveInverted;
@@ -49,7 +56,8 @@ public class ModuleConfiguration {
     /**
      * Gets the overall reduction of the drive system.
      * <p>
-     * If this value is multiplied by drive motor rotations the result would be drive wheel rotations.
+     * If this value is multiplied by drive motor rotations the result would be
+     * drive wheel rotations.
      */
     public double getDriveReduction() {
         return driveReduction;
@@ -65,7 +73,8 @@ public class ModuleConfiguration {
     /**
      * Gets the overall reduction of the steer system.
      * <p>
-     * If this value is multiplied by steering motor rotations the result would be steering pulley rotations.
+     * If this value is multiplied by steering motor rotations the result would be
+     * steering pulley rotations.
      */
     public double getSteerReduction() {
         return steerReduction;
@@ -80,8 +89,10 @@ public class ModuleConfiguration {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         ModuleConfiguration that = (ModuleConfiguration) o;
         return Double.compare(that.getWheelDiameter(), getWheelDiameter()) == 0 &&
                 Double.compare(that.getDriveReduction(), getDriveReduction()) == 0 &&
@@ -97,8 +108,7 @@ public class ModuleConfiguration {
                 getDriveReduction(),
                 isDriveInverted(),
                 getSteerReduction(),
-                isSteerInverted()
-        );
+                isSteerInverted());
     }
 
     @Override

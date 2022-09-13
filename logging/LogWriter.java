@@ -1,4 +1,4 @@
-package frc.robot.lightningUtil.logging;
+package frc.lightningUtil.logging;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Vector;
 import java.util.concurrent.ArrayBlockingQueue;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.lightningUtil.logging.Loop;
+import frc.lightningUtil.logging.Loop;
 
 public class LogWriter implements Loop {
     private BufferedWriter writer;

@@ -1,8 +1,8 @@
-package frc.robot.lightningUtil.swervelib.ctre;
+package frc.lightningUtil.swervelib.ctre;
 
 import java.util.Objects;
 
-import frc.robot.lightningUtil.swervelib.CanPort;
+import frc.lightningUtil.swervelib.CanPort;
 
 public class Falcon500SteerConfiguration<EncoderConfiguration> {
     private final CanPort motorPort;
@@ -23,10 +23,13 @@ public class Falcon500SteerConfiguration<EncoderConfiguration> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Falcon500SteerConfiguration<?> that = (Falcon500SteerConfiguration<?>) o;
-        return getMotorPort().equals(that.getMotorPort()) && getEncoderConfiguration().equals(that.getEncoderConfiguration());
+        return getMotorPort().equals(that.getMotorPort())
+                && getEncoderConfiguration().equals(that.getEncoderConfiguration());
     }
 
     @Override

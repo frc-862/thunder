@@ -1,4 +1,4 @@
-package frc.robot.lightningUtil.logging;
+package frc.lightningUtil.logging;
 
 import java.util.function.DoubleSupplier;
 

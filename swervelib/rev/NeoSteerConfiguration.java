@@ -1,4 +1,4 @@
-package frc.robot.lightningUtil.swervelib.rev;
+package frc.lightningUtil.swervelib.rev;
 
 import java.util.Objects;
 
@@ -21,10 +21,13 @@ public class NeoSteerConfiguration<EncoderConfiguration> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         NeoSteerConfiguration<?> that = (NeoSteerConfiguration<?>) o;
-        return getMotorPort() == that.getMotorPort() && getEncoderConfiguration().equals(that.getEncoderConfiguration());
+        return getMotorPort() == that.getMotorPort()
+                && getEncoderConfiguration().equals(that.getEncoderConfiguration());
     }
 
     @Override

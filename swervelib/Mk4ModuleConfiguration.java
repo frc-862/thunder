@@ -1,12 +1,14 @@
-package frc.robot.lightningUtil.swervelib;
+package frc.lightningUtil.swervelib;
 
 import java.util.Objects;
 
 /**
  * Additional Mk4 module configuration parameters.
  * <p>
- * The configuration parameters here are used to customize the behavior of the Mk4 swerve module.
- * Each setting is initialized to a default that should be adequate for most use cases.
+ * The configuration parameters here are used to customize the behavior of the
+ * Mk4 swerve module.
+ * Each setting is initialized to a default that should be adequate for most use
+ * cases.
  */
 public class Mk4ModuleConfiguration {
     private double nominalVoltage = 12.0;
@@ -39,10 +41,14 @@ public class Mk4ModuleConfiguration {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Mk4ModuleConfiguration that = (Mk4ModuleConfiguration) o;
-        return Double.compare(that.getNominalVoltage(), getNominalVoltage()) == 0 && Double.compare(that.getDriveCurrentLimit(), getDriveCurrentLimit()) == 0 && Double.compare(that.getSteerCurrentLimit(), getSteerCurrentLimit()) == 0;
+        return Double.compare(that.getNominalVoltage(), getNominalVoltage()) == 0
+                && Double.compare(that.getDriveCurrentLimit(), getDriveCurrentLimit()) == 0
+                && Double.compare(that.getSteerCurrentLimit(), getSteerCurrentLimit()) == 0;
     }
 
     @Override

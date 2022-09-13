@@ -1,4 +1,4 @@
-package frc.robot.lightningUtil.logging;
+package frc.lightningUtil.logging;
 
 /**
  * Runnable class with reports all uncaught throws to CrashTracker
