@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Vector;
 import java.util.concurrent.ArrayBlockingQueue;
 import edu.wpi.first.wpilibj.Timer;
-import frc.lightningUtil.logging.Loop;
+import frc.lightningUtil.Loop;
 
 public class LogWriter implements Loop {
     private BufferedWriter writer;
