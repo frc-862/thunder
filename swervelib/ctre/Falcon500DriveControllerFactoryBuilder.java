@@ -61,6 +61,7 @@ public final class Falcon500DriveControllerFactoryBuilder {
             }
 
             TalonFX motor = new TalonFX(driveConfiguration.id, driveConfiguration.busName);
+            motor.configFactoryDefault(); // TODO does this work fritz ???
             motor.configAllSettings(motorConfiguration);
 
             if (hasVoltageCompensation()) {
