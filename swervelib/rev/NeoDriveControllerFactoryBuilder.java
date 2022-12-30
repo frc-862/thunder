@@ -1,87 +1,95 @@
-package frc.lightningUtil.swervelib.rev;
+// package frc.lightningUtil.swervelib.rev;
 
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
-import frc.lightningUtil.swervelib.DriveController;
-import frc.lightningUtil.swervelib.DriveControllerFactory;
-import frc.lightningUtil.swervelib.ModuleConfiguration;
+// import com.revrobotics.RelativeEncoder;
+// import com.revrobotics.CANSparkMaxLowLevel.*;
+// import com.revrobotics.jni.CANSparkMaxJNI;
+// import com.revrobotics.CANSparkMax;
+// import com.revrobotics.CANSparkMaxLowLevel;
 
-public final class NeoDriveControllerFactoryBuilder {
-    private double nominalVoltage = Double.NaN;
-    private double currentLimit = Double.NaN;
+// import frc.lightningUtil.swervelib.DriveController;
+// import frc.lightningUtil.swervelib.DriveControllerFactory;
+// import frc.lightningUtil.swervelib.ModuleConfiguration;
 
-    public NeoDriveControllerFactoryBuilder withVoltageCompensation(double nominalVoltage) {
-        this.nominalVoltage = nominalVoltage;
-        return this;
-    }
+// public final class NeoDriveControllerFactoryBuilder {
+//     private double nominalVoltage = Double.NaN;
+//     private double currentLimit = Double.NaN;
 
-    public boolean hasVoltageCompensation() {
-        return Double.isFinite(nominalVoltage);
-    }
+//     public NeoDriveControllerFactoryBuilder withVoltageCompensation(double nominalVoltage) {
+//         this.nominalVoltage = nominalVoltage;
+//         return this;
+//     }
 
-    public NeoDriveControllerFactoryBuilder withCurrentLimit(double currentLimit) {
-        this.currentLimit = currentLimit;
-        return this;
-    }
+//     public boolean hasVoltageCompensation() {
+//         return Double.isFinite(nominalVoltage);
+//     }
 
-    public boolean hasCurrentLimit() {
-        return Double.isFinite(currentLimit);
-    }
+//     public NeoDriveControllerFactoryBuilder withCurrentLimit(double currentLimit) {
+//         this.currentLimit = currentLimit;
+//         return this;
+//     }
 
-    public DriveControllerFactory<ControllerImplementation, Integer> build() {
-        return new FactoryImplementation();
-    }
+//     public boolean hasCurrentLimit() {
+//         return Double.isFinite(currentLimit);
+//     }
 
-    private class FactoryImplementation implements DriveControllerFactory<ControllerImplementation, Integer> {
-        @Override
-        public ControllerImplementation create(Integer id, ModuleConfiguration moduleConfiguration) {
-            CANSparkMax motor = new CANSparkMax(id, CANSparkMaxLowLevel.MotorType.kBrushless);
-            motor.setInverted(moduleConfiguration.isDriveInverted());
+//     public DriveControllerFactory<ControllerImplementation, Integer> build() {
+//         return new FactoryImplementation();
+//     }
 
-            // Setup voltage compensation
-            if (hasVoltageCompensation()) {
-                motor.enableVoltageCompensation(nominalVoltage);
-            }
+//     private class FactoryImplementation implements DriveControllerFactory<ControllerImplementation, Integer> {
+//         @Override
+//         public ControllerImplementation create(Integer id, ModuleConfiguration moduleConfiguration) {
+//             CANSparkMax motor = new CANSparkMax(id, MotorType.kBrushless);
+//             motor.setInverted(moduleConfiguration.isDriveInverted());
 
-            if (hasCurrentLimit()) {
-                motor.setSmartCurrentLimit((int) currentLimit);
-            }
+//             // Setup voltage compensation
+//             if (hasVoltageCompensation()) {
+//                 motor.enableVoltageCompensation(nominalVoltage);
+//             }
 
-            motor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus0, 100);
-            motor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus1, 20);
-            motor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus2, 20);
-            // Set neutral mode to brake
-            motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+//             if (hasCurrentLimit()) {
+//                 motor.setSmartCurrentLimit((int) currentLimit);
+//             }
 
-            // Setup encoder
-            RelativeEncoder encoder = motor.getEncoder();
-            double positionConversionFactor = Math.PI * moduleConfiguration.getWheelDiameter()
-                    * moduleConfiguration.getDriveReduction();
-            encoder.setPositionConversionFactor(positionConversionFactor);
-            encoder.setVelocityConversionFactor(positionConversionFactor / 60.0);
+//             motor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
+//             motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
+//             motor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
+//             // Set neutral mode to brake
+//             motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
-            return new ControllerImplementation(motor, encoder);
-        }
-    }
+//             // Setup encoder
+//             RelativeEncoder encoder = motor.getEncoder();
+//             double positionConversionFactor = Math.PI * moduleConfiguration.getWheelDiameter()
+//                     * moduleConfiguration.getDriveReduction();
+//             encoder.setPositionConversionFactor(positionConversionFactor);
+//             encoder.setVelocityConversionFactor(positionConversionFactor / 60.0);
 
-    private static class ControllerImplementation implements DriveController {
-        private final CANSparkMax motor;
-        private final RelativeEncoder encoder;
+//             return new ControllerImplementation(motor, encoder);
+//         }
+//     }
 
-        private ControllerImplementation(CANSparkMax motor, RelativeEncoder encoder) {
-            this.motor = motor;
-            this.encoder = encoder;
-        }
+//     private static class ControllerImplementation implements DriveController {
+//         private final CANSparkMax motor;
+//         private final RelativeEncoder encoder;
 
-        @Override
-        public void setReferenceVoltage(double voltage) {
-            motor.setVoltage(voltage);
-        }
+//         private ControllerImplementation(CANSparkMax motor, RelativeEncoder encoder) {
+//             this.motor = motor;
+//             this.encoder = encoder;
+//         }
 
-        @Override
-        public double getStateVelocity() {
-            return encoder.getVelocity();
-        }
-    }
-}
+//         @Override
+//         public void setReferenceVoltage(double voltage) {
+//             motor.setVoltage(voltage);
+//         }
+
+//         @Override
+//         public double getStateVelocity() {
+//             return encoder.getVelocity();
+//         }
+
+//         @Override
+//         public double getStatePosition() {
+//             return encoder.getPosition();
+//         }
+//     }
+// }
