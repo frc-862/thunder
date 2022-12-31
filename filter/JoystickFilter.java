@@ -1,6 +1,6 @@
-package frc.lightningUtil.util.filter;
+package frc.lightningUtil.filter;
 
-import frc.lightningUtil.util.LightningMath;
+import frc.lightningUtil.math.LightningMath;
 
 /**
  * Filter for joystick input to enhance driver controll.

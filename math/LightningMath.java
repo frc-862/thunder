@@ -1,4 +1,4 @@
-package frc.lightningUtil.util;
+package frc.lightningUtil.math;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
@@ -118,14 +118,6 @@ public final class LightningMath {
 
     public static double deltaThetaInRadians(double from, double to) {
         return boundThetaNegPiToPi(to - from);
-    }
-
-    public static int scale(int input,
-                            int lowInput, int highInput, int lowOutput, int highOutput) {
-        final int inputRange = highInput - lowInput;
-        final int outputRange = highOutput - lowOutput;
-
-        return (input - lowInput) * outputRange / inputRange + lowOutput;
     }
 
     public static double scale(double input,

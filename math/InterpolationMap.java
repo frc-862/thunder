@@ -1,4 +1,4 @@
-package frc.lightningUtil.util;
+package frc.lightningUtil.math;
 
 import java.util.Map;
 import java.util.TreeMap;

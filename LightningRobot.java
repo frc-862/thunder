@@ -12,7 +12,6 @@ import frc.lightningUtil.fault.FaultMonitor;
 import frc.lightningUtil.fault.LightningFaultCodes;
 import frc.lightningUtil.fault.TimedFaultMonitor;
 import frc.lightningUtil.logging.DataLogger;
-import frc.lightningUtil.testing.SystemTestCommand;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -239,34 +238,13 @@ public class LightningRobot extends TimedRobot {
             autonomousCommand.cancel();
     }
 
-    private static SystemTestCommand stc = new SystemTestCommand();
-
-    private boolean systemTestFlag = false;
-
-    /**
-     * The default implementation cancles all commands and releases the default
-     * commands
-     * from the subsystems, and schedules a
-     * {@link frc.lightningUtil.testing.SystemTestCommand}.
-     *
-     * It is reccomended that you avoid overriding this method.
-     */
     @Override
     public void testInit() {
-        System.out.println("LightningRobot.testInit");
-        getContainer().releaseDefaultCommands();
-        CommandScheduler.getInstance().cancelAll();
-        stc.initialize();
     }
 
     @Override
     public void testPeriodic() {
-        if (!stc.isFinished()) {
-            stc.execute();
-        } else if (stc.isFinished() && !systemTestFlag) {
-            stc.end(false);
-            systemTestFlag = true;
-        }
+        
     }
 
     /**

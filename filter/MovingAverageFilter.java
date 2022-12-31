@@ -1,4 +1,4 @@
-package frc.lightningUtil.util.filter;
+package frc.lightningUtil.filter;
 
 public class MovingAverageFilter implements ValueFilter {
     
