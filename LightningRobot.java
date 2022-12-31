@@ -12,6 +12,7 @@ import frc.lightningUtil.fault.FaultMonitor;
 import frc.lightningUtil.fault.LightningFaultCodes;
 import frc.lightningUtil.fault.TimedFaultMonitor;
 import frc.lightningUtil.logging.DataLogger;
+import frc.lightningUtil.testing.SystemTest;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -118,6 +119,9 @@ public class LightningRobot extends TimedRobot {
 
         // Load our autonomous chooser to the dashboard
         Autonomous.load();
+
+        // Load our system tests to the dashboard
+        SystemTest.loadTests();
 
     }
 
@@ -240,7 +244,6 @@ public class LightningRobot extends TimedRobot {
     @Override
     public void testInit() {
         System.out.println("LightningRobot.testInit");
-        getContainer().configureSystemTests();
     }
 
     @Override
