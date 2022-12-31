@@ -27,9 +27,6 @@ public abstract class LightningContainer {
         configureFaultCodes();
         configureFaultMonitors();
 
-        // Setup system tests
-        configureSystemTests();
-
     }
 
     /**

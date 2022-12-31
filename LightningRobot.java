@@ -239,11 +239,12 @@ public class LightningRobot extends TimedRobot {
 
     @Override
     public void testInit() {
+        System.out.println("LightningRobot.testInit");
+        getContainer().configureSystemTests();
     }
 
     @Override
     public void testPeriodic() {
-
     }
 
     /**
