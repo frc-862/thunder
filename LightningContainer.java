@@ -72,13 +72,4 @@ public abstract class LightningContainer {
      * Configures listeners for fault codes
      */
     protected abstract void configureFaultMonitors();
-
-    /**
-     * The {@link frc.lightningUtil.subsystem.drivetrain.LightningDrivetrain
-     * drivetrain} object of the robot
-     * 
-     * @return The drivetrain object of the given robot
-     */
-    // public abstract LightningDrivetrain getDrivetrain();
-
 }

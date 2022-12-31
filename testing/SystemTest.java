@@ -2,14 +2,14 @@ package frc.lightningUtil.testing;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class SystemTest {
 
-    private ShuffleboardTab systemTestTab = Shuffleboard.getTab("SystemTest");
+    private static final ShuffleboardTab tab = Shuffleboard.getTab("SystemTest");
 
-    public static void registerTest(String name, Command command) {
-        Shuffleboard.getTab("systemTest").add(name, command);
+    public static void registerTest(String name, CommandBase command) {
+        tab.add(name, command);
     }
 
 }

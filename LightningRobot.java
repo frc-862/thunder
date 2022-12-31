@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
-// import frc.lightningUtil.auto.Autonomous;
+import frc.lightningUtil.auto.Autonomous;
 import frc.lightningUtil.fault.FaultCode;
 import frc.lightningUtil.fault.FaultMonitor;
 import frc.lightningUtil.fault.LightningFaultCodes;
@@ -117,7 +117,7 @@ public class LightningRobot extends TimedRobot {
                 0.08, "Loop is running slow: " + getLoopTime()));
 
         // Load our autonomous chooser to the dashboard
-        // Autonomous.load();
+        Autonomous.load();
 
     }
 
@@ -212,14 +212,13 @@ public class LightningRobot extends TimedRobot {
      * or
      * the selected registered command will not be executed.
      */
-    // @Override
-    // public void autonomousInit() {
-    //     System.out.println("LightningRobot.autonomousInit");
-    //     autonomousCommand = Autonomous.getAutonomous();
-    //     if (autonomousCommand != null)
-    //         autonomousCommand.schedule();
-
-    // }
+    @Override
+    public void autonomousInit() {
+        System.out.println("LightningRobot.autonomousInit");
+        autonomousCommand = Autonomous.getAutonomous();
+        if (autonomousCommand != null)
+            autonomousCommand.schedule();
+    }
 
     /**
      * The default implementation handles canceling the autonomous command.
@@ -244,7 +243,7 @@ public class LightningRobot extends TimedRobot {
 
     @Override
     public void testPeriodic() {
-        
+
     }
 
     /**
