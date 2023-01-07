@@ -1,5 +1,7 @@
 package frc.lightningUtil.swervelib;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
 public class SwerveModuleFactory<DriveConfiguration, SteerConfiguration> {
@@ -53,6 +55,11 @@ public class SwerveModuleFactory<DriveConfiguration, SteerConfiguration> {
         @Override
         public double getSteerAngle() {
             return steerController.getStateAngle();
+        }
+
+        @Override
+        public SwerveModulePosition getDrivePosition() {
+            return new SwerveModulePosition(driveController.getStatePosition(), new Rotation2d(getSteerAngle()));
         }
 
         @Override
