@@ -3,6 +3,7 @@ package frc.lightningUtil.swervelib.rev;
 import com.revrobotics.*;
 import com.revrobotics.CANSparkMax.ControlType;
 import frc.lightningUtil.swervelib.*;
+import frc.lightningUtil.swervelib.AbsoluteEncoder;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 
 public final class NeoSteerControllerFactoryBuilder {

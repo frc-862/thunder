@@ -1,8 +1,9 @@
 package frc.lightningUtil.swervelib.rev;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMaxLowLevel.*;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
+
 import frc.lightningUtil.swervelib.DriveController;
 import frc.lightningUtil.swervelib.DriveControllerFactory;
 import frc.lightningUtil.swervelib.ModuleConfiguration;
@@ -36,7 +37,7 @@ public final class NeoDriveControllerFactoryBuilder {
     private class FactoryImplementation implements DriveControllerFactory<ControllerImplementation, Integer> {
         @Override
         public ControllerImplementation create(Integer id, ModuleConfiguration moduleConfiguration) {
-            CANSparkMax motor = new CANSparkMax(id, CANSparkMaxLowLevel.MotorType.kBrushless);
+            CANSparkMax motor = new CANSparkMax(id, MotorType.kBrushless);
             motor.setInverted(moduleConfiguration.isDriveInverted());
 
             // Setup voltage compensation
@@ -48,9 +49,9 @@ public final class NeoDriveControllerFactoryBuilder {
                 motor.setSmartCurrentLimit((int) currentLimit);
             }
 
-            motor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus0, 100);
-            motor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus1, 20);
-            motor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus2, 20);
+            motor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
+            motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
+            motor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
             // Set neutral mode to brake
             motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
@@ -82,6 +83,11 @@ public final class NeoDriveControllerFactoryBuilder {
         @Override
         public double getStateVelocity() {
             return encoder.getVelocity();
+        }
+
+        @Override
+        public double getStatePosition() {
+            return encoder.getPosition();
         }
     }
 }
