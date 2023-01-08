@@ -1,7 +1,7 @@
 package frc.lightningUtil.tuning;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -9,9 +9,9 @@ public class PIDDashboardTuner extends SubsystemBase {
 
 	private PIDController controller;
 
-	private NetworkTableEntry kPTuner;
-	private NetworkTableEntry kITuner;
-	private NetworkTableEntry kDTuner;
+	private GenericEntry kPTuner;
+	private GenericEntry kITuner;
+	private GenericEntry kDTuner;
 
 	
 	public PIDDashboardTuner(String name, PIDController controller) {

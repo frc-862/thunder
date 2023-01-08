@@ -3,8 +3,12 @@ package frc.lightningUtil.auto;
 import java.util.HashMap;
 import java.util.Set;
 
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /**
@@ -77,7 +81,7 @@ public class Autonomous {
      * {@link edu.wpi.first.wpilibj.shuffleboard.Shuffleboard}. Selection menu will have name "Auto Mode".
      */
     public static void load() {
-        final var tab = Shuffleboard.getTab("Autonomous");
+        ShuffleboardTab tab = Shuffleboard.getTab("Autonomous");
         if(autons != null && !autons.isEmpty()) {
             Set<String> names = autons.keySet();
             for(var name : names) {

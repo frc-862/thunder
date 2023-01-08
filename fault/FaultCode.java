@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
@@ -22,7 +22,7 @@ public class FaultCode {
 
     private static final String FAULT_PATH = "/home/lvuser/faults.log";
     private static HashSet<LightningFaultCodes.Code> faults = new HashSet<>();
-    private static Map<LightningFaultCodes.Code, NetworkTableEntry> networkTableMap = new HashMap<>();
+    private static Map<LightningFaultCodes.Code, GenericEntry> networkTableMap = new HashMap<>();
     private static boolean dummy_light = false;
 
     /**
@@ -34,7 +34,7 @@ public class FaultCode {
      * @param nte  The {@link edu.wpi.first.networktables.NetworkTableEntry} to link
      *             the fault to
      */
-    public static void setNetworkTableEntry(LightningFaultCodes.Code code, NetworkTableEntry nte) {
+    public static void setGenericEntry(LightningFaultCodes.Code code, GenericEntry nte) {
         networkTableMap.put(code, nte);
     }
 
@@ -48,7 +48,7 @@ public class FaultCode {
                     .withWidget("Boolean Box")
                     .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "maroon"))
                     .getEntry();
-            FaultCode.setNetworkTableEntry(code, nte);
+            FaultCode.setGenericEntry(code, nte);
         });
         try {
             Files.write(getFaultPath(), ("######### RESTART #########\n").getBytes(), StandardOpenOption.CREATE,

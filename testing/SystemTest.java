@@ -3,7 +3,7 @@ package frc.lightningUtil.testing;
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -13,13 +13,12 @@ public class SystemTest {
 
     private static ShuffleboardTab systemTestTab = Shuffleboard.getTab("SystemTest"); ;
 
-    private static NetworkTableEntry interrupt = systemTestTab.add("interrupt", false).withWidget(BuiltInWidgets.kToggleButton).getEntry();
-    
+    private static GenericEntry interrupt = systemTestTab.add("interrupt", false).withWidget(BuiltInWidgets.kToggleButton).getEntry();
 
     private static final HashMap<String, CommandBase> systemTests = new HashMap<>();
 
     public static void registerTest(String name, CommandBase command) {
-        systemTests.put(name, command.withInterrupt(() -> interrupt.getBoolean(false)));
+        systemTests.put(name, command.until(() -> interrupt.getBoolean(false)));
     }
  
     public static void loadTests() {
