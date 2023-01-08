@@ -3,12 +3,9 @@ package frc.lightningUtil.auto;
 import java.util.HashMap;
 import java.util.Set;
 
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /**
@@ -23,12 +20,6 @@ public class Autonomous {
      * Number of registered commands
      */
     private static int autonCommandCount = 0; 
-
-    /**
-     * Flag indicates if a {@link com.lightningrobotics.common.WaitCommand.DashboardWaitCommand} will be used in a 
-     * {@link edu.wpi.first.wpilibj2.command.SequentialCommandGroup} before the configured autonomous command.
-     */
-    private static boolean wait = true;
 
     /**
      * Map of autonomous commands. Key ({@link java.lang.String}) corresponds to the name of the 
@@ -58,22 +49,6 @@ public class Autonomous {
      */
     public static void register(String name, Command cmd) { 
         autons.put(name, cmd); 
-    }
-
-    /**
-     * Configures if {@link Autonomous#register(String, Command)} will group command with a {@link com.lightningrobotics.common.command.core.WaitCommand}
-     * if enabled ({@link Autonomous#setHasDashboardWaitCommand(boolean)}).
-     * @return {@code true} by default ({@link Autonomous#setHasDashboardWaitCommand(boolean)} not called), value set by 
-     * {@link Autonomous#setHasDashboardWaitCommand(boolean)} otherwise.
-     */
-    public static boolean hasDashboardWaitCommand() { return wait; }
-
-    /**
-     * Configures if {@link Autonomous#register(String, Command)} will group command with a {@link com.lightningrobotics.common.command.core.WaitCommand}.
-     * @param hasWait {@code true} if there needs to be a {@link com.lightningrobotics.common.command.core.WaitCommand}, false otherwise.
-     */
-    public static void setHasDashboardWaitCommand(boolean hasWait) {
-        wait = hasWait;
     }
 
     /**
