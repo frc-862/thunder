@@ -1,5 +1,6 @@
 package frc.lightningUtil.filter;
 
+import edu.wpi.first.math.MathUtil;
 import frc.lightningUtil.math.LightningMath;
 
 /**
@@ -90,7 +91,7 @@ public class JoystickFilter {
         if (negative)
             output = -output;
 
-        output = LightningMath.constrain(output, lastOutput - rampDelta, lastOutput + rampDelta);
+        output = MathUtil.clamp(output, lastOutput - rampDelta, lastOutput + rampDelta);
         lastOutput = output;
 
         return output;
