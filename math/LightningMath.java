@@ -13,30 +13,9 @@ public final class LightningMath {
     }
 
     /**
-     * Returns value clamped between low and high boundaries.
-     * @param value Value to clamp.
-     * @param low The lower boundary to which to clamp value.
-     * @param high The higher boundary to which to clamp value.
-     * @return clamped value.
-     */
-    public static int clamp(int value, int low, int high) {
-        return Math.max(low, Math.min(value, high));
-    }
-
-    /**
-     * Returns value clamped between low and high boundaries.
-     * @param value Value to clamp.
-     * @param low The lower boundary to which to clamp value.
-     * @param high The higher boundary to which to clamp value.
-     * @return clamped value.
-     */
-    public static double clamp(double value, double low, double high) {
-        return Math.max(low, Math.min(value, high));
-    }
-
-    /**
      * Returns modulus of input.
-     * @param input Input value to wrap.
+     * 
+     * @param input        Input value to wrap.
      * @param minimumInput The minimum value expected from the input.
      * @param maximumInput The maximum value expected from the input.
      * @return mod of input value
@@ -57,6 +36,7 @@ public final class LightningMath {
 
     /**
      * Wraps an angle to the range -pi to pi radians.
+     * 
      * @param angleRadians Angle to wrap in radians.
      * @return constrained angle from -pi to pi
      */
@@ -66,6 +46,7 @@ public final class LightningMath {
 
     /**
      * Finds the maximum value of the given inputs.
+     * 
      * @param values Multiple floating-point values.
      * @return The maximum of the values given.
      */
@@ -77,25 +58,6 @@ public final class LightningMath {
         return max;
     }
 
-    public static int constrain(int value, int low, int high) {
-      return Math.max(low, Math.min(value, high));
-    }
-
-    public static double constrain(double value, double low, double high) {
-      return Math.max(low, Math.min(value, high));
-    }
-    public static double limit(double v, double low, double high) {
-        return (v < low) ? low : ((v > high) ? high : v);
-    }
-
-    public static double limit(double v, double limit) {
-        return limit(v, -limit, limit);
-    }
-
-    public static double limit(double input) {
-        return limit(input, -1, 1);
-    }
-
     public static double boundThetaNegPiToPi(double theta) {
         return theta - (Math.ceil((theta + Math.PI) / (Math.PI * 2)) - 1) * (Math.PI * 2); // (-π;π]
     }
@@ -105,11 +67,11 @@ public final class LightningMath {
     }
 
     public static double boundThetaNeg180to180(double theta) {
-        return theta - (Math.ceil((theta + 180)/360)-1)*360; // (-180;180]
+        return theta - (Math.ceil((theta + 180) / 360) - 1) * 360; // (-180;180]
     }
 
     public static double boundTheta0to360(double theta) {
-        return theta - Math.floor(theta/360)*360;  // [0;360)
+        return theta - Math.floor(theta / 360) * 360; // [0;360)
     }
 
     public static double deltaThetaInDegrees(double from, double to) {
@@ -120,12 +82,11 @@ public final class LightningMath {
         return boundThetaNegPiToPi(to - from);
     }
 
-    public static double scale(double input,
-                               double lowInput, double highInput, double lowOutput, double highOutput) {
+    public static double scale(double input, double lowInput, double highInput, double lowOutput, double highOutput) {
         final double inputRange = highInput - lowInput;
         final double outputRange = highOutput - lowOutput;
 
-        return  (input - lowInput) * outputRange / inputRange + lowOutput;
+        return (input - lowInput) * outputRange / inputRange + lowOutput;
     }
 
     public static double deadZone(double input, double deadband) {
@@ -158,8 +119,9 @@ public final class LightningMath {
 
     /**
      * Converts motor rotational speed to linear speed
-     * @param rpm input speed to convert
-     * @param gearReduction reduction between driver and actuator
+     * 
+     * @param rpm                input speed to convert
+     * @param gearReduction      reduction between driver and actuator
      * @param wheelCircumference circumference of wheel (inches)
      * @return the speed in meters per second
      */
@@ -169,12 +131,13 @@ public final class LightningMath {
 
     /**
      * Converts encoder ticks to a distance (units of input)
-     * @param ticks input to convert
+     * 
+     * @param ticks         input to convert
      * @param wheelDiameter diameter of wheel
      * @param gearReduction reduction in gearbox
-     * @param ticksPerRev ticks pre revolution of motor shaft
+     * @param ticksPerRev   ticks pre revolution of motor shaft
      * @return distance wheel has travled, in units of the wheel diameter supplied
-     */    
+     */
     public static double ticksToDistance(double ticks, double wheelDiameter, double gearReduction, double ticksPerRev) {
         return (ticks * (wheelDiameter * Math.PI / (ticksPerRev * gearReduction)));
     }

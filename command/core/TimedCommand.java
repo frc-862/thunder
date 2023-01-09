@@ -13,6 +13,12 @@ public class TimedCommand extends CommandBase {
 	protected Timer timer;
 	protected double timeout;
 
+	/**
+	 * A command that runs with a timeout.
+	 * 
+	 * @param command the command to be run
+	 * @param timeout the timeout in seconds
+	 */
 	public TimedCommand(Command command, double timeout) {
 		timer = new Timer();
 		this.command = command;

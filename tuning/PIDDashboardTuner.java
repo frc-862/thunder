@@ -14,6 +14,12 @@ public class PIDDashboardTuner extends SubsystemBase {
 	private GenericEntry kDTuner;
 
 	
+	/**
+	 * Puts kP, kI, kD values on the dashboard to be tuned on the fly
+	 * 
+	 * @param name name of the tab to put the PID Tuner on 
+	 * @param controller the PIDController to be tuned
+	 */
 	public PIDDashboardTuner(String name, PIDController controller) {
 		this.controller = controller;
 
