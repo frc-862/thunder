@@ -17,7 +17,9 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
-/** Add your docs here. */
+/**
+ * Class used for making autonomous commands with pathplanner
+ */
 public class AutonomousCommandFactory {
 
 	private final Supplier<Pose2d> getPose;
@@ -28,6 +30,17 @@ public class AutonomousCommandFactory {
 	private final Consumer<SwerveModuleState[]> setStates;
 	private final Subsystem[] drivetrain;
 
+	/**
+	 * Creates a new AutonomousCommandFactory
+	 * 
+	 * @param getPose        drivetrain pose supplier
+	 * @param resetPose      used to reset drivetrain pose
+	 * @param kinematics     swervedrive kinematics
+	 * @param driveConstants drive motor PIDConstants
+	 * @param thetaConstants rotational motor PIDConstants
+	 * @param setStates      used to output module states
+	 * @param drivetrain     subsystem drivetrain
+	 */
 	public AutonomousCommandFactory(Supplier<Pose2d> getPose, Consumer<Pose2d> resetPose,
 			SwerveDriveKinematics kinematics, PIDConstants driveConstants, PIDConstants thetaConstants,
 			Consumer<SwerveModuleState[]> setStates, Subsystem... drivetrain) {
@@ -41,17 +54,13 @@ public class AutonomousCommandFactory {
 	}
 
 	/**
-	 * This method is gooing to create a swerve trajectory using pathplanners
-	 * generated wpilib json files. Max veloxity, max acceleration, and reversed
-	 * should be set when creating the paths in pathplanner.
+	 * Method to create autonomous trajectories.
 	 * 
-	 * @param name            name of the pathplanner path
-	 * @param maxVelocity     the max velocity for the path
-	 * @param maxAcceleration the max accelertaion for the path
-	 * @param driveConstants  PIDConstants for the drive controller
-	 * @param thetaConstants  PIDConstants for the theta controller
-	 * @param eventMap        hashmap to run the markers in pathplanner
-	 * @param drivetrain      the drivetrain subsystem to be required
+	 * @param name        name of the .path file from pathplanner
+	 * @param eventMap    the hashmap of events for the path
+	 * @param constraint  the constraint for the first part of the trajectory
+	 * @param constraints the constraints for the remaining sections of the
+	 *                    trajectory
 	 */
 	public void makeTrajectory(String name, HashMap<String, Command> eventMap, PathConstraints constraint,
 			PathConstraints... constraints) {
