@@ -2,17 +2,43 @@ package frc.thunder.auto;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
+import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Drivetrain;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 
 /** Add your docs here. */
 public class AutonomousCommandFactory {
+
+	private final Supplier<Pose2d> getPose;
+	private final Consumer<Pose2d> resetPose;
+	private final SwerveDriveKinematics kinematics;
+	private final PIDConstants driveConstants;
+	private final PIDConstants thetaConstants;
+	private final Consumer<SwerveModuleState[]> setStates;
+	private final Subsystem[] drivetrain;
+
+	public AutonomousCommandFactory(Supplier<Pose2d> getPose, Consumer<Pose2d> resetPose,
+			SwerveDriveKinematics kinematics, PIDConstants driveConstants, PIDConstants thetaConstants,
+			Consumer<SwerveModuleState[]> setStates, Subsystem... drivetrain) {
+		this.getPose = getPose;
+		this.resetPose = resetPose;
+		this.kinematics = kinematics;
+		this.driveConstants = driveConstants;
+		this.thetaConstants = thetaConstants;
+		this.setStates = setStates;
+		this.drivetrain = drivetrain;
+	}
 
 	/**
 	 * This method is gooing to create a swerve trajectory using pathplanners
@@ -27,18 +53,17 @@ public class AutonomousCommandFactory {
 	 * @param eventMap        hashmap to run the markers in pathplanner
 	 * @param drivetrain      the drivetrain subsystem to be required
 	 */
-	public static void makeTrajectory(String name, double maxVelocity, double maxAcceleration,
-			PIDConstants driveConstants, PIDConstants thetaConstants, HashMap<String, Command> eventMap,
-			Drivetrain drivetrain) {
+	public void makeTrajectory(String name, HashMap<String, Command> eventMap, PathConstraints constraint,
+			PathConstraints... constraints) {
 
-		List<PathPlannerTrajectory> trajectory = PathPlanner.loadPathGroup(name, maxVelocity, maxVelocity);
+		List<PathPlannerTrajectory> trajectory = PathPlanner.loadPathGroup(name, constraint, constraints);
 
-		SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(drivetrain::getPose,
-				drivetrain::resetOdometry,
-				drivetrain.getDriveKinematics(),
-				driveConstants,
+		SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(getPose,
+				resetPose,
+				kinematics,
 				thetaConstants,
-				drivetrain::setStates,
+				driveConstants,
+				setStates,
 				eventMap,
 				drivetrain);
 
