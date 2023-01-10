@@ -1,4 +1,4 @@
-package frc.lightningUtil.swervelib.ctre;
+package frc.thunder.swervelib.ctre;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
@@ -6,10 +6,10 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
-import frc.lightningUtil.swervelib.CanPort;
-import frc.lightningUtil.swervelib.DriveController;
-import frc.lightningUtil.swervelib.DriveControllerFactory;
-import frc.lightningUtil.swervelib.ModuleConfiguration;
+import frc.thunder.swervelib.CanPort;
+import frc.thunder.swervelib.DriveController;
+import frc.thunder.swervelib.DriveControllerFactory;
+import frc.thunder.swervelib.ModuleConfiguration;
 
 public final class Falcon500DriveControllerFactoryBuilder {
     private static final double TICKS_PER_ROTATION = 2048.0;
@@ -92,7 +92,8 @@ public final class Falcon500DriveControllerFactoryBuilder {
                 ? Falcon500DriveControllerFactoryBuilder.this.nominalVoltage
                 : 12.0;
 
-        private ControllerImplementation(TalonFX motor, double sensorVelocityCoefficient, double sensorPositionCoefficient) {
+        private ControllerImplementation(TalonFX motor, double sensorVelocityCoefficient,
+                double sensorPositionCoefficient) {
             this.motor = motor;
             this.sensorVelocityCoefficient = sensorVelocityCoefficient;
             this.sensorPositionCoefficient = sensorPositionCoefficient;

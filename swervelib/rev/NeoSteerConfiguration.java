@@ -1,4 +1,4 @@
-package frc.lightningUtil.swervelib.rev;
+package frc.thunder.swervelib.rev;
 
 import java.util.Objects;
 

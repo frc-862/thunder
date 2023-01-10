@@ -1,4 +1,4 @@
-package frc.lightningUtil.math;
+package frc.thunder.math;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -13,21 +13,23 @@ public class InterpolationMap extends TreeMap<Double, Double> {
 
     public InterpolationMap(double... doubles) {
         if (doubles.length % 2 != 0) {
-            System.err.println("InterpolationMap constructor should always have an even number of entries, last value ignored");
+            System.err.println(
+                    "InterpolationMap constructor should always have an even number of entries, last value ignored");
         }
 
         for (int i = 1; i < doubles.length; i += 2) {
-            this.put(doubles[i-1], doubles[i]);
+            this.put(doubles[i - 1], doubles[i]);
         }
     }
 
     public InterpolationMap(Double[] doubles) {
         if (doubles.length % 2 != 0) {
-            System.err.println("InterpolationMap constructor should always have an even number of entries, last value ignored");
+            System.err.println(
+                    "InterpolationMap constructor should always have an even number of entries, last value ignored");
         }
 
         for (int i = 1; i < doubles.length; i += 2) {
-            this.put(doubles[i-1], doubles[i]);
+            this.put(doubles[i - 1], doubles[i]);
         }
     }
 
@@ -43,11 +45,13 @@ public class InterpolationMap extends TreeMap<Double, Double> {
                 return 0;
             } else if (floorKey == null) {
                 Map.Entry<Double, Double> result = super.firstEntry();
-//                System.err.println("ERROR InterpolationMap key: " + key + " lower than floor: " + result.getKey());
+                // System.err.println("ERROR InterpolationMap key: " + key + " lower than floor:
+                // " + result.getKey());
                 return result.getValue();
             } else if (ceilKey == null) {
                 Map.Entry<Double, Double> result = super.lastEntry();
-//                System.err.println("ERROR InterpolationMap key: " + key + " higher than ceil: " + result.getKey());
+                // System.err.println("ERROR InterpolationMap key: " + key + " higher than ceil:
+                // " + result.getKey());
                 return result.getValue();
             }
             double range = ceilKey - floorKey;

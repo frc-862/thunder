@@ -1,4 +1,4 @@
-package frc.lightningUtil;
+package frc.thunder;
 
 /**
  * Interface for loops, which are routine that run periodically in the robot

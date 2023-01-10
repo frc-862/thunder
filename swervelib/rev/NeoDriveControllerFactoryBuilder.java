@@ -1,12 +1,12 @@
-package frc.lightningUtil.swervelib.rev;
+package frc.thunder.swervelib.rev;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.*;
 import com.revrobotics.CANSparkMax;
 
-import frc.lightningUtil.swervelib.DriveController;
-import frc.lightningUtil.swervelib.DriveControllerFactory;
-import frc.lightningUtil.swervelib.ModuleConfiguration;
+import frc.thunder.swervelib.DriveController;
+import frc.thunder.swervelib.DriveControllerFactory;
+import frc.thunder.swervelib.ModuleConfiguration;
 
 public final class NeoDriveControllerFactoryBuilder {
     private double nominalVoltage = Double.NaN;

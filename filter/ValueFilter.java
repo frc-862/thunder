@@ -1,4 +1,4 @@
-package frc.lightningUtil.filter;
+package frc.thunder.filter;
 
 public interface ValueFilter {
 
@@ -7,5 +7,5 @@ public interface ValueFilter {
     double filter(double value);
 
     double get();
-    
+
 }

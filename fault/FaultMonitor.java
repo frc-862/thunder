@@ -1,15 +1,15 @@
-package frc.lightningUtil.fault;
+package frc.thunder.fault;
 
 import java.util.LinkedList;
 import java.util.function.BooleanSupplier;
 
-import frc.lightningUtil.fault.LightningFaultCodes.Code;
+import frc.thunder.fault.LightningFaultCodes.Code;
 
 import java.util.List;
 
 /**
  * Basic implementation of an
- * {@link frc.lightningUtil.fault.AbstractFaultMonitor} that
+ * {@link frc.thunder.fault.AbstractFaultMonitor} that
  * also provides a means to register ad check other fault monitors
  */
 public class FaultMonitor extends AbstractFaultMonitor {
@@ -20,9 +20,9 @@ public class FaultMonitor extends AbstractFaultMonitor {
 
     /**
      * Adds a new fault monitor to be checked with
-     * {@link frc.lightningUtil.fault.FaultMonitor#checkMonitors()}
+     * {@link frc.thunder.fault.FaultMonitor#checkMonitors()}
      * 
-     * @param fm The {@link frc.lightningUtil.fault.AbstractFaultMonitor} to be
+     * @param fm The {@link frc.thunder.fault.AbstractFaultMonitor} to be
      *           registered
      */
     static public void register(AbstractFaultMonitor fm) {

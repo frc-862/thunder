@@ -1,9 +1,9 @@
-package frc.lightningUtil.fault;
+package frc.thunder.fault;
 
 import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.wpilibj.Timer;
-import frc.lightningUtil.fault.LightningFaultCodes.Code;
+import frc.thunder.fault.LightningFaultCodes.Code;
 
 /**
  * A fault monitor that checks if a condition has existed for a given period of

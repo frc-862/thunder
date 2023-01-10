@@ -1,10 +1,10 @@
-package frc.lightningUtil.fault;
+package frc.thunder.fault;
 
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.lightningUtil.fault.LightningFaultCodes.Code;
+import frc.thunder.fault.LightningFaultCodes.Code;
 
 /**
- * Base {@link frc.lightningUtil.fault.LightningFaultCodes.Code} checking
+ * Base {@link frc.thunder.fault.LightningFaultCodes.Code} checking
  * functionality
  */
 public abstract class AbstractFaultMonitor {
@@ -15,7 +15,7 @@ public abstract class AbstractFaultMonitor {
     /**
      * Creates a new abstract fault monitor
      * 
-     * @param code  The {@link frc.lightningUtil.fault.LightningFaultCodes.Code} to
+     * @param code  The {@link frc.thunder.fault.LightningFaultCodes.Code} to
      *              be monitored
      * @param msg   The message to use should the fault be written
      * @param fatal If the fault is fatal and should stop the robot
@@ -29,7 +29,7 @@ public abstract class AbstractFaultMonitor {
     /**
      * Creates a new non-fatal abstract fault monitor
      * 
-     * @param code The {@link frc.lightningUtil.fault.LightningFaultCodes.Code} to
+     * @param code The {@link frc.thunder.fault.LightningFaultCodes.Code} to
      *             be monitored
      * @param msg  The message to use should the fault be written
      */
@@ -40,7 +40,7 @@ public abstract class AbstractFaultMonitor {
     /**
      * Creates a new non-fatal abstract fault monitor
      * 
-     * @param code The {@link frc.lightningUtil.fault.LightningFaultCodes.Code} to
+     * @param code The {@link frc.thunder.fault.LightningFaultCodes.Code} to
      *             be monitored
      */
     public AbstractFaultMonitor(Code code) {

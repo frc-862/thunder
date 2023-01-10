@@ -1,4 +1,4 @@
-package frc.lightningUtil.fault;
+package frc.thunder.fault;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,10 +26,10 @@ public class FaultCode {
     private static boolean dummy_light = false;
 
     /**
-     * Links a {@link frc.lightningUtil.fault.LightningFaultCodes.Code} with a
+     * Links a {@link frc.thunder.fault.LightningFaultCodes.Code} with a
      * {@link edu.wpi.first.networktables.NetworkTableEntry}
      * 
-     * @param code The {@link frc.lightningUtil.fault.LightningFaultCodes.Code} that
+     * @param code The {@link frc.thunder.fault.LightningFaultCodes.Code} that
      *             needs to be linked with an NT entry
      * @param nte  The {@link edu.wpi.first.networktables.NetworkTableEntry} to link
      *             the fault to
@@ -71,7 +71,7 @@ public class FaultCode {
     /**
      * Writes the given fault code
      * 
-     * @param code The {@link frc.lightningUtil.fault.LightningFaultCodes.Code} to
+     * @param code The {@link frc.thunder.fault.LightningFaultCodes.Code} to
      *             be written
      */
     public static void write(LightningFaultCodes.Code code) {
@@ -80,7 +80,7 @@ public class FaultCode {
 
     /**
      * Updates the {@link edu.wpi.first.networktables.NetworkTableEntry} for each
-     * {@link frc.lightningUtil.fault.LightningFaultCodes.Code}.
+     * {@link frc.thunder.fault.LightningFaultCodes.Code}.
      */
     public static void update() {
         eachCode((LightningFaultCodes.Code c, Boolean state) -> {
@@ -111,7 +111,7 @@ public class FaultCode {
      * automatically on {@link edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
      * Shuffleboard}
      * 
-     * @param code The {@link frc.lightningUtil.fault.LightningFaultCodes.Code} to
+     * @param code The {@link frc.thunder.fault.LightningFaultCodes.Code} to
      *             be written
      * @param msg  The message to write to the log file
      */

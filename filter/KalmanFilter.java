@@ -1,4 +1,4 @@
-package frc.lightningUtil.filter;
+package frc.thunder.filter;
 
 public class KalmanFilter implements ValueFilter {
 

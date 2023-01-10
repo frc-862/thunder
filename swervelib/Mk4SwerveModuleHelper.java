@@ -1,9 +1,9 @@
-package frc.lightningUtil.swervelib;
+package frc.thunder.swervelib;
 
-import frc.lightningUtil.swervelib.ctre.*;
-import frc.lightningUtil.swervelib.rev.NeoDriveControllerFactoryBuilder;
-import frc.lightningUtil.swervelib.rev.NeoSteerConfiguration;
-import frc.lightningUtil.swervelib.rev.NeoSteerControllerFactoryBuilder;
+import frc.thunder.swervelib.ctre.*;
+import frc.thunder.swervelib.rev.NeoDriveControllerFactoryBuilder;
+import frc.thunder.swervelib.rev.NeoSteerConfiguration;
+import frc.thunder.swervelib.rev.NeoSteerControllerFactoryBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
 public final class Mk4SwerveModuleHelper {

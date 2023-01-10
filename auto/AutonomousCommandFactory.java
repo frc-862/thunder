@@ -1,4 +1,4 @@
-package frc.lightningUtil.auto;
+package frc.thunder.auto;
 
 import java.util.HashMap;
 import java.util.List;

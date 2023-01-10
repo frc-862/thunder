@@ -1,4 +1,4 @@
-package frc.lightningUtil.tuning;
+package frc.thunder.tuning;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
@@ -13,17 +13,16 @@ public class PIDDashboardTuner extends SubsystemBase {
 	private GenericEntry kITuner;
 	private GenericEntry kDTuner;
 
-	
 	/**
 	 * Puts kP, kI, kD values on the dashboard to be tuned on the fly
 	 * 
-	 * @param name name of the tab to put the PID Tuner on 
+	 * @param name       name of the tab to put the PID Tuner on
 	 * @param controller the PIDController to be tuned
 	 */
 	public PIDDashboardTuner(String name, PIDController controller) {
 		this.controller = controller;
 
-		var tab = Shuffleboard.getTab(name); 
+		var tab = Shuffleboard.getTab(name);
 
 		kPTuner = tab.add("kP", 0d).getEntry();
 		kITuner = tab.add("kI", 0d).getEntry();

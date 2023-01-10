@@ -1,4 +1,4 @@
-package frc.lightningUtil.logging;
+package frc.thunder.logging;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -22,7 +22,7 @@ public class CommandLogger {
     private final Vector<String> drain = new Vector<>(logDepth);
     private boolean overflow = false;
 
-    private final HashMap<String,String> values = new HashMap<>();
+    private final HashMap<String, String> values = new HashMap<>();
     private final ArrayList<String> fieldNames = new ArrayList<>();
     private boolean first_time = true;
 
@@ -40,12 +40,14 @@ public class CommandLogger {
                 buffer.clear();
                 first_time = true;
             }
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file.getAbsolutePath()), StandardCharsets.UTF_8));
+            writer = new BufferedWriter(
+                    new OutputStreamWriter(new FileOutputStream(file.getAbsolutePath()), StandardCharsets.UTF_8));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
+
     public void addDataElement(String name) {
         fieldNames.add(name);
         values.put(name, "");
@@ -105,7 +107,7 @@ public class CommandLogger {
         }
 
         base = new File(base, "log");
-        //noinspection ResultOfMethodCallIgnored
+        // noinspection ResultOfMethodCallIgnored
         base.mkdirs();
 
         int counter = 0;

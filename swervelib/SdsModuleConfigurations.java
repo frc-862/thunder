@@ -1,4 +1,4 @@
-package frc.lightningUtil.swervelib;
+package frc.thunder.swervelib;
 
 public final class SdsModuleConfigurations {
         public static final ModuleConfiguration MK3_STANDARD = new ModuleConfiguration(

@@ -1,4 +1,4 @@
-package frc.lightningUtil.fault;
+package frc.thunder.fault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Class representing a set of fault codes, or enumerated things that can go
  * wrong.
- * e.g. an encoder fault. We can use {@link frc.lightningUtil.fault.FaultMonitor
+ * e.g. an encoder fault. We can use {@link frc.thunder.fault.FaultMonitor
  * fault monitoring}
  * to keep tabs on these potential problems and to associate a name and error
  * message with a problem that could happen.

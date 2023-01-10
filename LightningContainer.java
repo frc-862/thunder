@@ -1,6 +1,6 @@
-package frc.lightningUtil;
+package frc.thunder;
 
-// import frc.lightningUtil.subsystem.drivetrain.LightningDrivetrain;
+// import frc.thunder.subsystem.drivetrain.LightningDrivetrain;
 
 /**
  * This class is where the bulk of the robot should be declared. Since

@@ -1,4 +1,4 @@
-package frc.lightningUtil.logging;
+package frc.thunder.logging;
 
 import java.util.function.DoubleSupplier;
 
@@ -18,7 +18,7 @@ public class DataLoggerOutOfBand implements DoubleSupplier {
             @Override
             public void run() {
                 double newValue = fn.getAsDouble();
-                synchronized(me) {
+                synchronized (me) {
                     lastValue = newValue;
                 }
             }
@@ -29,7 +29,7 @@ public class DataLoggerOutOfBand implements DoubleSupplier {
 
     @Override
     public double getAsDouble() {
-        synchronized(this) {
+        synchronized (this) {
             return lastValue;
         }
     }

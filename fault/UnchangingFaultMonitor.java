@@ -1,8 +1,8 @@
-package frc.lightningUtil.fault;
+package frc.thunder.fault;
 
 import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.Timer;
-import frc.lightningUtil.fault.LightningFaultCodes.Code;
+import frc.thunder.fault.LightningFaultCodes.Code;
 
 /**
  * A fault monitor that ensures a given value remains unchanged for a duration

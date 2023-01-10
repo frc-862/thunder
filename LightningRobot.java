@@ -1,4 +1,4 @@
-package frc.lightningUtil;
+package frc.thunder;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -6,31 +6,31 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
-import frc.lightningUtil.auto.Autonomous;
-import frc.lightningUtil.fault.FaultCode;
-import frc.lightningUtil.fault.FaultMonitor;
-import frc.lightningUtil.fault.LightningFaultCodes;
-import frc.lightningUtil.fault.TimedFaultMonitor;
-import frc.lightningUtil.logging.DataLogger;
-import frc.lightningUtil.testing.SystemTest;
+import frc.thunder.auto.Autonomous;
+import frc.thunder.fault.FaultCode;
+import frc.thunder.fault.FaultMonitor;
+import frc.thunder.fault.LightningFaultCodes;
+import frc.thunder.fault.TimedFaultMonitor;
+import frc.thunder.logging.DataLogger;
+import frc.thunder.testing.SystemTest;
 
 import java.io.IOException;
 import java.util.Properties;
 
 /**
  * Base robot class, provides
- * {@link frc.lightningUtil.logging.DataLogger logging},
- * {@link frc.lightningUtil.fault.FaultMonitor fault monitoring}, and loops with
+ * {@link frc.thunder.logging.DataLogger logging},
+ * {@link frc.thunder.fault.FaultMonitor fault monitoring}, and loops with
  * varying
  * periods {@link LightningRobot#robotBackgroundPeriodic() background},
  * {@link LightningRobot#robotLowPriorityPeriodic() low}, and
  * {@link LightningRobot#robotMediumPriorityPeriodic() medium} priority
  * loops.
  *
- * Uses {@link frc.lightningUtil.auto.Autonomous} to configure autonomous
+ * Uses {@link frc.thunder.auto.Autonomous} to configure autonomous
  * commands. Also includes
  * self-testing support with
- * {@link frc.lightningUtil.testing.SystemTestCommand}.
+ * {@link frc.thunder.testing.SystemTestCommand}.
  */
 public class LightningRobot extends TimedRobot {
 
@@ -59,7 +59,7 @@ public class LightningRobot extends TimedRobot {
     /**
      * Getter for the configured robot container.
      * 
-     * @return the {@link frc.lightningUtil.LightningContainer} for the robot.
+     * @return the {@link frc.thunder.LightningContainer} for the robot.
      */
     public LightningContainer getContainer() {
         return container;

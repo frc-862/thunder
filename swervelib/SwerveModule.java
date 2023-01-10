@@ -1,4 +1,4 @@
-package frc.lightningUtil.swervelib;
+package frc.thunder.swervelib;
 
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 

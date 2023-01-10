@@ -1,4 +1,4 @@
-package frc.lightningUtil.swervelib;
+package frc.thunder.swervelib;
 
 public interface DriveController {
     void setReferenceVoltage(double voltage);

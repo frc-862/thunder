@@ -1,7 +1,7 @@
-package frc.lightningUtil.filter;
+package frc.thunder.filter;
 
 public class MovingAverageFilter implements ValueFilter {
-    
+
     private final double[] values;
     private double average = 0;
     private int pos = 0;

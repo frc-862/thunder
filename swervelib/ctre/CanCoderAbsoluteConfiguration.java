@@ -1,6 +1,6 @@
-package frc.lightningUtil.swervelib.ctre;
+package frc.thunder.swervelib.ctre;
 
-import frc.lightningUtil.swervelib.CanPort;
+import frc.thunder.swervelib.CanPort;
 
 public class CanCoderAbsoluteConfiguration {
     private final CanPort port;
