@@ -2,43 +2,77 @@ package frc.thunder.auto;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
+import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Drivetrain;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 
-/** Add your docs here. */
+/**
+ * Class used for making autonomous commands with pathplanner
+ */
 public class AutonomousCommandFactory {
 
+	private final Supplier<Pose2d> getPose;
+	private final Consumer<Pose2d> resetPose;
+	private final SwerveDriveKinematics kinematics;
+	private final PIDConstants driveConstants;
+	private final PIDConstants thetaConstants;
+	private final Consumer<SwerveModuleState[]> setStates;
+	private final Subsystem[] drivetrain;
+
 	/**
-	 * This method is gooing to create a swerve trajectory using pathplanners
-	 * generated wpilib json files. Max veloxity, max acceleration, and reversed
-	 * should be set when creating the paths in pathplanner.
+	 * Creates a new AutonomousCommandFactory
 	 * 
-	 * @param name            name of the pathplanner path
-	 * @param maxVelocity     the max velocity for the path
-	 * @param maxAcceleration the max accelertaion for the path
-	 * @param driveConstants  PIDConstants for the drive controller
-	 * @param thetaConstants  PIDConstants for the theta controller
-	 * @param eventMap        hashmap to run the markers in pathplanner
-	 * @param drivetrain      the drivetrain subsystem to be required
+	 * @param getPose        drivetrain pose supplier
+	 * @param resetPose      used to reset drivetrain pose
+	 * @param kinematics     swervedrive kinematics
+	 * @param driveConstants drive motor PIDConstants
+	 * @param thetaConstants rotational motor PIDConstants
+	 * @param setStates      used to output module states
+	 * @param drivetrain     subsystem drivetrain
 	 */
-	public static void makeTrajectory(String name, double maxVelocity, double maxAcceleration,
-			PIDConstants driveConstants, PIDConstants thetaConstants, HashMap<String, Command> eventMap,
-			Drivetrain drivetrain) {
+	public AutonomousCommandFactory(Supplier<Pose2d> getPose, Consumer<Pose2d> resetPose,
+			SwerveDriveKinematics kinematics, PIDConstants driveConstants, PIDConstants thetaConstants,
+			Consumer<SwerveModuleState[]> setStates, Subsystem... drivetrain) {
+		this.getPose = getPose;
+		this.resetPose = resetPose;
+		this.kinematics = kinematics;
+		this.driveConstants = driveConstants;
+		this.thetaConstants = thetaConstants;
+		this.setStates = setStates;
+		this.drivetrain = drivetrain;
+	}
 
-		List<PathPlannerTrajectory> trajectory = PathPlanner.loadPathGroup(name, maxVelocity, maxVelocity);
+	/**
+	 * Method to create autonomous trajectories.
+	 * 
+	 * @param name        name of the .path file from pathplanner
+	 * @param eventMap    the hashmap of events for the path
+	 * @param constraint  the constraint for the first part of the trajectory
+	 * @param constraints the constraints for the remaining sections of the
+	 *                    trajectory
+	 */
+	public void makeTrajectory(String name, HashMap<String, Command> eventMap, PathConstraints constraint,
+			PathConstraints... constraints) {
 
-		SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(drivetrain::getPose,
-				drivetrain::resetOdometry,
-				drivetrain.getDriveKinematics(),
-				driveConstants,
+		List<PathPlannerTrajectory> trajectory = PathPlanner.loadPathGroup(name, constraint, constraints);
+
+		SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(getPose,
+				resetPose,
+				kinematics,
 				thetaConstants,
-				drivetrain::setStates,
+				driveConstants,
+				setStates,
 				eventMap,
 				drivetrain);
 
