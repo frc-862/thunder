@@ -1,5 +1,6 @@
 package frc.thunder.auto;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
@@ -8,9 +9,13 @@ import java.util.function.Supplier;
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPoint;
+import com.pathplanner.lib.auto.BaseAutoBuilder;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -77,6 +82,19 @@ public class AutonomousCommandFactory {
 				drivetrain);
 
 		Autonomous.register(name, autoBuilder.fullAuto(trajectory));
+	}
+
+	public Command createManualTrajectory(PathConstraints PathConstraints, PathPoint point1, PathPoint point2,
+			PathPoint... points) {
+
+		PathPlannerTrajectory trajectory = PathPlanner.generatePath(PathConstraints, point1, point2, points);
+
+		return new PPSwerveControllerCommand(trajectory, getPose, kinematics,
+				new PIDController(driveConstants.kP, driveConstants.kI, driveConstants.kD),
+				new PIDController(driveConstants.kP, driveConstants.kI, driveConstants.kD),
+				new PIDController(thetaConstants.kP, thetaConstants.kI, thetaConstants.kD), setStates,
+				drivetrain);
+
 	}
 
 }
