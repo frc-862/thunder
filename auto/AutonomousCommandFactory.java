@@ -13,7 +13,11 @@ import com.pathplanner.lib.PathPoint;
 import com.pathplanner.lib.auto.BaseAutoBuilder;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
+<<<<<<< Updated upstream
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
+=======
+import com.pathplanner.lib.server.PathPlannerServer;
+>>>>>>> Stashed changes
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -84,6 +88,7 @@ public class AutonomousCommandFactory {
 		Autonomous.register(name, autoBuilder.fullAuto(trajectory));
 	}
 
+<<<<<<< Updated upstream
 	public Command createManualTrajectory(PathConstraints PathConstraints, PathPoint point1, PathPoint point2,
 			PathPoint... points) {
 
@@ -95,6 +100,10 @@ public class AutonomousCommandFactory {
 				new PIDController(thetaConstants.kP, thetaConstants.kI, thetaConstants.kD), setStates,
 				drivetrain);
 
+=======
+	public static void connectToServer(int ServerPort){
+		PathPlannerServer.startServer(ServerPort);
+>>>>>>> Stashed changes
 	}
 
 }

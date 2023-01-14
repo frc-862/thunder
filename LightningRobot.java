@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 import frc.thunder.auto.Autonomous;
+import frc.thunder.auto.AutonomousCommandFactory;
 import frc.thunder.fault.FaultCode;
 import frc.thunder.fault.FaultMonitor;
 import frc.thunder.fault.LightningFaultCodes;
@@ -122,6 +123,9 @@ public class LightningRobot extends TimedRobot {
 
         // Load our system tests to the dashboard
         SystemTest.loadTests();
+
+        // Connects to the path planner server
+        AutonomousCommandFactory.connectToServer(5811);
 
     }
 
