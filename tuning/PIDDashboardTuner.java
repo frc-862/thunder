@@ -3,6 +3,7 @@ package frc.thunder.tuning;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PIDDashboardTuner extends SubsystemBase {
@@ -22,15 +23,11 @@ public class PIDDashboardTuner extends SubsystemBase {
 	public PIDDashboardTuner(String name, PIDController controller) {
 		this.controller = controller;
 
-		var tab = Shuffleboard.getTab(name);
+		ShuffleboardTab tab = Shuffleboard.getTab("Tuning");
 
-		kPTuner = tab.add("kP", 0d).getEntry();
-		kITuner = tab.add("kI", 0d).getEntry();
-		kDTuner = tab.add("kD", 0d).getEntry();
-
-		kPTuner.setDouble(controller.getP());
-		kITuner.setDouble(controller.getI());
-		kDTuner.setDouble(controller.getD());
+		kPTuner = tab.add(name + "kP", controller.getP()).getEntry();
+		kITuner = tab.add(name + "kI", controller.getI()).getEntry();
+		kDTuner = tab.add(name + "kD", controller.getD()).getEntry();
 
 	}
 
@@ -39,7 +36,6 @@ public class PIDDashboardTuner extends SubsystemBase {
 		controller.setP(kPTuner.getDouble(controller.getP()));
 		controller.setI(kITuner.getDouble(controller.getI()));
 		controller.setD(kDTuner.getDouble(controller.getD()));
-
 	}
 
 }
