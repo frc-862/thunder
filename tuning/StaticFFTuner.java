@@ -16,6 +16,8 @@ public class StaticFFTuner extends SubsystemBase {
     private GenericEntry kSTuner;
     private double voltage = 0;
 
+    private int tunerNumber = 0;
+
     /**
      * This is a tuner to find the voltage that is needed to overcome static
      * friction, then you can take that number and put it into your feedforward.
@@ -25,11 +27,19 @@ public class StaticFFTuner extends SubsystemBase {
      */
     public StaticFFTuner(String name, MotorController motor) {
         this.motor = motor;
+        tunerNumber++;
 
-        ShuffleboardTab tab = Shuffleboard.getTab("Tuning");
+        ShuffleboardTab tab = Shuffleboard.getTab("FF Tuning");
 
-        kSTuner = tab.add(name + "kS", voltage).withWidget(BuiltInWidgets.kNumberSlider)
-                .withProperties(Map.of("Min", 0, "Max", 12, "Block increment", 0.00001)).getEntry();
+        if (tunerNumber <= 5) {
+            kSTuner = tab.add(name + "kS", voltage).withSize(2, 1).withPosition(0, tunerNumber)
+                    .withWidget(BuiltInWidgets.kNumberSlider)
+                    .withProperties(Map.of("Min", 0, "Max", 12, "Block increment", 0.00001)).getEntry();
+        } else {
+            kSTuner = tab.add(name + "kS", voltage).withSize(2, 1).withPosition(1, tunerNumber)
+                    .withWidget(BuiltInWidgets.kNumberSlider)
+                    .withProperties(Map.of("Min", 0, "Max", 12, "Block increment", 0.00001)).getEntry();
+        }
 
     }
 
