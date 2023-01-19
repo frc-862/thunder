@@ -1,12 +1,13 @@
 package frc.thunder.swervelib.rev;
 
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMaxLowLevel.*;
 import com.revrobotics.CANSparkMax;
-
+import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.RelativeEncoder;
 import frc.thunder.swervelib.DriveController;
 import frc.thunder.swervelib.DriveControllerFactory;
 import frc.thunder.swervelib.ModuleConfiguration;
+
+import static frc.thunder.swervelib.rev.RevUtils.checkNeoError;
 
 public final class NeoDriveControllerFactoryBuilder {
     private double nominalVoltage = Double.NaN;
@@ -34,24 +35,34 @@ public final class NeoDriveControllerFactoryBuilder {
         return new FactoryImplementation();
     }
 
-    private class FactoryImplementation implements DriveControllerFactory<ControllerImplementation, Integer> {
+    private class FactoryImplementation
+            implements DriveControllerFactory<ControllerImplementation, Integer> {
         @Override
-        public ControllerImplementation create(Integer id, ModuleConfiguration moduleConfiguration) {
-            CANSparkMax motor = new CANSparkMax(id, MotorType.kBrushless);
+        public ControllerImplementation create(Integer id,
+                ModuleConfiguration moduleConfiguration) {
+            CANSparkMax motor = new CANSparkMax(id, CANSparkMaxLowLevel.MotorType.kBrushless);
             motor.setInverted(moduleConfiguration.isDriveInverted());
 
             // Setup voltage compensation
             if (hasVoltageCompensation()) {
-                motor.enableVoltageCompensation(nominalVoltage);
+                checkNeoError(motor.enableVoltageCompensation(nominalVoltage),
+                        "Failed to enable voltage compensation");
             }
 
             if (hasCurrentLimit()) {
-                motor.setSmartCurrentLimit((int) currentLimit);
+                checkNeoError(motor.setSmartCurrentLimit((int) currentLimit),
+                        "Failed to set current limit for NEO");
             }
 
-            motor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
-            motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
-            motor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
+            checkNeoError(
+                    motor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus0, 100),
+                    "Failed to set periodic status frame 0 rate");
+            checkNeoError(
+                    motor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus1, 20),
+                    "Failed to set periodic status frame 1 rate");
+            checkNeoError(
+                    motor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus2, 20),
+                    "Failed to set periodic status frame 2 rate");
             // Set neutral mode to brake
             motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 

@@ -2,18 +2,16 @@ package frc.thunder.swervelib.ctre;
 
 import java.util.Objects;
 
-import frc.thunder.swervelib.CanPort;
-
 public class Falcon500SteerConfiguration<EncoderConfiguration> {
-    private final CanPort motorPort;
+    private final int motorPort;
     private final EncoderConfiguration encoderConfiguration;
 
-    public Falcon500SteerConfiguration(CanPort motorPort, EncoderConfiguration encoderConfiguration) {
+    public Falcon500SteerConfiguration(int motorPort, EncoderConfiguration encoderConfiguration) {
         this.motorPort = motorPort;
         this.encoderConfiguration = encoderConfiguration;
     }
 
-    public CanPort getMotorPort() {
+    public int getMotorPort() {
         return motorPort;
     }
 
@@ -28,7 +26,7 @@ public class Falcon500SteerConfiguration<EncoderConfiguration> {
         if (o == null || getClass() != o.getClass())
             return false;
         Falcon500SteerConfiguration<?> that = (Falcon500SteerConfiguration<?>) o;
-        return getMotorPort().equals(that.getMotorPort())
+        return getMotorPort() == that.getMotorPort()
                 && getEncoderConfiguration().equals(that.getEncoderConfiguration());
     }
 
@@ -39,9 +37,7 @@ public class Falcon500SteerConfiguration<EncoderConfiguration> {
 
     @Override
     public String toString() {
-        return "Falcon500SteerConfiguration{" +
-                "motorPort=" + motorPort +
-                ", encoderConfiguration=" + encoderConfiguration +
-                '}';
+        return "Falcon500SteerConfiguration{" + "motorPort=" + motorPort + ", encoderConfiguration="
+                + encoderConfiguration + '}';
     }
 }

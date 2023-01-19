@@ -6,7 +6,6 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
-import frc.thunder.swervelib.CanPort;
 import frc.thunder.swervelib.DriveController;
 import frc.thunder.swervelib.DriveControllerFactory;
 import frc.thunder.swervelib.ModuleConfiguration;
@@ -29,7 +28,7 @@ public final class Falcon500DriveControllerFactoryBuilder {
         return Double.isFinite(nominalVoltage);
     }
 
-    public DriveControllerFactory<ControllerImplementation, CanPort> build() {
+    public DriveControllerFactory<ControllerImplementation, Integer> build() {
         return new FactoryImplementation();
     }
 
@@ -42,9 +41,11 @@ public final class Falcon500DriveControllerFactoryBuilder {
         return Double.isFinite(currentLimit);
     }
 
-    private class FactoryImplementation implements DriveControllerFactory<ControllerImplementation, CanPort> {
+    private class FactoryImplementation
+            implements DriveControllerFactory<ControllerImplementation, Integer> {
         @Override
-        public ControllerImplementation create(CanPort driveConfiguration, ModuleConfiguration moduleConfiguration) {
+        public ControllerImplementation create(Integer driveConfiguration,
+                ModuleConfiguration moduleConfiguration) {
             TalonFXConfiguration motorConfiguration = new TalonFXConfiguration();
 
             double sensorPositionCoefficient = Math.PI * moduleConfiguration.getWheelDiameter()
@@ -60,8 +61,9 @@ public final class Falcon500DriveControllerFactoryBuilder {
                 motorConfiguration.supplyCurrLimit.enable = true;
             }
 
-            TalonFX motor = new TalonFX(driveConfiguration.id, driveConfiguration.busName);
-            motor.configAllSettings(motorConfiguration);
+            TalonFX motor = new TalonFX(driveConfiguration);
+            CtreUtils.checkCtreError(motor.configAllSettings(motorConfiguration),
+                    "Failed to configure Falcon 500");
 
             if (hasVoltageCompensation()) {
                 // Enable voltage compensation
@@ -75,10 +77,10 @@ public final class Falcon500DriveControllerFactoryBuilder {
             motor.setSensorPhase(true);
 
             // Reduce CAN status frame rates
-            motor.setStatusFramePeriod(
-                    StatusFrameEnhanced.Status_1_General,
-                    STATUS_FRAME_GENERAL_PERIOD_MS,
-                    CAN_TIMEOUT_MS);
+            CtreUtils.checkCtreError(
+                    motor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General,
+                            STATUS_FRAME_GENERAL_PERIOD_MS, CAN_TIMEOUT_MS),
+                    "Failed to configure Falcon status frame period");
 
             return new ControllerImplementation(motor, sensorVelocityCoefficient, sensorPositionCoefficient);
         }
@@ -92,8 +94,7 @@ public final class Falcon500DriveControllerFactoryBuilder {
                 ? Falcon500DriveControllerFactoryBuilder.this.nominalVoltage
                 : 12.0;
 
-        private ControllerImplementation(TalonFX motor, double sensorVelocityCoefficient,
-                double sensorPositionCoefficient) {
+        private ControllerImplementation(TalonFX motor, double sensorVelocityCoefficient, double sensorPositionCoefficient) {
             this.motor = motor;
             this.sensorVelocityCoefficient = sensorVelocityCoefficient;
             this.sensorPositionCoefficient = sensorPositionCoefficient;
@@ -113,6 +114,5 @@ public final class Falcon500DriveControllerFactoryBuilder {
         public double getStatePosition() {
             return motor.getSelectedSensorPosition() * sensorPositionCoefficient;
         }
-
     }
 }
