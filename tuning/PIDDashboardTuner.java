@@ -1,17 +1,22 @@
 package frc.thunder.tuning;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PIDDashboardTuner extends SubsystemBase {
 
-	private PIDController controller;
+	private PIDController pidController;
+	private ProfiledPIDController profiledPIDController;
 
 	private GenericEntry kPTuner;
 	private GenericEntry kITuner;
 	private GenericEntry kDTuner;
+
+	private static int tunerNumber = 0;
 
 	/**
 	 * Puts kP, kI, kD values on the dashboard to be tuned on the fly
@@ -19,27 +24,63 @@ public class PIDDashboardTuner extends SubsystemBase {
 	 * @param name       name of the tab to put the PID Tuner on
 	 * @param controller the PIDController to be tuned
 	 */
-	public PIDDashboardTuner(String name, PIDController controller) {
-		this.controller = controller;
+	public PIDDashboardTuner(String name, PIDController pidController) {
+		this.pidController = pidController;
+		tunerNumber++;
 
-		var tab = Shuffleboard.getTab(name);
+		ShuffleboardTab tab = Shuffleboard.getTab("PID Tuning");
 
-		kPTuner = tab.add("kP", 0d).getEntry();
-		kITuner = tab.add("kI", 0d).getEntry();
-		kDTuner = tab.add("kD", 0d).getEntry();
+		if (tunerNumber <= 5) {
+			kPTuner = tab.add(name + "kP", pidController.getP()).withPosition(0, tunerNumber).getEntry();
+			kITuner = tab.add(name + "kI", pidController.getI()).withPosition(1, tunerNumber).getEntry();
+			kDTuner = tab.add(name + "kD", pidController.getD()).withPosition(2, tunerNumber).getEntry();
 
-		kPTuner.setDouble(controller.getP());
-		kITuner.setDouble(controller.getI());
-		kDTuner.setDouble(controller.getD());
+		} else {
+			kPTuner = tab.add(name + "kP", pidController.getP()).withPosition(3, tunerNumber).getEntry();
+			kITuner = tab.add(name + "kI", pidController.getI()).withPosition(4, tunerNumber).getEntry();
+			kDTuner = tab.add(name + "kD", pidController.getD()).withPosition(5, tunerNumber).getEntry();
+		}
+
+	}
+
+	/**
+	 * Puts kP, kI, kD values on the dashboard to be tuned on the fly
+	 * 
+	 * @param name       name of the tab to put the PID Tuner on
+	 * @param controller the PIDController to be tuned
+	 */
+	public PIDDashboardTuner(String name, ProfiledPIDController profiledPIDController) {
+		this.profiledPIDController = profiledPIDController;
+		tunerNumber++;
+
+		ShuffleboardTab tab = Shuffleboard.getTab("PID Tuning");
+
+		if (tunerNumber <= 5) {
+			kPTuner = tab.add(name + "kP", profiledPIDController.getP()).withPosition(0, tunerNumber).getEntry();
+			kITuner = tab.add(name + "kI", profiledPIDController.getI()).withPosition(1, tunerNumber).getEntry();
+			kDTuner = tab.add(name + "kD", profiledPIDController.getD()).withPosition(2, tunerNumber).getEntry();
+
+		} else {
+			kPTuner = tab.add(name + "kP", profiledPIDController.getP()).withPosition(3, tunerNumber).getEntry();
+			kITuner = tab.add(name + "kI", profiledPIDController.getI()).withPosition(4, tunerNumber).getEntry();
+			kDTuner = tab.add(name + "kD", profiledPIDController.getD()).withPosition(5, tunerNumber).getEntry();
+		}
 
 	}
 
 	@Override
 	public void periodic() {
-		controller.setP(kPTuner.getDouble(controller.getP()));
-		controller.setI(kITuner.getDouble(controller.getI()));
-		controller.setD(kDTuner.getDouble(controller.getD()));
 
+		if (pidController != null) {
+			pidController.setP(kPTuner.getDouble(pidController.getP()));
+			pidController.setI(kITuner.getDouble(pidController.getI()));
+			pidController.setD(kDTuner.getDouble(pidController.getD()));
+
+		} else if (profiledPIDController != null) {
+			profiledPIDController.setP(kPTuner.getDouble(profiledPIDController.getP()));
+			profiledPIDController.setI(kITuner.getDouble(profiledPIDController.getI()));
+			profiledPIDController.setD(kDTuner.getDouble(profiledPIDController.getD()));
+		}
 	}
 
 }
