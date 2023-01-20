@@ -5,10 +5,8 @@ import java.util.Objects;
 /**
  * Additional Mk4 module configuration parameters.
  * <p>
- * The configuration parameters here are used to customize the behavior of the
- * Mk4 swerve module.
- * Each setting is initialized to a default that should be adequate for most use
- * cases.
+ * The configuration parameters here are used to customize the behavior of the Mk4 swerve module.
+ * Each setting is initialized to a default that should be adequate for most use cases.
  */
 public class Mk4ModuleConfiguration {
     private double nominalVoltage = 12.0;
@@ -58,10 +56,8 @@ public class Mk4ModuleConfiguration {
 
     @Override
     public String toString() {
-        return "Mk4ModuleConfiguration{" +
-                "nominalVoltage=" + nominalVoltage +
-                ", driveCurrentLimit=" + driveCurrentLimit +
-                ", steerCurrentLimit=" + steerCurrentLimit +
-                '}';
+        return "Mk4ModuleConfiguration{" + "nominalVoltage=" + nominalVoltage
+                + ", driveCurrentLimit=" + driveCurrentLimit + ", steerCurrentLimit="
+                + steerCurrentLimit + '}';
     }
 }

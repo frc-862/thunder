@@ -37,9 +37,7 @@ public class NeoSteerConfiguration<EncoderConfiguration> {
 
     @Override
     public String toString() {
-        return "NeoSteerConfiguration{" +
-                "motorPort=" + motorPort +
-                ", encoderConfiguration=" + encoderConfiguration +
-                '}';
+        return "NeoSteerConfiguration{" + "motorPort=" + motorPort + ", encoderConfiguration="
+                + encoderConfiguration + '}';
     }
 }

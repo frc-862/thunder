@@ -7,7 +7,7 @@ public interface SwerveModule {
 
     double getSteerAngle();
 
-    SwerveModulePosition getDrivePosition();
+    SwerveModulePosition getPosition();
 
     void set(double driveVoltage, double steerAngle);
 }
