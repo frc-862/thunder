@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class StaticFFTuner extends SubsystemBase {
 
-    private MotorController motor;
+    private MotorController[] motors;
 
     private GenericEntry kSTuner;
     private double voltage = 0;
@@ -25,8 +25,8 @@ public class StaticFFTuner extends SubsystemBase {
      * @param name  name of the motor you want to tune
      * @param motor the motor you want to tune
      */
-    public StaticFFTuner(String name, MotorController motor) {
-        this.motor = motor;
+    public StaticFFTuner(String name, MotorController... motors) {
+        this.motors = motors;
         tunerNumber++;
 
         ShuffleboardTab tab = Shuffleboard.getTab("FF Tuning");
@@ -46,7 +46,9 @@ public class StaticFFTuner extends SubsystemBase {
     @Override
     public void periodic() {
         voltage = kSTuner.getDouble(voltage);
-        motor.setVoltage(voltage);
+        for(MotorController motor : motors) {
+            motor.setVoltage(voltage);
+        }
     }
 
 }
