@@ -142,6 +142,8 @@ public final class NeoSteerControllerFactoryBuilder {
 
         private int numOfModule = 0;
 
+        private int resetCall = 0;
+
         public ControllerImplementation(CANSparkMax motor, AbsoluteEncoder absoluteEncoder) {
             this.motor = motor;
             this.controller = motor.getPIDController();
@@ -151,6 +153,7 @@ public final class NeoSteerControllerFactoryBuilder {
             DataLogger.addDataElement(numOfModule + "neo encoder angle", () -> motorEncoder.getPosition());
             DataLogger.addDataElement(numOfModule + "absolute encoder angle", () -> this.absoluteEncoder.getAbsoluteAngle());
             DataLogger.addDataElement(numOfModule + "angle reset itterations", () -> resetIteration);
+            DataLogger.addDataElement("Num of reset calls", () -> resetCall);
 
             numOfModule++;
         }
@@ -213,6 +216,7 @@ public final class NeoSteerControllerFactoryBuilder {
         @Override
         public void setMotorEncoderAngle() {
             motorEncoder.setPosition(absoluteEncoder.getAbsoluteAngle());
+            resetCall++;
         }
     }
 }
