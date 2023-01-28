@@ -1,6 +1,7 @@
 package frc.thunder.swervelib.rev;
 
 import com.revrobotics.*;
+import frc.thunder.logging.DataLogger;
 import frc.thunder.swervelib.*;
 import frc.thunder.swervelib.AbsoluteEncoder;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
@@ -139,11 +140,22 @@ public final class NeoSteerControllerFactoryBuilder {
 
         private double resetIteration = 0;
 
+        private int numOfModule = 0;
+
+        private int resetCall = 0;
+
         public ControllerImplementation(CANSparkMax motor, AbsoluteEncoder absoluteEncoder) {
             this.motor = motor;
             this.controller = motor.getPIDController();
             this.motorEncoder = motor.getEncoder();
             this.absoluteEncoder = absoluteEncoder;
+
+            DataLogger.addDataElement(numOfModule + "neo encoder angle", () -> motorEncoder.getPosition());
+            DataLogger.addDataElement(numOfModule + "absolute encoder angle", () -> this.absoluteEncoder.getAbsoluteAngle());
+            DataLogger.addDataElement(numOfModule + "angle reset itterations", () -> resetIteration);
+            DataLogger.addDataElement("Num of reset calls", () -> resetCall);
+
+            numOfModule++;
         }
 
         @Override
@@ -199,6 +211,12 @@ public final class NeoSteerControllerFactoryBuilder {
             }
 
             return motorAngleRadians;
+        }
+
+        @Override
+        public void setMotorEncoderAngle() {
+            motorEncoder.setPosition(absoluteEncoder.getAbsoluteAngle());
+            resetCall++;
         }
     }
 }

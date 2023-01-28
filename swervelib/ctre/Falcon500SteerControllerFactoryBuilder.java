@@ -193,7 +193,7 @@ public final class Falcon500SteerControllerFactoryBuilder {
         @Override
         public double getReferenceAngle() {
             return referenceAngleRadians;
-        }
+        } 
 
         @Override
         public void setReferenceAngle(double referenceAngleRadians) {
@@ -248,6 +248,11 @@ public final class Falcon500SteerControllerFactoryBuilder {
             }
 
             return motorAngleRadians;
+        }
+
+        @Override
+        public void setMotorEncoderAngle() {
+            motor.setSelectedSensorPosition(absoluteEncoder.getAbsoluteAngle());
         }
     }
 }
