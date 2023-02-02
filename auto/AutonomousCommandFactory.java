@@ -2,6 +2,7 @@ package frc.thunder.auto;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -32,7 +33,9 @@ public class AutonomousCommandFactory {
 	private final PIDConstants driveConstants;
 	private final PIDConstants thetaConstants;
 	private final Consumer<SwerveModuleState[]> setStates;
+    private final Runnable resyncNeo;
 	private final Subsystem[] drivetrain;
+
 
 	/**
 	 * Creates a new AutonomousCommandFactory
@@ -43,11 +46,12 @@ public class AutonomousCommandFactory {
 	 * @param driveConstants drive motor PIDConstants
 	 * @param thetaConstants rotational motor PIDConstants
 	 * @param setStates used to output module states
+     * @param resyncNeo method to call and resync neo and abs encoders, will run on robot init
 	 * @param drivetrain subsystem drivetrain
 	 */
 	public AutonomousCommandFactory(Supplier<Pose2d> getPose, Consumer<Pose2d> resetPose,
 			SwerveDriveKinematics kinematics, PIDConstants driveConstants,
-			PIDConstants thetaConstants, Consumer<SwerveModuleState[]> setStates,
+			PIDConstants thetaConstants, Consumer<SwerveModuleState[]> setStates, Runnable resyncNeo,
 			Subsystem... drivetrain) {
 		this.getPose = getPose;
 		this.resetPose = resetPose;
@@ -55,6 +59,7 @@ public class AutonomousCommandFactory {
 		this.driveConstants = driveConstants;
 		this.thetaConstants = thetaConstants;
 		this.setStates = setStates;
+        this.resyncNeo = resyncNeo;
 		this.drivetrain = drivetrain;
 	}
 
@@ -91,6 +96,11 @@ public class AutonomousCommandFactory {
 				setStates, drivetrain);
 
 	}
+
+    public void resyncNeoEncoder() {
+        resyncNeo.run();
+        System.out.println("Resynced Neo Encoders to Absolute");
+    }
 
 	public static void connectToServer(int ServerPort) {
 		PathPlannerServer.startServer(ServerPort);
