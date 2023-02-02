@@ -1,5 +1,7 @@
 package frc.thunder;
 
+import frc.thunder.auto.AutonomousCommandFactory;
+
 // import frc.thunder.subsystem.drivetrain.LightningDrivetrain;
 
 /**
@@ -72,4 +74,9 @@ public abstract class LightningContainer {
      * Configures listeners for fault codes
      */
     protected abstract void configureFaultMonitors();
+
+    /**
+     * Gets the command factory object
+     */
+    protected abstract AutonomousCommandFactory getCommandFactory();
 }

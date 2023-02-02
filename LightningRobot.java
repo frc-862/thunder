@@ -124,6 +124,9 @@ public class LightningRobot extends TimedRobot {
         // Load our system tests to the dashboard
         SystemTest.loadTests();
 
+        // Resync the neo encoders to the absolute encoder
+        container.getCommandFactory().resyncNeoEncoder();
+
         // Connects to the path planner server
         AutonomousCommandFactory.connectToServer(5811);
 
