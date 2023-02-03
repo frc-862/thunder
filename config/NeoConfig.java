@@ -1,9 +1,10 @@
 package frc.thunder.config;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.*;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
+import com.revrobotics.SparkMaxAnalogSensor.Mode;
 
 public class NeoConfig {
 
@@ -75,5 +76,64 @@ public class NeoConfig {
         pidController.setD(d);
 
         return pidController;
+    }
+
+    /**
+     * Creates a SparkMaxAbsoluteEncoder with the listed values
+     * @param motor the motor controller being used
+     * @param inverted whether the encoder should be inverted
+     * @param offset the zero offset to use on the encoder
+     * @return a SparkMaxAbsoluteEncoder configured as specified
+     */
+    public static SparkMaxAbsoluteEncoder createAbsoluteEncoder(CANSparkMax motor, boolean inverted, double offset) {
+        SparkMaxAbsoluteEncoder encoder = motor.getAbsoluteEncoder(Type.kDutyCycle);
+        encoder.setInverted(inverted);
+        encoder.setZeroOffset(offset);
+        return encoder;
+    }
+
+
+    /**
+     * Creates a MotorFeedbackSensor with the listed values
+     * @param encoder the encoder to configure
+     * @param inverted whether the encoder is inverted
+     * @return a MotorFeedbackSensor configured as specified
+     */
+    private static MotorFeedbackSensor createEncoder(MotorFeedbackSensor encoder, boolean inverted) {
+        encoder.setInverted(inverted);
+        return encoder;
+    }
+
+    /**
+     * Creates a SparkMaxAnalogSensor with the listed values
+     * @param motor the motor to attach the sensor to
+     * @param mode the mode to use for the encoder (Absolute or Relative)
+     * @param inverted whether the sensor is inverted
+     * @return a SparkMaxAnalogSensor, configured as specified
+     */
+    public static SparkMaxAnalogSensor createAnalogSensor(CANSparkMax motor, Mode mode, boolean inverted) {
+        return (SparkMaxAnalogSensor) createEncoder(motor.getAnalog(mode), inverted);
+    }
+
+    /**
+     * Creates a RelativeEncoder with the listed values. 
+     * 
+     * BE CAREFUL USING THIS,<a href="https://docs.revrobotics.com/sparkmax/operating-modes/alternate-encoder-mode"> IT DISABLES LIMIT SWITCHES</a>
+     * @param motor the motor to attach the sensor to
+     * @param countsPerRev the counts per revolution of the encoder
+     * @return a RelativeEncoder, configured as specified
+     */
+    public static RelativeEncoder createRelativeEncoder(CANSparkMax motor, int countsPerRev, boolean inverted) {
+        return (RelativeEncoder) createEncoder(motor.getAlternateEncoder(countsPerRev), inverted);
+    }
+
+    /**
+     * Creates a RelativeEncoder with the listed values, using the built-in encoder
+     * @param motor the motor controller being used
+     * @param inverted whether the encoder is inverted
+     * @return the builtin RelativeEncoder, configured as specified
+     */
+    public static RelativeEncoder createBuiltinEncoder(CANSparkMax motor, boolean inverted) {
+        return (RelativeEncoder) createEncoder(motor.getEncoder(), inverted);
     }
 }
