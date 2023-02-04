@@ -104,5 +104,10 @@ public class SwerveModuleFactory<DriveConfiguration, SteerConfiguration> {
         public void setEncoderAngle() {
             steerController.setMotorEncoderAngle();
         }
+
+        @Override
+        public double getDriveVoltage() {
+            return driveController.getVoltage();
+        }
     }
 }

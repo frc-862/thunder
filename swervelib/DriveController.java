@@ -6,4 +6,6 @@ public interface DriveController {
     double getStateVelocity();
 
     double getStatePosition();
+
+    double getVoltage();
 }

@@ -124,5 +124,10 @@ public final class NeoDriveControllerFactoryBuilder {
         public double getStatePosition() {
             return encoder.getPosition();
         }
+
+        @Override
+        public double getVoltage() {
+            return motor.getBusVoltage();
+        }
     }
 }
