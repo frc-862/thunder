@@ -2,6 +2,8 @@ package frc.thunder.swervelib;
 
 import java.util.Objects;
 
+import frc.thunder.config.SparkMaxPIDGains;
+
 /**
  * Additional Mk4 module configuration parameters.
  * <p>
@@ -12,6 +14,7 @@ public class Mk4ModuleConfiguration {
     private double nominalVoltage = 12.0;
     private double driveCurrentLimit = 80.0;
     private double steerCurrentLimit = 20.0;
+    private SparkMaxPIDGains drivePIDGains = new SparkMaxPIDGains(0.0, 0.0, 0.0, 0.0);
 
     public double getNominalVoltage() {
         return nominalVoltage;
@@ -35,6 +38,14 @@ public class Mk4ModuleConfiguration {
 
     public void setSteerCurrentLimit(double steerCurrentLimit) {
         this.steerCurrentLimit = steerCurrentLimit;
+    }
+
+    public SparkMaxPIDGains getDrivePIDGains() {
+        return drivePIDGains;
+    }
+
+    public void setDrivePIDGains(SparkMaxPIDGains drivePIDGains) {
+        this.drivePIDGains = drivePIDGains;
     }
 
     @Override

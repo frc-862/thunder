@@ -3,15 +3,21 @@ package frc.thunder.swervelib.rev;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
+
+import frc.thunder.config.SparkMaxPIDGains;
 import frc.thunder.swervelib.DriveController;
 import frc.thunder.swervelib.DriveControllerFactory;
 import frc.thunder.swervelib.ModuleConfiguration;
+import frc.thunder.tuning.PIDDashboardTuner;
 
 import static frc.thunder.swervelib.rev.RevUtils.checkNeoError;
 
 public final class NeoDriveControllerFactoryBuilder {
     private double nominalVoltage = Double.NaN;
     private double currentLimit = Double.NaN;
+    private double kP, kI, kD, FF;
 
     public NeoDriveControllerFactoryBuilder withVoltageCompensation(double nominalVoltage) {
         this.nominalVoltage = nominalVoltage;
@@ -24,6 +30,15 @@ public final class NeoDriveControllerFactoryBuilder {
 
     public NeoDriveControllerFactoryBuilder withCurrentLimit(double currentLimit) {
         this.currentLimit = currentLimit;
+        return this;
+    }
+
+    public NeoDriveControllerFactoryBuilder withPidConstants(SparkMaxPIDGains gains) {
+        this.kP = gains.getKP();
+        this.kI = gains.getKI();
+        this.kD = gains.getKD();
+        this.FF = gains.getFF();
+
         return this;
     }
 
@@ -73,22 +88,31 @@ public final class NeoDriveControllerFactoryBuilder {
             encoder.setPositionConversionFactor(positionConversionFactor);
             encoder.setVelocityConversionFactor(positionConversionFactor / 60.0);
 
-            return new ControllerImplementation(motor, encoder);
+            return new ControllerImplementation(motor, encoder, kP, kI, kD, FF);
         }
     }
 
     private static class ControllerImplementation implements DriveController {
         private final CANSparkMax motor;
+        private final SparkMaxPIDController controller;
         private final RelativeEncoder encoder;
-
-        private ControllerImplementation(CANSparkMax motor, RelativeEncoder encoder) {
+        
+        private ControllerImplementation(CANSparkMax motor, RelativeEncoder encoder, double kP, double kI, double kD,
+                double FF) {
             this.motor = motor;
             this.encoder = encoder;
+
+            this.controller = motor.getPIDController();
+            controller.setP(kP);
+            controller.setI(kI);
+            controller.setD(kD);
+            controller.setFF(FF);
+
         }
 
         @Override
-        public void setReferenceVoltage(double voltage) {
-            motor.setVoltage(voltage);
+        public void setReferenceSpeed(double speedMetersPerSecond) {
+            controller.setReference(speedMetersPerSecond, ControlType.kVelocity);
         }
 
         @Override
