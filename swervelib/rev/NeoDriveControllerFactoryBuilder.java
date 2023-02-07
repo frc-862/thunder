@@ -56,6 +56,8 @@ public final class NeoDriveControllerFactoryBuilder {
         public ControllerImplementation create(Integer id,
                 ModuleConfiguration moduleConfiguration) {
             CANSparkMax motor = new CANSparkMax(id, CANSparkMaxLowLevel.MotorType.kBrushless);
+            motor.restoreFactoryDefaults();
+
             motor.setInverted(moduleConfiguration.isDriveInverted());
 
             // Setup voltage compensation
@@ -96,7 +98,7 @@ public final class NeoDriveControllerFactoryBuilder {
         private final CANSparkMax motor;
         private final SparkMaxPIDController controller;
         private final RelativeEncoder encoder;
-        
+
         private ControllerImplementation(CANSparkMax motor, RelativeEncoder encoder, double kP, double kI, double kD,
                 double FF) {
             this.motor = motor;
@@ -107,6 +109,8 @@ public final class NeoDriveControllerFactoryBuilder {
             controller.setI(kI);
             controller.setD(kD);
             controller.setFF(FF);
+
+            encoder.setPosition(0);
 
         }
 
@@ -127,7 +131,7 @@ public final class NeoDriveControllerFactoryBuilder {
 
         @Override
         public double getVoltage() {
-            return motor.getBusVoltage();
+            return motor.getBusVoltage() * motor.getAppliedOutput();
         }
     }
 }
