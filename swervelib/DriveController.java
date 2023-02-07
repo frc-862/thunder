@@ -1,9 +1,11 @@
 package frc.thunder.swervelib;
 
 public interface DriveController {
-    void setReferenceVoltage(double voltage);
+    void setReferenceSpeed(double speedMetersPerSecond);
 
     double getStateVelocity();
 
     double getStatePosition();
+
+    double getVoltage();
 }
