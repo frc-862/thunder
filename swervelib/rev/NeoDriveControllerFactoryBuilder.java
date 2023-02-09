@@ -34,10 +34,10 @@ public final class NeoDriveControllerFactoryBuilder {
     }
 
     public NeoDriveControllerFactoryBuilder withPidConstants(SparkMaxPIDGains gains) {
-        this.kP = gains.getKP();
-        this.kI = gains.getKI();
-        this.kD = gains.getKD();
-        this.FF = gains.getFF();
+        this.kP = gains.getP();
+        this.kI = gains.getI();
+        this.kD = gains.getD();
+        this.FF = gains.getF();
 
         return this;
     }
