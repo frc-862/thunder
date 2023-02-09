@@ -1,33 +1,33 @@
 package frc.thunder.config;
 
 public class SparkMaxPIDGains {
-    
+
     private final double kP;
     private final double kI;
     private final double kD;
-    private final double FF;
+    private final double kF;
 
-    public SparkMaxPIDGains(double kP, double kI, double kD, double FF) {
+    public SparkMaxPIDGains(double kP, double kI, double kD, double kF) {
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
-        this.FF = FF;
+        this.kF = kF;
     }
 
-    public double getKP() {
+    public double getP() {
         return kP;
     }
 
-    public double getKI() {
+    public double getI() {
         return kI;
     }
 
-    public double getKD() {
+    public double getD() {
         return kD;
     }
 
-    public double getFF() {
-        return FF;
+    public double getF() {
+        return kF;
     }
 
 }
