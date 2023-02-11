@@ -48,11 +48,15 @@ public class NeoConfig {
      * @param i the kI value
      * @param d the kD value
      * @param ff the Feed Forward value
+     * @param encoder the feedback sensor (encoder) to use
      * 
      * @return a spark max pid controller with a ff
      */
     public static SparkMaxPIDController createPIDController(SparkMaxPIDController pidController,
-            SparkMaxPIDGains gains) {
+            SparkMaxPIDGains gains, MotorFeedbackSensor sensor) {
+
+        pidController.setFeedbackDevice(sensor);
+
         pidController.setP(gains.getP());
         pidController.setI(gains.getI());
         pidController.setD(gains.getD());
