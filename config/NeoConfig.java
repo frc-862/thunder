@@ -69,10 +69,8 @@ public class NeoConfig {
      * @param offset the zero offset to use on the encoder
      * @return a SparkMaxAbsoluteEncoder configured as specified
      */
-    public static SparkMaxAbsoluteEncoder createAbsoluteEncoder(CANSparkMax motor, boolean inverted,
-            double offset) {
+    public static SparkMaxAbsoluteEncoder createAbsoluteEncoder(CANSparkMax motor, double offset) {
         SparkMaxAbsoluteEncoder encoder = motor.getAbsoluteEncoder(Type.kDutyCycle);
-        encoder.setInverted(inverted);
         encoder.setZeroOffset(offset);
         return encoder;
     }
@@ -84,9 +82,7 @@ public class NeoConfig {
      * @param inverted whether the encoder is inverted
      * @return a MotorFeedbackSensor configured as specified
      */
-    private static MotorFeedbackSensor createEncoder(MotorFeedbackSensor encoder,
-            boolean inverted) {
-        encoder.setInverted(inverted);
+    private static MotorFeedbackSensor createEncoder(MotorFeedbackSensor encoder) {
         return encoder;
     }
 
@@ -98,9 +94,8 @@ public class NeoConfig {
      * @param inverted whether the sensor is inverted
      * @return a SparkMaxAnalogSensor, configured as specified
      */
-    public static SparkMaxAnalogSensor createAnalogSensor(CANSparkMax motor, Mode mode,
-            boolean inverted) {
-        return (SparkMaxAnalogSensor) createEncoder(motor.getAnalog(mode), inverted);
+    public static SparkMaxAnalogSensor createAnalogSensor(CANSparkMax motor, Mode mode) {
+        return (SparkMaxAnalogSensor) createEncoder(motor.getAnalog(mode));
     }
 
     /**
@@ -114,9 +109,8 @@ public class NeoConfig {
      * @param countsPerRev the counts per revolution of the encoder
      * @return a RelativeEncoder, configured as specified
      */
-    public static RelativeEncoder createRelativeEncoder(CANSparkMax motor, int countsPerRev,
-            boolean inverted) {
-        return (RelativeEncoder) createEncoder(motor.getAlternateEncoder(countsPerRev), inverted);
+    public static RelativeEncoder createRelativeEncoder(CANSparkMax motor, int countsPerRev) {
+        return (RelativeEncoder) createEncoder(motor.getAlternateEncoder(countsPerRev));
     }
 
     /**
@@ -126,7 +120,7 @@ public class NeoConfig {
      * @param inverted whether the encoder is inverted
      * @return the builtin RelativeEncoder, configured as specified
      */
-    public static RelativeEncoder createBuiltinEncoder(CANSparkMax motor, boolean inverted) {
-        return (RelativeEncoder) createEncoder(motor.getEncoder(), inverted);
+    public static RelativeEncoder createBuiltinEncoder(CANSparkMax motor) {
+        return (RelativeEncoder) createEncoder(motor.getEncoder());
     }
 }
