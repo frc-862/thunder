@@ -43,6 +43,10 @@ public final class NeoSteerControllerFactoryBuilder {
         this.currentLimit = currentLimit;
         return this;
     }
+    
+    public double getTemperature() {
+        return motor.getMotorTemperature();
+    }
 
     public boolean hasCurrentLimit() {
         return Double.isFinite(currentLimit);
