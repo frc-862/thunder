@@ -218,5 +218,10 @@ public final class NeoSteerControllerFactoryBuilder {
             motorEncoder.setPosition(absoluteEncoder.getAbsoluteAngle());
             resetCall++;
         }
+
+        @Override
+        public double getTemperature() {
+            return motor.getMotorTemperature();
+        }
     }
 }

@@ -133,5 +133,10 @@ public final class NeoDriveControllerFactoryBuilder {
         public double getVoltage() {
             return motor.getBusVoltage() * motor.getAppliedOutput();
         }
+
+        @Override
+        public double getTemperature() {
+            return motor.getMotorTemperature();
+        }
     }
 }

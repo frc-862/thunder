@@ -8,4 +8,6 @@ public interface DriveController {
     double getStatePosition();
 
     double getVoltage();
+
+    double getTemperature();
 }

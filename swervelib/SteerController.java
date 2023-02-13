@@ -8,5 +8,7 @@ public interface SteerController {
     double getStateAngle();
 
     void setMotorEncoderAngle();
+
+    double getTemperature();
 }
 
