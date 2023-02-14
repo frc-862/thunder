@@ -109,5 +109,15 @@ public class SwerveModuleFactory<DriveConfiguration, SteerConfiguration> {
         public double getDriveVoltage() {
             return driveController.getVoltage();
         }
+
+        @Override
+        public double getDriveTemperature() {
+            return driveController.getTemperature();
+        }
+
+        @Override
+        public double getSteerTemperature() {
+            return steerController.getTemperature();
+        }
     }
 }
