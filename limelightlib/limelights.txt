@@ -1,0 +1,7 @@
+limelight 1	limelight.local:5801 / Limelight-Front 10.8.62.11
+
+limelight-alice	10.8.62.11 / Limelight-Front 10.8.62.11
+
+limelight-bob 10.8.62.12 / Limelight-Back	10.8.62.12
+
+limelight Broken 10.8.62.13		
