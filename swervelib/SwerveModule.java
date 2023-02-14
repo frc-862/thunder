@@ -14,5 +14,9 @@ public interface SwerveModule {
     void set(double speedMetersPerSecond, double steerAngle);
 
     void setEncoderAngle();
+
+    double getDriveTemperature();
+
+    double getSteerTemperature();
 }
 
