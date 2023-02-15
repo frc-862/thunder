@@ -220,7 +220,7 @@ public class PPSwerveControllerCommand extends CommandBase {
     @Override
     public void execute() {
         double currentTime = this.timer.get();
-        PathPlannerState desiredState =
+        desiredState =
                 (PathPlannerState) transformedTrajectory.sample(currentTime);
 
         Pose2d currentPose = this.poseSupplier.get();
