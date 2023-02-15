@@ -2,6 +2,8 @@ package frc.thunder.shuffleboard;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import java.util.Arrays;
+import org.apache.commons.lang3.ArrayUtils;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -192,6 +194,18 @@ public class LightningShuffleboard {
     
     
     public static void setDoubleArray(String tabName, String key, double[] value) {
+    /**
+     * Creates a graph on the shuffleboard, still requires you to set the output as a graph on the shuffleboard
+     * @param tabName
+     * @param key
+     * @param targetValue
+     * @param currentValue
+     */
+    public static void createGraph(String tabName, String key, double targetValue, double... currentValue) {
+        //create the array for the graph
+        double[] value = {targetValue};
+        value = ArrayUtils.addAll(value, currentValue);
+
         boolean hasComponent = false;
         ShuffleboardTab tab = Shuffleboard.getTab(tabName);
 
