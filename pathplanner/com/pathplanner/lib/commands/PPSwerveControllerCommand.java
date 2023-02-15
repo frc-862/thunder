@@ -1,5 +1,6 @@
 package frc.thunder.pathplanner.com.pathplanner.lib.commands;
 
+import frc.thunder.logging.DataLogger;
 import frc.thunder.pathplanner.com.pathplanner.lib.PathPlannerTrajectory;
 import frc.thunder.pathplanner.com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import frc.thunder.pathplanner.com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -32,6 +33,7 @@ public class PPSwerveControllerCommand extends CommandBase {
     private final boolean useAllianceColor;
 
     private PathPlannerTrajectory transformedTrajectory;
+    private PathPlannerState desiredState;
 
     private static Consumer<PathPlannerTrajectory> logActiveTrajectory = null;
     private static Consumer<Pose2d> logTargetPose = null;
@@ -73,6 +75,11 @@ public class PPSwerveControllerCommand extends CommandBase {
         this.kinematics = null;
         this.useKinematics = false;
         this.useAllianceColor = useAllianceColor;
+
+        DataLogger.addDataElement("auto target pose x", () -> desiredState.poseMeters.getX());
+        DataLogger.addDataElement("auto target pose Y", () -> desiredState.poseMeters.getY());
+        DataLogger.addDataElement("auto target holonomic rotation", () -> desiredState.holonomicRotation.getDegrees());
+        DataLogger.addDataElement("auto target velocity", () -> desiredState.velocityMetersPerSecond);
 
         addRequirements(requirements);
 
@@ -147,6 +154,11 @@ public class PPSwerveControllerCommand extends CommandBase {
         this.outputChassisSpeeds = null;
         this.useKinematics = true;
         this.useAllianceColor = useAllianceColor;
+
+        DataLogger.addDataElement("auto target pose x", () -> desiredState.poseMeters.getX());
+        DataLogger.addDataElement("auto target pose Y", () -> desiredState.poseMeters.getY());
+        DataLogger.addDataElement("auto target holonomic rotation", () -> desiredState.holonomicRotation.getDegrees());
+        DataLogger.addDataElement("auto target velocity", () -> desiredState.velocityMetersPerSecond);
 
         addRequirements(requirements);
 
