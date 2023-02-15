@@ -1,5 +1,7 @@
 package frc.thunder.shuffleboard;
 
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -20,6 +22,26 @@ public class LightningShuffleboard {
         //if the component exists, write to it using the NetworkTable, and if not, create the component
         if(hasComponent) {
             NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setDouble(value);
+        } else {
+            tab.add(key, value);
+        }
+    }
+
+    public static void setDoubleSupplier(String tabName, String key, DoubleSupplier value) {
+        boolean hasComponent = false;
+        ShuffleboardTab tab = Shuffleboard.getTab(tabName);
+
+        //iterate through the components in the tab, check if the component exists
+        for(int i = 0; i < tab.getComponents().size(); i++) {     
+            if(tab.getComponents().get(i).getTitle() == key) {
+                hasComponent = true;
+                break;                
+            }
+        }
+
+        //if the component doesnt exist, create it (since its a supplier, it will be updated automatically)
+        if(hasComponent) {
+            //do nothing
         } else {
             tab.add(key, value);
         }
@@ -107,6 +129,26 @@ public class LightningShuffleboard {
         }
     }
 
+    public static void setBoolSupplier(String tabName, String key, BooleanSupplier value) {
+        boolean hasComponent = false;
+        ShuffleboardTab tab = Shuffleboard.getTab(tabName);
+
+        //iterate through the components in the tab, check if the component exists
+        for(int i = 0; i < tab.getComponents().size(); i++) {     
+            if(tab.getComponents().get(i).getTitle() == key) {
+                hasComponent = true;
+                break;                
+            }
+        }
+
+        //if the component doesnt exist, create it (since its a supplier, it will be updated automatically)
+        if(hasComponent) {
+            //do nothing
+        } else {
+            tab.add(key, value);
+        }
+    }
+
     public static boolean getBool(String tabName, String key, boolean defaultValue) {
         boolean hasComponent = false;
         ShuffleboardTab tab = Shuffleboard.getTab(tabName);
@@ -125,6 +167,67 @@ public class LightningShuffleboard {
         } else {
             tab.add(key, defaultValue);
             return defaultValue;
+        }
+    }
+
+    public static void setStringArray(String tabName, String key, String[] value) {
+        boolean hasComponent = false;
+        ShuffleboardTab tab = Shuffleboard.getTab(tabName);
+
+        //iterate through the components in the tab, check if the component exists
+        for(int i = 0; i < tab.getComponents().size(); i++) {     
+            if(tab.getComponents().get(i).getTitle() == key) {
+                hasComponent = true;
+                break;                
+            }
+        }
+
+        //if the component exists, write to it using the NetworkTable, and if not, create the component
+        if(hasComponent) {
+            NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setStringArray(value);
+        } else {
+            tab.add(key, value);
+        }
+    }
+    
+    
+    public static void setDoubleArray(String tabName, String key, double[] value) {
+        boolean hasComponent = false;
+        ShuffleboardTab tab = Shuffleboard.getTab(tabName);
+
+        //iterate through the components in the tab, check if the component exists
+        for(int i = 0; i < tab.getComponents().size(); i++) {     
+            if(tab.getComponents().get(i).getTitle() == key) {
+                hasComponent = true;
+                break;                
+            }
+        }
+
+        //if the component exists, write to it using the NetworkTable, and if not, create the component
+        if(hasComponent) {
+            NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setDoubleArray(value);
+        } else {
+            tab.add(key, value);
+        }
+    }
+
+    public static void setBoolArray(String tabName, String key, boolean[] value) {
+        boolean hasComponent = false;
+        ShuffleboardTab tab = Shuffleboard.getTab(tabName);
+
+        //iterate through the components in the tab, check if the component exists
+        for(int i = 0; i < tab.getComponents().size(); i++) {     
+            if(tab.getComponents().get(i).getTitle() == key) {
+                hasComponent = true;
+                break;                
+            }
+        }
+
+        //if the component exists, write to it using the NetworkTable, and if not, create the component
+        if(hasComponent) {
+            NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setBooleanArray(value);
+        } else {
+            tab.add(key, value);
         }
     }
 }
