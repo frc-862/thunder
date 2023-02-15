@@ -33,7 +33,7 @@ public class PPSwerveControllerCommand extends CommandBase {
     private final boolean useAllianceColor;
 
     private PathPlannerTrajectory transformedTrajectory;
-    private PathPlannerState desiredState;
+    private PathPlannerState desiredState = new PathPlannerState();
 
     private static Consumer<PathPlannerTrajectory> logActiveTrajectory = null;
     private static Consumer<Pose2d> logTargetPose = null;
