@@ -111,7 +111,7 @@ public class PPHolonomicDriveController {
         double poseFeedBackX = this.poseController.calculate(currentPose.getX(), referenceState.poseMeters.getX());
         double poseFeedBackY = this.poseController.calculate(currentPose.getY(), referenceState.poseMeters.getY());
 
-        return ChassisSpeeds.fromFieldRelativeSpeeds(xFF + xFeedback, yFF + yFeedback,
-                rotationFF + rotationFeedback + poseFeedBackX + poseFeedBackY, currentPose.getRotation());
+        return ChassisSpeeds.fromFieldRelativeSpeeds(xFF + xFeedback + poseFeedBackX, yFF + yFeedback + poseFeedBackY,
+                rotationFF + rotationFeedback, currentPose.getRotation());
     }
 }
