@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj.DataLogManager;
 
 import frc.thunder.auto.Autonomous;
 import frc.thunder.auto.AutonomousCommandFactory;
@@ -83,6 +84,8 @@ public class LightningRobot extends TimedRobot {
     public void robotInit() {
         System.out.println("LightningRobot.robotInit");
 
+        //Starts WPILIB data logging
+        DataLogManager.start();
         // No Live Window for now
         LiveWindow.disableAllTelemetry();
 
