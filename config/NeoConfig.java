@@ -57,10 +57,41 @@ public class NeoConfig {
 
         pidController.setFeedbackDevice(sensor);
 
-        pidController.setP(gains.getP());
-        pidController.setI(gains.getI());
-        pidController.setD(gains.getD());
-        pidController.setFF(gains.getF());
+        pidController.setP(gains.getP(), 0);
+        pidController.setI(gains.getI(), 0);
+        pidController.setD(gains.getD(), 0);
+        pidController.setFF(gains.getF(), 0);
+
+        return pidController;
+    }
+
+    /**
+     * Creates a SparkMaxPIDController with the listed values
+     * 
+     * @param pidController the spark max pid contorller
+     * @param p the kP value
+     * @param i the kI value
+     * @param d the kD value
+     * @param ff the Feed Forward value
+     * @param encoder the feedback sensor (encoder) to use
+     * 
+     * @return a spark max pid controller with a ff
+     */
+    public static SparkMaxPIDController createPIDController(SparkMaxPIDController pidController,
+            SparkMaxPIDGains slotOneGains, SparkMaxPIDGains slotTwoGains,
+            MotorFeedbackSensor sensor) {
+
+        pidController.setFeedbackDevice(sensor);
+
+        pidController.setP(slotOneGains.getP(), 0);
+        pidController.setI(slotOneGains.getI(), 0);
+        pidController.setD(slotOneGains.getD(), 0);
+        pidController.setFF(slotOneGains.getF(), 0);
+
+        pidController.setP(slotTwoGains.getP(), 1);
+        pidController.setI(slotTwoGains.getI(), 1);
+        pidController.setD(slotTwoGains.getD(), 1);
+        pidController.setFF(slotTwoGains.getF(), 1);
 
         return pidController;
     }
