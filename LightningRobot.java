@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.DataLogManager;
-
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.thunder.auto.Autonomous;
 import frc.thunder.auto.AutonomousCommandFactory;
 import frc.thunder.fault.FaultCode;
@@ -85,7 +85,11 @@ public class LightningRobot extends TimedRobot {
         System.out.println("LightningRobot.robotInit");
 
         //Starts WPILIB data logging
-        DataLogManager.start();
+        DataLogManager.start("/home/lvuser/datalog");
+
+        // Start logging driverstation
+        DriverStation.startDataLog(DataLogManager.getLog());
+
         // No Live Window for now
         LiveWindow.disableAllTelemetry();
 
