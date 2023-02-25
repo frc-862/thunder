@@ -31,12 +31,12 @@ public class LightningShuffleboardPeriodic {
     private int index = 0;
 
     private enum Type {
-        DOUBLE, BOOLEAN, STRING, DOUBLE_ARRAY, BOOLEAN_ARRAY, STRING_ARRAY
+        DOUBLE, BOOLEAN, STRING, DOUBLE_ARRAY, BOOLEAN_ARRAY, STRING_ARRAY, NULL
     }
 
     Type type[];
 
-    public LightningShuffleboardPeriodic(String tab, double period, Pair<String, Object>... values) throws IllegalArgumentException {
+    public LightningShuffleboardPeriodic(String tab, double period, Pair<String, Object>... values) {
         this.values = values;
         length = values.length;
         type = new Type[length];
@@ -66,16 +66,18 @@ public class LightningShuffleboardPeriodic {
                     Shuffleboard.getTab(tab).add(value.getFirst(), ((Supplier<String>) value.getSecond()).get());
                     type[i] = Type.STRING_ARRAY;
                 } else {
-                    throw new IllegalArgumentException("Invalid type");
+                    type[i] = Type.NULL;
+                    System.out.println(value.getFirst() + " is null");
                 }
             } else {
-                throw new IllegalArgumentException("Invalid type");
+                type[i] = Type.NULL;
+                System.out.println(value.getFirst() + " is null");
             }
             i++;
         }
     }
     //default period is 5 seconds
-    public LightningShuffleboardPeriodic(String tab, Pair<String, Object>... values) throws IllegalArgumentException {
+    public LightningShuffleboardPeriodic(String tab, Pair<String, Object>... values) {
         this(tab, 5d, values);
     }
 
@@ -103,6 +105,9 @@ public class LightningShuffleboardPeriodic {
                 case STRING_ARRAY:
                     NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tab).getEntry(values[index].getFirst()).setStringArray((String[]) values[index].getSecond());
                     break;
+                case NULL:
+                    System.out.println(values[index].getFirst() + " is null");
+                break;
             }
 
             lastTime = currentTime;
