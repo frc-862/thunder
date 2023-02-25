@@ -2,6 +2,8 @@ package frc.thunder.shuffleboard;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
 import org.apache.commons.lang3.ArrayUtils;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.sendable.Sendable;
@@ -311,6 +313,27 @@ public class LightningShuffleboard {
         // component
         if (hasComponent) {
             NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setBooleanArray(value);
+        } else {
+            tab.add(key, value);
+        }
+    }
+
+    public static void setStringSupplier(String tabName, String key, Supplier<String> value) {
+        boolean hasComponent = false;
+        ShuffleboardTab tab = Shuffleboard.getTab(tabName);
+
+        // iterate through the components in the tab, check if the component exists
+        for (int i = 0; i < tab.getComponents().size(); i++) {
+            if (tab.getComponents().get(i).getTitle() == key) {
+                hasComponent = true;
+                break;
+            }
+        }
+
+        // if the component doesnt exist, create it (since its a supplier, it will be updated
+        // automatically)
+        if (hasComponent) {
+            // do nothing
         } else {
             tab.add(key, value);
         }
