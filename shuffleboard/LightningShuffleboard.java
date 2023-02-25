@@ -49,7 +49,7 @@ public class LightningShuffleboard {
         if (hasComponent) {
             // do nothing
         } else {
-            tab.add(key, value);
+            tab.addDouble(key, value);
         }
     }
 
@@ -154,7 +154,7 @@ public class LightningShuffleboard {
         if (hasComponent) {
             // do nothing
         } else {
-            tab.add(key, value);
+            tab.addBoolean(key, value);
         }
     }
 
@@ -179,7 +179,7 @@ public class LightningShuffleboard {
         }
     }
 
-    public static void setStringArray(String tabName, String key, String[] value) {
+    public static void setStringArray(String tabName, String key, Supplier<String[]> value) {
         boolean hasComponent = false;
         ShuffleboardTab tab = Shuffleboard.getTab(tabName);
 
@@ -194,13 +194,13 @@ public class LightningShuffleboard {
         // if the component exists, write to it using the NetworkTable, and if not, create the
         // component
         if (hasComponent) {
-            NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setStringArray(value);
+            // do nothing
         } else {
-            tab.add(key, value);
+            tab.addStringArray(key, value);
         }
     }
 
-    public static void setDoubleArray(String tabName, String key, double[] value) {
+    public static void setDoubleArray(String tabName, String key, Supplier<double[]> value) {
         boolean hasComponent = false;
         ShuffleboardTab tab = Shuffleboard.getTab(tabName);
 
@@ -215,9 +215,9 @@ public class LightningShuffleboard {
         // if the component exists, write to it using the NetworkTable, and if not, create the
         // component
         if (hasComponent) {
-            NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setDoubleArray(value);
+            // do nothing
         } else {
-            tab.add(key, value);
+            tab.addDoubleArray(key, value);
         }
     }
 
@@ -297,7 +297,7 @@ public class LightningShuffleboard {
         }
     }
 
-    public static void setBoolArray(String tabName, String key, boolean[] value) {
+    public static void setBoolArray(String tabName, String key, Supplier<boolean[]> value) {
         boolean hasComponent = false;
         ShuffleboardTab tab = Shuffleboard.getTab(tabName);
 
@@ -312,9 +312,9 @@ public class LightningShuffleboard {
         // if the component exists, write to it using the NetworkTable, and if not, create the
         // component
         if (hasComponent) {
-            NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setBooleanArray(value);
+            // do nothing
         } else {
-            tab.add(key, value);
+            tab.addBooleanArray(key, value);
         }
     }
 
@@ -335,7 +335,7 @@ public class LightningShuffleboard {
         if (hasComponent) {
             // do nothing
         } else {
-            tab.add(key, value);
+            tab.addString(key, value);
         }
     }
 }
