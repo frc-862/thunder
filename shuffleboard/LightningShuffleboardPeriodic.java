@@ -4,14 +4,10 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 /**
  * This class is used to create a periodic shuffleboard tab. This is useful for logging data that is
@@ -22,6 +18,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
  * LightningShuffleboardPeriodic.loop in your periodic method.
  */
 
+ @SuppressWarnings("unchecked")
 public class LightningShuffleboardPeriodic {
     private Pair<String, Object>[] values;
     private int length = 0;
