@@ -64,11 +64,9 @@ public class LightningShuffleboardPeriodic {
                     type[i] = Type.STRING;
                 } else {
                     type[i] = Type.NULL;
-                    System.out.println(value.getFirst() + " is null");
                 }
             } else {
                 type[i] = Type.NULL;
-                System.out.println(value.getFirst() + " is null");
             }
             i++;
         }
@@ -82,28 +80,22 @@ public class LightningShuffleboardPeriodic {
     //call this in your periodic
     public void loop() {
         double currentTime = Timer.getFPGATimestamp();
-        // System.out.println("IN LOOP PERIODIC");
 
         if (currentTime-lastTime > loopTime / length) {
-                // System.out.println("IN LOOP PERIODIC TIME");
-                System.out.println(type[index]);
             switch (type[index]) {
                 case DOUBLE:
                     NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tab).getEntry(values[index].getFirst()).setDouble(((DoubleSupplier) (values[index].getSecond())).getAsDouble());
                     break;
                 case BOOLEAN:
-                System.out.println("IN BOLEAN PERIODITOINC");
                     NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tab).getEntry(values[index].getFirst()).setBoolean(((BooleanSupplier) values[index].getSecond()).getAsBoolean());
                     break;
                 case STRING:
-                System.out.println("STRING IN PERIODICI");
                     NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tab).getEntry(values[index].getFirst()).setString(((Supplier<String>) values[index].getSecond()).get());
                     break;
                 case DOUBLE_ARRAY:
                     NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tab).getEntry(values[index].getFirst()).setDoubleArray(((Supplier<double[]>) values[index].getSecond()).get());
                     break;
                 case BOOLEAN_ARRAY:
-                System.out.println("IN BOLEAN ARAY PERIODITOINC");
                     NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tab).getEntry(values[index].getFirst()).setBooleanArray(((Supplier<boolean[]>) values[index].getSecond()).get());
                     break;
                 case STRING_ARRAY:
