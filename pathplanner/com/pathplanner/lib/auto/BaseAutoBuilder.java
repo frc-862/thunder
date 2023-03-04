@@ -4,6 +4,7 @@ import frc.thunder.pathplanner.com.pathplanner.lib.PathPlannerTrajectory;
 import frc.thunder.pathplanner.com.pathplanner.lib.PathPlannerTrajectory.StopEvent;
 import frc.thunder.pathplanner.com.pathplanner.lib.PathPlannerTrajectory.StopEvent.ExecutionBehavior;
 import frc.thunder.pathplanner.com.pathplanner.lib.commands.FollowPathWithEvents;
+import frc.thunder.shuffleboard.LightningShuffleboard;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -166,6 +167,8 @@ public abstract class BaseAutoBuilder {
 
                 resetPose.accept(new Pose2d(initialState.poseMeters.getTranslation(),
                         initialState.holonomicRotation));
+
+                LightningShuffleboard.setDouble("Autonomous", "holonomicRotation", initialState.holonomicRotation.getDegrees());
             });
         } else {
             return Commands.runOnce(() -> {

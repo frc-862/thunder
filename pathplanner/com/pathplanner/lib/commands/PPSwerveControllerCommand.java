@@ -5,6 +5,7 @@ import frc.thunder.pathplanner.com.pathplanner.lib.PathPlannerTrajectory;
 import frc.thunder.pathplanner.com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import frc.thunder.pathplanner.com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import frc.thunder.pathplanner.com.pathplanner.lib.server.PathPlannerServer;
+import frc.thunder.shuffleboard.LightningShuffleboard;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -155,10 +156,10 @@ public class PPSwerveControllerCommand extends CommandBase {
         this.useKinematics = true;
         this.useAllianceColor = useAllianceColor;
 
-        DataLogger.addDataElement("auto target pose x", () -> desiredState.poseMeters.getX());
-        DataLogger.addDataElement("auto target pose Y", () -> desiredState.poseMeters.getY());
-        DataLogger.addDataElement("auto target holonomic rotation", () -> desiredState.holonomicRotation.getDegrees());
-        DataLogger.addDataElement("auto target velocity", () -> desiredState.velocityMetersPerSecond);
+        LightningShuffleboard.setDoubleSupplier("Autonomoius", "auto target pose x", () -> desiredState.poseMeters.getX());
+        LightningShuffleboard.setDoubleSupplier("Autonomoius", "auto target pose Y", () -> desiredState.poseMeters.getY());
+        LightningShuffleboard.setDoubleSupplier("Autonomoius", "auto target holonomic rotation", () -> desiredState.holonomicRotation.getDegrees());
+        LightningShuffleboard.setDoubleSupplier("Autonomoius", "auto target velocity", () -> desiredState.velocityMetersPerSecond);
 
         addRequirements(requirements);
 

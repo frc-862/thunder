@@ -82,7 +82,7 @@ public class SwerveAutoBuilder extends BaseAutoBuilder {
             PIDConstants rotationConstants, PIDConstants poseConstants, Consumer<SwerveModuleState[]> outputModuleStates,
             Map<String, Command> eventMap, Subsystem... driveRequirements) {
         this(poseSupplier, resetPose, kinematics, translationConstants, rotationConstants, poseConstants,
-                outputModuleStates, eventMap, false, driveRequirements);
+                outputModuleStates, eventMap, true, driveRequirements);
     }
 
     /**
