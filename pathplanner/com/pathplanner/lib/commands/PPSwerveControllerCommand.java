@@ -156,10 +156,10 @@ public class PPSwerveControllerCommand extends CommandBase {
         this.useKinematics = true;
         this.useAllianceColor = useAllianceColor;
 
-        LightningShuffleboard.setDoubleSupplier("Autonomoius", "auto target pose x", () -> desiredState.poseMeters.getX());
-        LightningShuffleboard.setDoubleSupplier("Autonomoius", "auto target pose Y", () -> desiredState.poseMeters.getY());
-        LightningShuffleboard.setDoubleSupplier("Autonomoius", "auto target holonomic rotation", () -> desiredState.holonomicRotation.getDegrees());
-        LightningShuffleboard.setDoubleSupplier("Autonomoius", "auto target velocity", () -> desiredState.velocityMetersPerSecond);
+        LightningShuffleboard.setDoubleSupplier("Autonomous", "auto target pose x", () -> desiredState.poseMeters.getX());
+        LightningShuffleboard.setDoubleSupplier("Autonomous", "auto target pose Y", () -> desiredState.poseMeters.getY());
+        LightningShuffleboard.setDoubleSupplier("Autonomous", "auto target holonomic rotation", () -> desiredState.holonomicRotation.getDegrees());
+        LightningShuffleboard.setDoubleSupplier("Autonomous", "auto target velocity", () -> desiredState.velocityMetersPerSecond);
 
         addRequirements(requirements);
 
