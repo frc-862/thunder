@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.thunder.pathplanner.com.pathplanner.lib.PathConstraints;
@@ -49,10 +50,8 @@ public class AutonomousCommandFactory {
      * @param resyncNeo method to call and resync neo and abs encoders, will run on robot init
      * @param drivetrain subsystem drivetrain
      */
-    public AutonomousCommandFactory(Supplier<Pose2d> getPose, Consumer<Pose2d> resetPose,
-            SwerveDriveKinematics kinematics, PIDConstants driveConstants,
-            PIDConstants thetaConstants, PIDConstants poseConstants, Consumer<SwerveModuleState[]> setStates,
-            Runnable resyncNeo, Subsystem... drivetrain) {
+    public AutonomousCommandFactory(Supplier<Pose2d> getPose, Consumer<Pose2d> resetPose, SwerveDriveKinematics kinematics, PIDConstants driveConstants, PIDConstants thetaConstants,
+            PIDConstants poseConstants, Consumer<SwerveModuleState[]> setStates, Runnable resyncNeo, Subsystem... drivetrain) {
         this.getPose = getPose;
         this.resetPose = resetPose;
         this.kinematics = kinematics;
@@ -72,14 +71,11 @@ public class AutonomousCommandFactory {
      * @param constraint the constraint for the first part of the trajectory
      * @param constraints the constraints for the remaining sections of the trajectory
      */
-    public void makeTrajectory(String name, HashMap<String, Command> eventMap,
-            PathConstraints constraint, PathConstraints... constraints) {
+    public void makeTrajectory(String name, HashMap<String, Command> eventMap, PathConstraints constraint, PathConstraints... constraints) {
 
-        List<PathPlannerTrajectory> trajectory =
-                PathPlanner.loadPathGroup(name, constraint, constraints);
+        List<PathPlannerTrajectory> trajectory = PathPlanner.loadPathGroup(name, constraint, constraints);
 
-        SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(getPose, resetPose, kinematics,
-                driveConstants, thetaConstants, poseConstants, setStates, eventMap, drivetrain);
+        SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(getPose, resetPose, kinematics, driveConstants, thetaConstants, poseConstants, setStates, eventMap, drivetrain);
 
         Autonomous.register(name, autoBuilder.fullAuto(trajectory));
     }
@@ -94,18 +90,15 @@ public class AutonomousCommandFactory {
      * 
      * @return a {@link PPSwerveControllerCommand} with all the listed path points
      */
-    public Command createManualTrajectory(PathConstraints PathConstraints, PathPoint point1,
-            PathPoint point2, PathPoint... points) {
+    public void createManualTrajectory(PathConstraints PathConstraints, Pose2d startPose, PathPoint point2, PathPoint... points) {
 
-        PathPlannerTrajectory trajectory =
-                PathPlanner.generatePath(PathConstraints, point1, point2, points);
+        PathPlannerTrajectory trajectory = PathPlanner.generatePath(PathConstraints, new PathPoint(new Translation2d(startPose.getX(), startPose.getY()), startPose.getRotation()), point2, points);
 
-        return new PPSwerveControllerCommand(trajectory, getPose, kinematics,
-                new PIDController(driveConstants.kP, driveConstants.kI, driveConstants.kD),
-                new PIDController(driveConstants.kP, driveConstants.kI, driveConstants.kD),
-                new PIDController(thetaConstants.kP, thetaConstants.kI, thetaConstants.kD),
-                new PIDController(poseConstants.kP, poseConstants.kI, poseConstants.kD),
-                setStates, drivetrain);
+        PPSwerveControllerCommand command = new PPSwerveControllerCommand(trajectory, getPose, kinematics, new PIDController(driveConstants.kP, driveConstants.kI, driveConstants.kD),
+                new PIDController(driveConstants.kP, driveConstants.kI, driveConstants.kD), new PIDController(thetaConstants.kP, thetaConstants.kI, thetaConstants.kD),
+                new PIDController(poseConstants.kP, poseConstants.kI, poseConstants.kD), setStates, drivetrain);
+
+        command.schedule();
 
     }
 
@@ -121,5 +114,4 @@ public class AutonomousCommandFactory {
     public static void connectToServer(int ServerPort) {
         PathPlannerServer.startServer(ServerPort);
     }
-
 }
