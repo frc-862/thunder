@@ -25,7 +25,6 @@ public class PPSwerveControllerCommand extends CommandBase {
     private final Timer timer = new Timer();
     private final PathPlannerTrajectory trajectory;
     private final Supplier<Pose2d> poseSupplier;
-    import frc.thunder.logging.DataLogger;
     private final SwerveDriveKinematics kinematics;
     private final PPHolonomicDriveController controller;
     private final Consumer<SwerveModuleState[]> outputModuleStates;
