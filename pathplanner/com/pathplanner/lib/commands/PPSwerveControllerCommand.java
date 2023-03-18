@@ -1,6 +1,5 @@
 package frc.thunder.pathplanner.com.pathplanner.lib.commands;
 
-import frc.thunder.logging.DataLogger;
 import frc.thunder.pathplanner.com.pathplanner.lib.PathPlannerTrajectory;
 import frc.thunder.pathplanner.com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import frc.thunder.pathplanner.com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -26,6 +25,7 @@ public class PPSwerveControllerCommand extends CommandBase {
     private final Timer timer = new Timer();
     private final PathPlannerTrajectory trajectory;
     private final Supplier<Pose2d> poseSupplier;
+    import frc.thunder.logging.DataLogger;
     private final SwerveDriveKinematics kinematics;
     private final PPHolonomicDriveController controller;
     private final Consumer<SwerveModuleState[]> outputModuleStates;
@@ -73,10 +73,10 @@ public class PPSwerveControllerCommand extends CommandBase {
         this.useKinematics = false;
         this.useAllianceColor = useAllianceColor;
 
-        DataLogger.addDataElement("auto target pose x", () -> desiredState.poseMeters.getX());
-        DataLogger.addDataElement("auto target pose Y", () -> desiredState.poseMeters.getY());
-        DataLogger.addDataElement("auto target holonomic rotation", () -> desiredState.holonomicRotation.getDegrees());
-        DataLogger.addDataElement("auto target velocity", () -> desiredState.velocityMetersPerSecond);
+        LightningShuffleboard.setDoubleSupplier("Autonomous", "auto target pose x", () -> desiredState.poseMeters.getX());
+        LightningShuffleboard.setDoubleSupplier("Autonomous", "auto target pose Y", () -> desiredState.poseMeters.getY());
+        LightningShuffleboard.setDoubleSupplier("Autonomous", "auto target holonomic rotation", () -> desiredState.holonomicRotation.getDegrees());
+        LightningShuffleboard.setDoubleSupplier("Autonomous", "auto target velocity", () -> desiredState.velocityMetersPerSecond);
 
         addRequirements(requirements);
 
@@ -199,7 +199,6 @@ public class PPSwerveControllerCommand extends CommandBase {
 
     @Override
     public void execute() {
-        System.out.println(";lakjsdfhlaksjdfhlkajsdhflkjasdhflkjashfdlkjasdhflkjahf");
         double currentTime = this.timer.get();
         desiredState = (PathPlannerState) transformedTrajectory.sample(currentTime);
 

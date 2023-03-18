@@ -90,9 +90,9 @@ public class AutonomousCommandFactory {
      * 
      * @return a {@link PPSwerveControllerCommand} with all the listed path points
      */
-    public void createManualTrajectory(PathConstraints PathConstraints, Pose2d startPose, PathPoint point2, PathPoint... points) {
+    public void createManualTrajectory(PathConstraints PathConstraints, PathPoint point1, PathPoint point2, PathPoint... points) {
 
-        PathPlannerTrajectory trajectory = PathPlanner.generatePath(PathConstraints, new PathPoint(new Translation2d(startPose.getX(), startPose.getY()), startPose.getRotation()), point2, points);
+        PathPlannerTrajectory trajectory = PathPlanner.generatePath(PathConstraints, point1, point2, points);
 
         PPSwerveControllerCommand command = new PPSwerveControllerCommand(trajectory, getPose, kinematics, new PIDController(driveConstants.kP, driveConstants.kI, driveConstants.kD),
                 new PIDController(driveConstants.kP, driveConstants.kI, driveConstants.kD), new PIDController(thetaConstants.kP, thetaConstants.kI, thetaConstants.kD),
