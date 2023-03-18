@@ -29,6 +29,7 @@ import frc.thunder.pathplanner.com.pathplanner.lib.server.PathPlannerServer;
 public class AutonomousCommandFactory {
 
     private final Supplier<Pose2d> getPose;
+    private final Consumer<Boolean> changeUpdateVision;
     private final Consumer<Pose2d> resetPose;
     private final SwerveDriveKinematics kinematics;
     private final PIDConstants driveConstants;
@@ -50,9 +51,10 @@ public class AutonomousCommandFactory {
      * @param resyncNeo method to call and resync neo and abs encoders, will run on robot init
      * @param drivetrain subsystem drivetrain
      */
-    public AutonomousCommandFactory(Supplier<Pose2d> getPose, Consumer<Pose2d> resetPose, SwerveDriveKinematics kinematics, PIDConstants driveConstants, PIDConstants thetaConstants,
+    public AutonomousCommandFactory(Supplier<Pose2d> getPose, Consumer<Boolean> changeUpdateVision, Consumer<Pose2d> resetPose, SwerveDriveKinematics kinematics, PIDConstants driveConstants, PIDConstants thetaConstants,
             PIDConstants poseConstants, Consumer<SwerveModuleState[]> setStates, Runnable resyncNeo, Subsystem... drivetrain) {
         this.getPose = getPose;
+        this.changeUpdateVision = changeUpdateVision;
         this.resetPose = resetPose;
         this.kinematics = kinematics;
         this.driveConstants = driveConstants;
@@ -75,7 +77,7 @@ public class AutonomousCommandFactory {
 
         List<PathPlannerTrajectory> trajectory = PathPlanner.loadPathGroup(name, constraint, constraints);
 
-        SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(getPose, resetPose, kinematics, driveConstants, thetaConstants, poseConstants, setStates, eventMap, drivetrain);
+        SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(getPose, changeUpdateVision, resetPose, kinematics, driveConstants, thetaConstants, poseConstants, setStates, eventMap, drivetrain);
 
         Autonomous.register(name, autoBuilder.fullAuto(trajectory));
     }
@@ -94,7 +96,7 @@ public class AutonomousCommandFactory {
 
         PathPlannerTrajectory trajectory = PathPlanner.generatePath(PathConstraints, point1, point2, points);
 
-        PPSwerveControllerCommand command = new PPSwerveControllerCommand(trajectory, getPose, kinematics, new PIDController(driveConstants.kP, driveConstants.kI, driveConstants.kD),
+        PPSwerveControllerCommand command = new PPSwerveControllerCommand(trajectory, getPose, changeUpdateVision, kinematics, new PIDController(driveConstants.kP, driveConstants.kI, driveConstants.kD),
                 new PIDController(driveConstants.kP, driveConstants.kI, driveConstants.kD), new PIDController(thetaConstants.kP, thetaConstants.kI, thetaConstants.kD),
                 new PIDController(poseConstants.kP, poseConstants.kI, poseConstants.kD), setStates, drivetrain);
 

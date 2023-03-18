@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.BooleanArrayEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,6 +26,7 @@ public class PPSwerveControllerCommand extends CommandBase {
     private final Timer timer = new Timer();
     private final PathPlannerTrajectory trajectory;
     private final Supplier<Pose2d> poseSupplier;
+    private final Consumer<Boolean> changeUpdateVision;
     private final SwerveDriveKinematics kinematics;
     private final PPHolonomicDriveController controller;
     private final Consumer<SwerveModuleState[]> outputModuleStates;
@@ -61,10 +63,11 @@ public class PPSwerveControllerCommand extends CommandBase {
      *        the field.
      * @param requirements The subsystems to require.
      */
-    public PPSwerveControllerCommand(PathPlannerTrajectory trajectory, Supplier<Pose2d> poseSupplier, PIDController xController, PIDController yController, PIDController rotationController,
+    public PPSwerveControllerCommand(PathPlannerTrajectory trajectory, Supplier<Pose2d> poseSupplier, Consumer<Boolean> changeUpdateVision, PIDController xController, PIDController yController, PIDController rotationController,
             PIDController poseController, Consumer<ChassisSpeeds> outputChassisSpeeds, boolean useAllianceColor, Subsystem... requirements) {
         this.trajectory = trajectory;
         this.poseSupplier = poseSupplier;
+        this.changeUpdateVision = changeUpdateVision;
         this.controller = new PPHolonomicDriveController(xController, yController, rotationController, poseController);
         this.outputChassisSpeeds = outputChassisSpeeds;
         this.outputModuleStates = null;
@@ -103,9 +106,9 @@ public class PPSwerveControllerCommand extends CommandBase {
      * @param outputChassisSpeeds The field relative chassis speeds output consumer.
      * @param requirements The subsystems to require.
      */
-    public PPSwerveControllerCommand(PathPlannerTrajectory trajectory, Supplier<Pose2d> poseSupplier, PIDController xController, PIDController yController, PIDController rotationController,
+    public PPSwerveControllerCommand(PathPlannerTrajectory trajectory, Supplier<Pose2d> poseSupplier, Consumer<Boolean> changeUpdateVision, PIDController xController, PIDController yController, PIDController rotationController,
             PIDController poseController, Consumer<ChassisSpeeds> outputChassisSpeeds, Subsystem... requirements) {
-        this(trajectory, poseSupplier, xController, yController, rotationController, poseController, outputChassisSpeeds, false, requirements);
+        this(trajectory, poseSupplier, changeUpdateVision, xController, yController, rotationController, poseController, outputChassisSpeeds, false, requirements);
     }
 
     /**
@@ -130,10 +133,11 @@ public class PPSwerveControllerCommand extends CommandBase {
      *        the field.
      * @param requirements The subsystems to require.
      */
-    public PPSwerveControllerCommand(PathPlannerTrajectory trajectory, Supplier<Pose2d> poseSupplier, SwerveDriveKinematics kinematics, PIDController xController, PIDController yController,
+    public PPSwerveControllerCommand(PathPlannerTrajectory trajectory, Supplier<Pose2d> poseSupplier, Consumer<Boolean> changeUpdateVision, SwerveDriveKinematics kinematics, PIDController xController, PIDController yController,
             PIDController rotationController, PIDController poseController, Consumer<SwerveModuleState[]> outputModuleStates, boolean useAllianceColor, Subsystem... requirements) {
         this.trajectory = trajectory;
         this.poseSupplier = poseSupplier;
+        this.changeUpdateVision = changeUpdateVision;
         this.kinematics = kinematics;
         this.controller = new PPHolonomicDriveController(xController, yController, rotationController, poseController);
         this.outputModuleStates = outputModuleStates;
@@ -173,9 +177,9 @@ public class PPSwerveControllerCommand extends CommandBase {
      * @param outputModuleStates The raw output module states from the position controllers.
      * @param requirements The subsystems to require.
      */
-    public PPSwerveControllerCommand(PathPlannerTrajectory trajectory, Supplier<Pose2d> poseSupplier, SwerveDriveKinematics kinematics, PIDController xController, PIDController yController,
+    public PPSwerveControllerCommand(PathPlannerTrajectory trajectory, Supplier<Pose2d> poseSupplier, Consumer<Boolean> changeUpdateVision, SwerveDriveKinematics kinematics, PIDController xController, PIDController yController,
             PIDController rotationController, PIDController poseController, Consumer<SwerveModuleState[]> outputModuleStates, Subsystem... requirements) {
-        this(trajectory, poseSupplier, kinematics, xController, yController, rotationController, poseController, outputModuleStates, false, requirements);
+        this(trajectory, poseSupplier, changeUpdateVision, kinematics, xController, yController, rotationController, poseController, outputModuleStates, false, requirements);
     }
 
     @Override
@@ -194,6 +198,8 @@ public class PPSwerveControllerCommand extends CommandBase {
         timer.start();
 
         PathPlannerServer.sendActivePath(transformedTrajectory.getStates());
+
+        changeUpdateVision.accept(false);
     }
 
     @Override
@@ -239,6 +245,8 @@ public class PPSwerveControllerCommand extends CommandBase {
                 this.outputChassisSpeeds.accept(new ChassisSpeeds());
             }
         }
+
+        changeUpdateVision.accept(true);
     }
 
     @Override

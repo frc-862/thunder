@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class SwerveAutoBuilder extends BaseAutoBuilder {
+    private final Consumer<Boolean> changeUpdateVision;
     private final SwerveDriveKinematics kinematics;
     private final PIDConstants translationConstants;
     private final PIDConstants rotationConstants;
@@ -46,11 +47,11 @@ public class SwerveAutoBuilder extends BaseAutoBuilder {
      * @param driveRequirements The subsystems that the path following commands should require.
      *        Usually just a Drive subsystem.
      */
-    public SwerveAutoBuilder(Supplier<Pose2d> poseSupplier, Consumer<Pose2d> resetPose,
+    public SwerveAutoBuilder(Supplier<Pose2d> poseSupplier, Consumer<Boolean> changeUpdateVision, Consumer<Pose2d> resetPose,
             PIDConstants translationConstants, PIDConstants rotationConstants, PIDConstants poseConstants,
             Consumer<ChassisSpeeds> outputChassisSpeeds, Map<String, Command> eventMap,
             Subsystem... driveRequirements) {
-        this(poseSupplier, resetPose, translationConstants, rotationConstants, poseConstants, outputChassisSpeeds,
+        this(poseSupplier, changeUpdateVision, resetPose, translationConstants, rotationConstants, poseConstants, outputChassisSpeeds,
                 eventMap, false, driveRequirements);
     }
 
@@ -77,11 +78,11 @@ public class SwerveAutoBuilder extends BaseAutoBuilder {
      * @param driveRequirements The subsystems that the path following commands should require.
      *        Usually just a Drive subsystem.
      */
-    public SwerveAutoBuilder(Supplier<Pose2d> poseSupplier, Consumer<Pose2d> resetPose,
+    public SwerveAutoBuilder(Supplier<Pose2d> poseSupplier, Consumer<Boolean> changeUpdateVision, Consumer<Pose2d> resetPose,
             SwerveDriveKinematics kinematics, PIDConstants translationConstants,
             PIDConstants rotationConstants, PIDConstants poseConstants, Consumer<SwerveModuleState[]> outputModuleStates,
             Map<String, Command> eventMap, Subsystem... driveRequirements) {
-        this(poseSupplier, resetPose, kinematics, translationConstants, rotationConstants, poseConstants,
+        this(poseSupplier, changeUpdateVision, resetPose, kinematics, translationConstants, rotationConstants, poseConstants,
                 outputModuleStates, eventMap, true, driveRequirements);
     }
 
@@ -110,12 +111,13 @@ public class SwerveAutoBuilder extends BaseAutoBuilder {
      * @param driveRequirements The subsystems that the path following commands should require.
      *        Usually just a Drive subsystem.
      */
-    public SwerveAutoBuilder(Supplier<Pose2d> poseSupplier, Consumer<Pose2d> resetPose,
+    public SwerveAutoBuilder(Supplier<Pose2d> poseSupplier, Consumer<Boolean> changeUpdateVision, Consumer<Pose2d> resetPose,
             PIDConstants translationConstants, PIDConstants rotationConstants, PIDConstants poseConstants,
             Consumer<ChassisSpeeds> outputChassisSpeeds, Map<String, Command> eventMap,
             boolean useAllianceColor, Subsystem... driveRequirements) {
         super(poseSupplier, resetPose, eventMap, DrivetrainType.HOLONOMIC, useAllianceColor);
 
+        this.changeUpdateVision = changeUpdateVision;
         this.kinematics = null;
         this.translationConstants = translationConstants;
         this.rotationConstants = rotationConstants;
@@ -153,13 +155,14 @@ public class SwerveAutoBuilder extends BaseAutoBuilder {
      * @param driveRequirements The subsystems that the path following commands should require.
      *        Usually just a Drive subsystem.
      */
-    public SwerveAutoBuilder(Supplier<Pose2d> poseSupplier, Consumer<Pose2d> resetPose,
+    public SwerveAutoBuilder(Supplier<Pose2d> poseSupplier, Consumer<Boolean> changeUpdateVision, Consumer<Pose2d> resetPose,
             SwerveDriveKinematics kinematics, PIDConstants translationConstants,
             PIDConstants rotationConstants, PIDConstants poseConstants, Consumer<SwerveModuleState[]> outputModuleStates,
             Map<String, Command> eventMap, boolean useAllianceColor,
             Subsystem... driveRequirements) {
         super(poseSupplier, resetPose, eventMap, DrivetrainType.HOLONOMIC, useAllianceColor);
 
+        this.changeUpdateVision = changeUpdateVision;
         this.kinematics = kinematics;
         this.translationConstants = translationConstants;
         this.rotationConstants = rotationConstants;
@@ -174,14 +177,14 @@ public class SwerveAutoBuilder extends BaseAutoBuilder {
     @Override
     public CommandBase followPath(PathPlannerTrajectory trajectory) {
         if (useKinematics) {
-            return new PPSwerveControllerCommand(trajectory, poseSupplier, kinematics,
+            return new PPSwerveControllerCommand(trajectory, poseSupplier, changeUpdateVision, kinematics,
                     pidControllerFromConstants(translationConstants),
                     pidControllerFromConstants(translationConstants),
                     pidControllerFromConstants(rotationConstants),
                     pidControllerFromConstants(poseConstants), outputModuleStates,
                     useAllianceColor, driveRequirements);
         } else {
-            return new PPSwerveControllerCommand(trajectory, poseSupplier,
+            return new PPSwerveControllerCommand(trajectory, poseSupplier, changeUpdateVision,
                     pidControllerFromConstants(translationConstants),
                     pidControllerFromConstants(translationConstants),
                     pidControllerFromConstants(rotationConstants),
