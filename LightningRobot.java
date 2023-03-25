@@ -15,6 +15,7 @@ import frc.thunder.fault.LightningFaultCodes;
 import frc.thunder.fault.TimedFaultMonitor;
 import frc.thunder.logging.DataLogger;
 import frc.thunder.testing.SystemTest;
+import.frc.thunder.vision.VisionBase;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -51,8 +52,6 @@ public class LightningRobot extends TimedRobot {
     private int lowPriorityFreq = (int) Math.round(1 / getPeriod());
 
     private int backgroundPriorityFreq = (int) Math.round(10 / getPeriod());
-
-    private boolean useVision = true;
 
     private Command autonomousCommand;
 
@@ -235,7 +234,7 @@ public class LightningRobot extends TimedRobot {
     @Override
     public void autonomousInit() {
         System.out.println("LightningRobot.autonomousInit");
-        useVision = false;
+        VisionBase.disableVision();
         autonomousCommand = Autonomous.getAutonomous();
         if (autonomousCommand != null)
             autonomousCommand.schedule();
@@ -254,21 +253,9 @@ public class LightningRobot extends TimedRobot {
     @Override
     public void teleopInit() {
         System.out.println("LightningRobot.teleopInit");
-        useVision = true;
+        VisionBase.enableVision();
         if (autonomousCommand != null)
             autonomousCommand.cancel();
-    }
-
-    public void enableVision() {
-        useVision = true;
-    }
-
-    public void disableVision() {
-        useVision = false;
-    }
-
-    public boolean isVisionEnabled() {
-        return useVision;
     }
     
     @Override
