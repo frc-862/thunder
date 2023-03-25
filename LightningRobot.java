@@ -52,6 +52,8 @@ public class LightningRobot extends TimedRobot {
 
     private int backgroundPriorityFreq = (int) Math.round(10 / getPeriod());
 
+    private boolean useVision = true;
+
     private Command autonomousCommand;
 
     public LightningRobot(LightningContainer container) {
@@ -233,6 +235,7 @@ public class LightningRobot extends TimedRobot {
     @Override
     public void autonomousInit() {
         System.out.println("LightningRobot.autonomousInit");
+        useVision = false;
         autonomousCommand = Autonomous.getAutonomous();
         if (autonomousCommand != null)
             autonomousCommand.schedule();
@@ -251,10 +254,23 @@ public class LightningRobot extends TimedRobot {
     @Override
     public void teleopInit() {
         System.out.println("LightningRobot.teleopInit");
+        useVision = true;
         if (autonomousCommand != null)
             autonomousCommand.cancel();
     }
 
+    public void enableVision() {
+        useVision = true;
+    }
+
+    public void disableVision() {
+        useVision = false;
+    }
+
+    public boolean isVisionEnabled() {
+        return useVision;
+    }
+    
     @Override
     public void testInit() {
         System.out.println("LightningRobot.testInit");
