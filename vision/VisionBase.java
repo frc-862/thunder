@@ -2,7 +2,7 @@ package frc.thunder.vision;
 
 public class VisionBase {
 
-    private static boolean useVision = false;
+    private static boolean useVision = true;
     
     public static void enableVision() {
         useVision = true;
