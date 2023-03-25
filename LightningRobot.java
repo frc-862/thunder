@@ -15,7 +15,7 @@ import frc.thunder.fault.LightningFaultCodes;
 import frc.thunder.fault.TimedFaultMonitor;
 import frc.thunder.logging.DataLogger;
 import frc.thunder.testing.SystemTest;
-import.frc.thunder.vision.VisionBase;
+import frc.thunder.vision.VisionBase;
 
 import java.io.IOException;
 import java.util.Properties;
