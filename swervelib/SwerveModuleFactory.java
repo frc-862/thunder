@@ -1,5 +1,6 @@
 package frc.thunder.swervelib;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
@@ -63,22 +64,29 @@ public class SwerveModuleFactory<DriveConfiguration, SteerConfiguration> {
                     new Rotation2d(getSteerAngle()));
         }
 
+        private static double ensureAngleInRange0To2Pi(double angle) {
+            return MathUtil.inputModulus(angle, 0d, Math.PI * 2d);
+        }
+
+        private static double ensureAngleInRangeNegPiToPi(double angle) {
+            return MathUtil.inputModulus(angle, -Math.PI, Math.PI);
+        }
+
         @Override
         public void set(double speedMetersPerSecond, double steerAngle) {
-            steerAngle %= (2.0 * Math.PI);
-            if (steerAngle < 0.0) {
-                steerAngle += 2.0 * Math.PI;
-            }
+            steerAngle = ensureAngleInRange0To2Pi(steerAngle);
 
-            double difference = steerAngle - getSteerAngle();
+            double difference = ensureAngleInRangeNegPiToPi(steerAngle - ensureAngleInRange0To2Pi(getSteerAngle()));
             // Change the target angle so the difference is in the range [-pi, pi) instead of [0,
             // 2pi)
-            if (difference >= Math.PI) {
-                steerAngle -= 2.0 * Math.PI;
-            } else if (difference < -Math.PI) {
-                steerAngle += 2.0 * Math.PI;
-            }
-            difference = steerAngle - getSteerAngle(); // Recalculate difference
+            // if (difference >= Math.PI) {
+            //     steerAngle -= 2.0 * Math.PI;
+            // } else if (difference < -Math.PI) {
+            //     steerAngle += 2.0 * Math.PI;
+            // }
+            // difference = steerAngle - getSteerAngle(); // Recalculate difference
+
+
 
             // If the difference is greater than 90 deg or less than -90 deg the drive can be
             // inverted so the total
@@ -91,10 +99,7 @@ public class SwerveModuleFactory<DriveConfiguration, SteerConfiguration> {
             }
 
             // Put the target angle back into the range [0, 2pi)
-            steerAngle %= (2.0 * Math.PI);
-            if (steerAngle < 0.0) {
-                steerAngle += 2.0 * Math.PI;
-            }
+            steerAngle = ensureAngleInRange0To2Pi(steerAngle);
 
             driveController.setReferenceSpeed(speedMetersPerSecond);
             steerController.setReferenceAngle(steerAngle);
