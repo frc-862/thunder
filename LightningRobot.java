@@ -234,7 +234,7 @@ public class LightningRobot extends TimedRobot {
     @Override
     public void autonomousInit() {
         System.out.println("LightningRobot.autonomousInit");
-        VisionBase.disableVision();
+        VisionBase.enableVision();
         autonomousCommand = Autonomous.getAutonomous();
         if (autonomousCommand != null)
             autonomousCommand.schedule();
