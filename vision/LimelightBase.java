@@ -92,8 +92,10 @@ public class LimelightBase extends SubsystemBase {
     }
 
     /**
-     * Gets robot pose based off the alliance color
+     * Gets robot pose based off the alliance color 
+     * from specified tag
      * 
+     * @param tagNum Tag you want data from
      * @return Pose2d of the robot
      */
     public Pose2d getRobotPose(double tagNum) {
