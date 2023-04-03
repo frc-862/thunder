@@ -150,10 +150,10 @@ public final class NeoSteerControllerFactoryBuilder {
             this.motorEncoder = motor.getEncoder();
             this.absoluteEncoder = absoluteEncoder;
 
-            DataLogger.addDataElement(numOfModule + "neo encoder angle", () -> motorEncoder.getPosition());
-            DataLogger.addDataElement(numOfModule + "absolute encoder angle", () -> this.absoluteEncoder.getAbsoluteAngle());
-            DataLogger.addDataElement(numOfModule + "angle reset itterations", () -> resetIteration);
-            DataLogger.addDataElement("Num of reset calls", () -> resetCall);
+            // DataLogger.addDataElement(numOfModule + "neo encoder angle", () -> motorEncoder.getPosition());
+            // DataLogger.addDataElement(numOfModule + "absolute encoder angle", () -> this.absoluteEncoder.getAbsoluteAngle());
+            // DataLogger.addDataElement(numOfModule + "angle reset itterations", () -> resetIteration);
+            // DataLogger.addDataElement("Num of reset calls", () -> resetCall);
 
             numOfModule++;
         }

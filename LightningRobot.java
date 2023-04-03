@@ -41,7 +41,7 @@ public class LightningRobot extends TimedRobot {
 
     private final static double SETTLE_TIME = 3.0;
 
-    public DataLogger dataLogger = DataLogger.getLogger();
+    // public DataLogger dataLogger = DataLogger.getLogger();
 
     private int counter = 0;
 
@@ -115,7 +115,7 @@ public class LightningRobot extends TimedRobot {
         }
 
         // By this point all datalog fields should be registered
-        DataLogger.preventNewDataElements();
+        // DataLogger.preventNewDataElements();
 
         // Also by this point, all fault codes should be registered, so we can throw
         // them up on the dashboard
@@ -137,6 +137,9 @@ public class LightningRobot extends TimedRobot {
 
         // Connects to the path planner server
         AutonomousCommandFactory.connectToServer(5811);
+
+
+        VisionBase.disableVision();
 
     }
 
@@ -169,7 +172,7 @@ public class LightningRobot extends TimedRobot {
             }
 
             FaultMonitor.checkMonitors();
-            DataLogger.logData();
+            // DataLogger.logData();
             loopTime = Timer.getFPGATimestamp() - time;
         }
 
@@ -186,8 +189,8 @@ public class LightningRobot extends TimedRobot {
      * thread.
      */
     protected void robotBackgroundPeriodic() {
-        DataLogger.flush();
-        DataLogger.checkBaseFileName();
+        // DataLogger.flush();
+        // DataLogger.checkBaseFileName();
     }
 
     /**
@@ -200,7 +203,7 @@ public class LightningRobot extends TimedRobot {
      * thread.
      */
     protected void robotLowPriorityPeriodic() {
-        DataLogger.getLogger().getLogWriter().drain();
+        // DataLogger.getLogger().getLogWriter().drain();
     }
 
     /**
