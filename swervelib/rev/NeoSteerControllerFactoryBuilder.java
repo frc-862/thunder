@@ -4,6 +4,7 @@ import com.revrobotics.*;
 import frc.thunder.logging.DataLogger;
 import frc.thunder.swervelib.*;
 import frc.thunder.swervelib.AbsoluteEncoder;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 
 import static frc.thunder.swervelib.rev.RevUtils.checkNeoError;
@@ -150,6 +151,10 @@ public final class NeoSteerControllerFactoryBuilder {
             this.motorEncoder = motor.getEncoder();
             this.absoluteEncoder = absoluteEncoder;
 
+            controller.setPositionPIDWrappingEnabled(true);
+            controller.setPositionPIDWrappingMaxInput(360);
+            controller.setPositionPIDWrappingMinInput(0);
+
             // DataLogger.addDataElement(numOfModule + "neo encoder angle", () -> motorEncoder.getPosition());
             // DataLogger.addDataElement(numOfModule + "absolute encoder angle", () -> this.absoluteEncoder.getAbsoluteAngle());
             // DataLogger.addDataElement(numOfModule + "angle reset itterations", () -> resetIteration);
@@ -182,12 +187,15 @@ public final class NeoSteerControllerFactoryBuilder {
                 resetIteration = 0;
             }
 
-            double currentAngleRadiansMod = currentAngleRadians % (2.0 * Math.PI);
-            if (currentAngleRadiansMod < 0.0) {
-                currentAngleRadiansMod += 2.0 * Math.PI;
-            }
+            // double currentAngleRadiansMod = currentAngleRadians % (2.0 * Math.PI);
+            // if (currentAngleRadiansMod < 0.0) {
+            //     currentAngleRadiansMod += 2.0 * Math.PI;
+            // }
+            double currentAngleRadiansMod = MathUtil.inputModulus(currentAngleRadians, 0, 2.0 * (Math.PI));
 
             // The reference angle has the range [0, 2pi) but the Neo's encoder can go above that
+
+            //adjust the target angle so that it always takes the shortest route (<180 degrees) to its path
             double adjustedReferenceAngleRadians =
                     referenceAngleRadians + currentAngleRadians - currentAngleRadiansMod;
             if (referenceAngleRadians - currentAngleRadiansMod > Math.PI) {
