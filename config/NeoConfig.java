@@ -9,28 +9,28 @@ import com.revrobotics.SparkMaxAnalogSensor.Mode;
 public class NeoConfig {
 
     /**
-     * Creates a CanSparkMax motor with the specified configuration so it can all be done in one
-     * place
+     * Creates a CanSparkMax motor with the specified configuration so it can all be done in one place
      * 
      * @param ID the device ID
      * @param invert the state of inversion
      * @param currentLimit the smart current limit to set to the motor
      * @param voltageCompensation the nominol voltage to compenstate the output to
      * @param motorType The motor type connected to the controller. Brushless motor wires must be
-     *        connected to their matching colors and the hall sensor must be plugged in. Brushed
-     *        motors must be connected to the Red and Black terminals only.
+     *        connected to their matching colors and the hall sensor must be plugged in. Brushed motors
+     *        must be connected to the Red and Black terminals only.
      * @param idleMode Idle mode (coast or brake)
      * 
      * @return The motor with the configured settings
      */
-    public static CANSparkMax createMotor(int ID, boolean invert, int currentLimit,
-            double voltageCompensation, MotorType motorType, IdleMode idleMode) {
+    public static CANSparkMax createMotor(int ID, boolean invert, int currentLimit, double voltageCompensation, MotorType motorType, IdleMode idleMode) {
         CANSparkMax motor = new CANSparkMax(ID, motorType);
-        motor.restoreFactoryDefaults();
+        // motor.restoreFactoryDefaults();
         motor.setInverted(invert);
         motor.setSmartCurrentLimit(currentLimit);
         motor.enableVoltageCompensation(voltageCompensation);
         motor.setIdleMode(idleMode);
+
+        motor.burnFlash();
 
         return motor;
     }
@@ -52,8 +52,7 @@ public class NeoConfig {
      * 
      * @return a spark max pid controller with a ff
      */
-    public static SparkMaxPIDController createPIDController(SparkMaxPIDController pidController,
-            SparkMaxPIDGains gains, MotorFeedbackSensor sensor) {
+    public static SparkMaxPIDController createPIDController(SparkMaxPIDController pidController, SparkMaxPIDGains gains, MotorFeedbackSensor sensor) {
 
         pidController.setFeedbackDevice(sensor);
 
@@ -77,9 +76,7 @@ public class NeoConfig {
      * 
      * @return a spark max pid controller with a ff
      */
-    public static SparkMaxPIDController createPIDController(SparkMaxPIDController pidController,
-            SparkMaxPIDGains slotOneGains, SparkMaxPIDGains slotTwoGains,
-            MotorFeedbackSensor sensor) {
+    public static SparkMaxPIDController createPIDController(SparkMaxPIDController pidController, SparkMaxPIDGains slotOneGains, SparkMaxPIDGains slotTwoGains, MotorFeedbackSensor sensor) {
 
         pidController.setFeedbackDevice(sensor);
 
@@ -137,8 +134,8 @@ public class NeoConfig {
      * Creates a RelativeEncoder with the listed values.
      * 
      * BE CAREFUL USING
-     * THIS,<a href= "https://docs.revrobotics.com/sparkmax/operating-modes/alternate-encoder-mode">
-     * IT DISABLES LIMIT SWITCHES</a>
+     * THIS,<a href= "https://docs.revrobotics.com/sparkmax/operating-modes/alternate-encoder-mode"> IT
+     * DISABLES LIMIT SWITCHES</a>
      * 
      * @param motor the motor to attach the sensor to
      * @param countsPerRev the counts per revolution of the encoder
