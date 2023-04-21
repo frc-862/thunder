@@ -18,5 +18,9 @@ public interface SwerveModule {
     double getDriveTemperature();
 
     double getSteerTemperature();
+
+    double getDriveAmperage();
+
+    void setDriveCurrentLimit(int amperage);
 }
 

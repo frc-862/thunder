@@ -124,5 +124,15 @@ public class SwerveModuleFactory<DriveConfiguration, SteerConfiguration> {
         public double getSteerTemperature() {
             return steerController.getTemperature();
         }
+
+        @Override
+        public double getDriveAmperage() {
+            return driveController.getAmperage();
+        }
+
+        @Override
+        public void setDriveCurrentLimit(int amperage) {
+            driveController.setCurrentLimit(amperage);
+        }
     }
 }

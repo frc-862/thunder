@@ -10,4 +10,8 @@ public interface DriveController {
     double getVoltage();
 
     double getTemperature();
+
+    double getAmperage();
+
+    void setCurrentLimit(int amperage);
 }

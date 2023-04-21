@@ -138,5 +138,15 @@ public final class NeoDriveControllerFactoryBuilder {
         public double getTemperature() {
             return motor.getMotorTemperature();
         }
+
+        @Override
+        public double getAmperage() {
+            return motor.getOutputCurrent();
+        }
+
+        @Override
+        public void setCurrentLimit(int amperage) {
+            motor.setSmartCurrentLimit(amperage);
+        }
     }
 }
