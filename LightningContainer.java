@@ -22,8 +22,8 @@ public abstract class LightningContainer {
         configureDefaultCommands();
         initializeDashboardCommands();
 
-        // Configure autonomous
-        configureAutonomousCommands();
+        // // Configure autonomous
+        // configureAutonomousCommands();
 
         // Setup fault monitoring
         configureFaultCodes();
@@ -75,8 +75,8 @@ public abstract class LightningContainer {
      */
     protected abstract void configureFaultMonitors();
 
-    /**
-     * Gets the command factory object
-     */
-    protected abstract AutonomousCommandFactory getCommandFactory();
+    // /**
+    //  * Gets the command factory object
+    //  */
+    // protected abstract AutonomousCommandFactory getCommandFactory();
 }
