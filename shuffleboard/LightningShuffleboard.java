@@ -4,7 +4,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-// import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -274,8 +274,8 @@ public class LightningShuffleboard {
      */
     public static void createGraph(String tabName, String key, double targetValue, double... currentValue) {
         // create the array for the graph
-        // double[] value = {targetValue};
-        // value = ArrayUtils.addAll(value, currentValue);
+        double[] value = {targetValue};
+        value = ArrayUtils.addAll(value, currentValue);
 
         boolean hasComponent = false;
         ShuffleboardTab tab = Shuffleboard.getTab(tabName);
@@ -291,9 +291,9 @@ public class LightningShuffleboard {
         // if the component exists, write to it using the NetworkTable, and if not, create the
         // component
         if (hasComponent) {
-            // NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setDoubleArray(value);
+            NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setDoubleArray(value);
         } else {
-            // tab.add(key, value);
+            tab.add(key, value);
         }
     }
 
