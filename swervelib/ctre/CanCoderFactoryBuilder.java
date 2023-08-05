@@ -9,7 +9,7 @@ import frc.thunder.swervelib.AbsoluteEncoder;
 import frc.thunder.swervelib.AbsoluteEncoderFactory;
 
 public class CanCoderFactoryBuilder {
-    private Direction direction = Direction.COUNTER_CLOCKWISE;
+    private SensorDirectionValue direction = SensorDirectionValue.CounterClockwise_Positive;
     private int periodMilliseconds = 10;
 
     public CanCoderFactoryBuilder withReadingUpdatePeriod(int periodMilliseconds) {
@@ -17,7 +17,7 @@ public class CanCoderFactoryBuilder {
         return this;
     }
 
-    public CanCoderFactoryBuilder withDirection(Direction direction) {
+    public CanCoderFactoryBuilder withDirection(SensorDirectionValue direction) {
         this.direction = direction;
         return this;
     }
@@ -30,7 +30,7 @@ public class CanCoderFactoryBuilder {
             // config.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
             config.MagnetSensor.MagnetOffset = (configuration.getOffset() / (2*Math.PI));
             //TODO: Sanity Check this ^ properly matches radians to -1 - 1 range
-            config.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+            config.MagnetSensor.SensorDirection = direction;
 
 
             CANcoder encoder = new CANcoder(configuration.getId());
@@ -62,9 +62,5 @@ public class CanCoderFactoryBuilder {
 
             return angle;
         }
-    }
-
-    public enum Direction {
-        CLOCKWISE, COUNTER_CLOCKWISE
     }
 }
