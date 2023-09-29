@@ -7,13 +7,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.thunder.auto.Autonomous;
-import frc.thunder.auto.AutonomousCommandFactory;
+// import frc.thunder.auto.Autonomous;
+// import frc.thunder.auto.AutonomousCommandFactory;
 import frc.thunder.fault.FaultCode;
 import frc.thunder.fault.FaultMonitor;
 import frc.thunder.fault.LightningFaultCodes;
 import frc.thunder.fault.TimedFaultMonitor;
-import frc.thunder.logging.DataLogger;
 import frc.thunder.testing.SystemTest;
 import frc.thunder.vision.VisionBase;
 
@@ -22,8 +21,7 @@ import java.util.Properties;
 
 /**
  * Base robot class, provides
- * {@link frc.thunder.logging.DataLogger logging},
- * {@link frc.thunder.fault.FaultMonitor fault monitoring}, and loops with
+ * {@link frc.thunder.fault.FaultMonitor fault monitoring} and loops with
  * varying
  * periods {@link LightningRobot#robotBackgroundPeriodic() background},
  * {@link LightningRobot#robotLowPriorityPeriodic() low}, and
@@ -41,8 +39,6 @@ public class LightningRobot extends TimedRobot {
 
     private final static double SETTLE_TIME = 3.0;
 
-    // public DataLogger dataLogger = DataLogger.getLogger();
-
     private int counter = 0;
 
     private int medPriorityFreq = (int) Math.round(0.1 / getPeriod());
@@ -53,7 +49,7 @@ public class LightningRobot extends TimedRobot {
 
     private int backgroundPriorityFreq = (int) Math.round(10 / getPeriod());
 
-    private Command autonomousCommand;
+    // private Command autonomousCommand;
 
     public LightningRobot(LightningContainer container) {
         this.container = container;
@@ -114,8 +110,6 @@ public class LightningRobot extends TimedRobot {
             System.out.println("Unable to read build version information.");
         }
 
-        // By this point all datalog fields should be registered
-        // DataLogger.preventNewDataElements();
 
         // Also by this point, all fault codes should be registered, so we can throw
         // them up on the dashboard
@@ -126,17 +120,17 @@ public class LightningRobot extends TimedRobot {
                 () -> getLoopTime() > getPeriod(),
                 0.08, "Loop is running slow: " + getLoopTime()));
 
-        // Load our autonomous chooser to the dashboard
-        Autonomous.load();
+        // // Load our autonomous chooser to the dashboard
+        // Autonomous.load();
 
         // Load our system tests to the dashboard
         SystemTest.loadTests();
 
-        // Resync the neo encoders to the absolute encoder
-        container.getCommandFactory().resyncNeoEncoder();
+        // // Resync the neo encoders to the absolute encoder
+        // container.getCommandFactory().resyncNeoEncoder();
 
-        // Connects to the path planner server
-        AutonomousCommandFactory.connectToServer(5811);
+        // // Connects to the path planner server
+        // AutonomousCommandFactory.connectToServer(5811);
 
 
         VisionBase.disableVision();
@@ -172,7 +166,6 @@ public class LightningRobot extends TimedRobot {
             }
 
             FaultMonitor.checkMonitors();
-            // DataLogger.logData();
             loopTime = Timer.getFPGATimestamp() - time;
         }
 
@@ -188,10 +181,7 @@ public class LightningRobot extends TimedRobot {
      * long running operation, consider creating a background
      * thread.
      */
-    protected void robotBackgroundPeriodic() {
-        // DataLogger.flush();
-        // DataLogger.checkBaseFileName();
-    }
+    protected void robotBackgroundPeriodic() {}
 
     /**
      * A slow loop, running once a second
@@ -202,9 +192,7 @@ public class LightningRobot extends TimedRobot {
      * long running operation, consider creating a background
      * thread.
      */
-    protected void robotLowPriorityPeriodic() {
-        // DataLogger.getLogger().getLogWriter().drain();
-    }
+    protected void robotLowPriorityPeriodic() {}
 
     /**
      * A loop, running 10 times a second
@@ -237,10 +225,10 @@ public class LightningRobot extends TimedRobot {
     @Override
     public void autonomousInit() {
         System.out.println("LightningRobot.autonomousInit");
-        VisionBase.disableVision();
-        autonomousCommand = Autonomous.getAutonomous();
-        if (autonomousCommand != null)
-            autonomousCommand.schedule();
+        // VisionBase.disableVision();
+        // autonomousCommand = Autonomous.getAutonomous();
+        // if (autonomousCommand != null)
+        //     autonomousCommand.schedule();
     }
 
     /**
@@ -257,8 +245,8 @@ public class LightningRobot extends TimedRobot {
     public void teleopInit() {
         System.out.println("LightningRobot.teleopInit");
         VisionBase.enableVision();
-        if (autonomousCommand != null)
-            autonomousCommand.cancel();
+        // if (autonomousCommand != null)
+        //     autonomousCommand.cancel();
     }
     
     @Override

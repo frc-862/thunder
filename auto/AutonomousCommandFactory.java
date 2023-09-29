@@ -35,7 +35,6 @@ public class AutonomousCommandFactory {
     private final PIDConstants thetaConstants;
     private final PIDConstants poseConstants;
     private final Consumer<SwerveModuleState[]> setStates;
-    private final Runnable resyncNeo;
     private final Subsystem[] drivetrain;
 
     /**
@@ -47,11 +46,10 @@ public class AutonomousCommandFactory {
      * @param driveConstants drive motor PIDConstants
      * @param thetaConstants rotational motor PIDConstants
      * @param setStates used to output module states
-     * @param resyncNeo method to call and resync neo and abs encoders, will run on robot init
      * @param drivetrain subsystem drivetrain
      */
     public AutonomousCommandFactory(Supplier<Pose2d> getPose, Consumer<Pose2d> resetPose, SwerveDriveKinematics kinematics, PIDConstants driveConstants, PIDConstants thetaConstants,
-            PIDConstants poseConstants, Consumer<SwerveModuleState[]> setStates, Runnable resyncNeo, Subsystem... drivetrain) {
+            PIDConstants poseConstants, Consumer<SwerveModuleState[]> setStates, Subsystem... drivetrain) {
         this.getPose = getPose;
         this.resetPose = resetPose;
         this.kinematics = kinematics;
@@ -59,7 +57,6 @@ public class AutonomousCommandFactory {
         this.thetaConstants = thetaConstants;
         this.poseConstants = poseConstants;
         this.setStates = setStates;
-        this.resyncNeo = resyncNeo;
         this.drivetrain = drivetrain;
     }
 
