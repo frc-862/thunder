@@ -14,7 +14,6 @@ import frc.thunder.fault.FaultMonitor;
 import frc.thunder.fault.LightningFaultCodes;
 import frc.thunder.fault.TimedFaultMonitor;
 import frc.thunder.testing.SystemTest;
-import frc.thunder.vision.VisionBase;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -127,9 +126,6 @@ public class LightningRobot extends TimedRobot {
 
         // // Connects to the path planner server
         AutonomousCommandFactory.connectToServer(5811);
-
-        VisionBase.disableVision();
-
     }
 
     /**
@@ -238,7 +234,6 @@ public class LightningRobot extends TimedRobot {
     @Override
     public void teleopInit() {
         System.out.println("LightningRobot.teleopInit");
-        VisionBase.enableVision();
         if (autonomousCommand != null)
             autonomousCommand.cancel();
     }
