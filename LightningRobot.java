@@ -7,8 +7,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
-// import frc.thunder.auto.Autonomous;
-// import frc.thunder.auto.AutonomousCommandFactory;
+import frc.thunder.auto.Autonomous;
+import frc.thunder.auto.AutonomousCommandFactory;
 import frc.thunder.fault.FaultCode;
 import frc.thunder.fault.FaultMonitor;
 import frc.thunder.fault.LightningFaultCodes;
@@ -49,7 +49,7 @@ public class LightningRobot extends TimedRobot {
 
     private int backgroundPriorityFreq = (int) Math.round(10 / getPeriod());
 
-    // private Command autonomousCommand;
+    private Command autonomousCommand;
 
     public LightningRobot(LightningContainer container) {
         this.container = container;
@@ -111,8 +111,7 @@ public class LightningRobot extends TimedRobot {
         }
 
 
-        // Also by this point, all fault codes should be registered, so we can throw
-        // them up on the dashboard
+        // Also by this point, all fault codes should be registered, so we can throw them up on the dashboard
         FaultCode.init();
 
         // Set up a fault monitor for our loop time
@@ -121,17 +120,13 @@ public class LightningRobot extends TimedRobot {
                 0.08, "Loop is running slow: " + getLoopTime()));
 
         // // Load our autonomous chooser to the dashboard
-        // Autonomous.load();
+        Autonomous.load();
 
         // Load our system tests to the dashboard
         SystemTest.loadTests();
 
-        // // Resync the neo encoders to the absolute encoder
-        // container.getCommandFactory().resyncNeoEncoder();
-
         // // Connects to the path planner server
-        // AutonomousCommandFactory.connectToServer(5811);
-
+        AutonomousCommandFactory.connectToServer(5811);
 
         VisionBase.disableVision();
 
@@ -225,10 +220,9 @@ public class LightningRobot extends TimedRobot {
     @Override
     public void autonomousInit() {
         System.out.println("LightningRobot.autonomousInit");
-        // VisionBase.disableVision();
-        // autonomousCommand = Autonomous.getAutonomous();
-        // if (autonomousCommand != null)
-        //     autonomousCommand.schedule();
+        autonomousCommand = Autonomous.getAutonomous();
+        if (autonomousCommand != null)
+            autonomousCommand.schedule();
     }
 
     /**
@@ -245,8 +239,8 @@ public class LightningRobot extends TimedRobot {
     public void teleopInit() {
         System.out.println("LightningRobot.teleopInit");
         VisionBase.enableVision();
-        // if (autonomousCommand != null)
-        //     autonomousCommand.cancel();
+        if (autonomousCommand != null)
+            autonomousCommand.cancel();
     }
     
     @Override
