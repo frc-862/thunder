@@ -118,13 +118,13 @@ public class LightningRobot extends TimedRobot {
                 () -> getLoopTime() > getPeriod(),
                 0.08, "Loop is running slow: " + getLoopTime()));
 
-        // // Load our autonomous chooser to the dashboard
+        // Load our autonomous chooser to the dashboard
         Autonomous.load();
 
         // Load our system tests to the dashboard
         SystemTest.loadTests();
 
-        // // Connects to the path planner server
+        // Connects to the path planner server
         AutonomousCommandFactory.connectToServer(5811);
     }
 

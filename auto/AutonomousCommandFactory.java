@@ -103,11 +103,6 @@ public class AutonomousCommandFactory {
         return new PathPoint(new Translation2d(x, y), new Rotation2d(heading));
     }
 
-    public void resyncNeoEncoder() {
-        resyncNeo.run();
-        System.out.println("Resynced Neo Encoders to Absolute");
-    }
-
     public static void connectToServer(int ServerPort) {
         PathPlannerServer.startServer(ServerPort);
     }
