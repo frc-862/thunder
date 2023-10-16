@@ -261,11 +261,15 @@ public class Limelight {
      * @return Translation (X,Y,Z) Rotation(Roll,Pitch,Yaw), total latency (cl+tl)
      */
     public Pose4d getAlliancePose() {
-        if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
-            return toPose4d(getArrayNT("botpose_wpiblue"));
-        } else {
-            return toPose4d(getArrayNT("botpose_wpired"));
-        }
+            if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
+                if(getArrayNT("botpose_wpiblue") != null){
+                    return toPose4d(getArrayNT("botpose_wpiblue"));
+                } else return null;
+            } else {
+                if(getArrayNT("botpose_wpired") != null){
+                return toPose4d(getArrayNT("botpose_wpired"));
+                } else return null;
+            }
     }
 
 
