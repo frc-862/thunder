@@ -18,12 +18,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.thunder.util.Pose4d;
+import frc.thunder.util.PoseConverter;
 
 public class Limelight {
     private NetworkTable table;
@@ -200,13 +199,6 @@ public class Limelight {
     }
 
     /**
-     * @return True active pipeline index of the camera (0 .. 9)
-     */
-    public int getPipeline() {
-        return getIntNT("getpipe");
-    }
-
-    /**
      * @return Full JSON dump of targeting results
      */
     public JsonNode getTargetJSON() {
@@ -228,32 +220,6 @@ public class Limelight {
     }
 
     /**
-     * Convert an array of 7 doubles to a Pose4d
-     * @param ntValues array of 7 doubles containing translation (X,Y,Z) Rotation(Roll,Pitch,Yaw), total latency (cl+tl)
-     * @return a new Pose4d object with the values from the array
-     */
-    private Pose4d toPose4d(double[] ntValues) {
-        if (ntValues.length == 7){
-            return new Pose4d(new Translation3d(ntValues[0], ntValues[1], ntValues[2]), new Rotation3d(Math.toRadians(ntValues[3]), Math.toRadians(ntValues[4]), Math.toRadians(ntValues[5])), ntValues[6]);
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Convert an array of 6 doubles to a Pose3d
-     * @param ntValues array of 6 doubles containing translation (X,Y,Z) Rotation(Roll,Pitch,Yaw)
-     * @return a new Pose3d object with the values from the array
-     */
-    private Pose3d toPose3d(double[] ntValues) {
-        if (ntValues.length == 6){
-            return new Pose3d(new Translation3d(ntValues[0], ntValues[1], ntValues[2]), new Rotation3d(Math.toRadians(ntValues[3]), Math.toRadians(ntValues[4]), Math.toRadians(ntValues[5])));
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * Automatically return either the blue or red alliance pose based on which alliance the driver station reports
      * @see Limelight#getBotPoseBlue()
      * @see Limelight#getBotPoseRed()
@@ -263,11 +229,11 @@ public class Limelight {
     public Pose4d getAlliancePose() {
             if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
                 if(getArrayNT("botpose_wpiblue") != null){
-                    return toPose4d(getArrayNT("botpose_wpiblue"));
+                    return PoseConverter.toPose4d(getArrayNT("botpose_wpiblue"));
                 } else return null;
             } else {
                 if(getArrayNT("botpose_wpired") != null){
-                return toPose4d(getArrayNT("botpose_wpired"));
+                return PoseConverter.toPose4d(getArrayNT("botpose_wpired"));
                 } else return null;
             }
     }
@@ -277,28 +243,28 @@ public class Limelight {
      * @return 3D transform of the camera in the coordinate system of the primary in-view AprilTag
      */
     public Pose3d getCamPoseTargetSpace() {
-        return toPose3d(getArrayNT("camerapose_targetspace"));
+        return PoseConverter.toPose3d(getArrayNT("camerapose_targetspace"));
     }
 
     /**
      * @return 3D transform of the camera in the coordinate system of the Robot
      */
     public Pose3d getCamPoseRobotSpace() {
-        return toPose3d(getArrayNT("camerapose_robotspace"));
+        return PoseConverter.toPose3d(getArrayNT("camerapose_robotspace"));
     }
 
     /**
      * @return 3D transform of the primary in-view AprilTag in the coordinate system of the Camera
      */
     public Pose3d getTargetPoseCameraSpace() {
-        return toPose3d(getArrayNT("targetpose_cameraspace"));
+        return PoseConverter.toPose3d(getArrayNT("targetpose_cameraspace"));
     }
 
     /**
      * @return 3D transform of the primary in-view AprilTag in the coordinate system of the Robot
      */
     public Pose3d getTargetPoseRobotSpace() {
-        return toPose3d(getArrayNT("targetpose_robotspace"));
+        return PoseConverter.toPose3d(getArrayNT("targetpose_robotspace"));
     }
 
     /**
@@ -337,6 +303,13 @@ public class Limelight {
         setNumNT("ledMode", mode.getValue());
     }
 
+    /**
+     * @return the current LED mode
+     */
+    public LEDMode getLEDMode() {
+        return LEDMode.values()[getIntNT("ledMode")];
+    }
+
     public enum CamMode {
         VISION(0),
         DRIVER(1);
@@ -360,6 +333,13 @@ public class Limelight {
      */
     public void setCamMode(CamMode mode) {
         setNumNT("camMode", mode.getValue());
+    }
+
+    /**
+     * @return the current camera mode
+     */
+    public CamMode getCamMode() {
+        return CamMode.values()[getIntNT("camMode")];
     }
 
     public enum StreamMode {
@@ -390,10 +370,24 @@ public class Limelight {
     }
 
     /**
+     * @return the current stream mode
+     */
+    public StreamMode getStreamMode() {
+        return StreamMode.values()[getIntNT("stream")];
+    }
+
+    /**
      * Sets limelight’s current pipeline
      */
     public void setPipeline(int pipeline) {
         setNumNT("pipeline", pipeline);
+    }
+
+    /**
+     * @return the current pipeline (0-9)
+     */
+    public int getPipeline() {
+        return getIntNT("pipeline");
     }
 
     /**
@@ -406,7 +400,9 @@ public class Limelight {
     public void setCropSize(double xMin, double yMin, double xMax, double yMax) {
         setArrayNT("crop", new double[] {xMin, xMax, yMin, yMax});
     }
+    //I'm way too lazy to make a getter for this lol
 
+    @Deprecated
     /**
      * @deprecated use limelight pipeline instead
      * @param pose the camera's position, with X as front/back, Y as left/right, and Z as up/down, in meters
@@ -421,6 +417,14 @@ public class Limelight {
         ntValues[5] = pose.getRotation().getZ();
 
         setArrayNT("camerapose_robotspace_set", ntValues);
+    }
+
+    /**
+     * @return the current camera pose in robot space
+     * @see Limelight#getCamPoseRobotSpace()
+     */
+    public Pose3d getCameraPoseRobotSpace() {
+        return getCamPoseRobotSpace();
     }
 
 
@@ -486,16 +490,26 @@ public class Limelight {
     /**
      * send a GET request to the limelight with the specified suffix
      * @param suffix the suffix to add to the base url (eg "deletesnapshots", "capturesnapshot")
+     * @param headers the headers to send with the request
      * @return the response message from the limelight
      */
     private String getRequest(String suffix, ArrayList<Pair<String, String>> headers) {
         return httpRequest(suffix, "GET", headers);
     }
 
+    /**
+     * send a GET request to the limelight with the specified suffix, with no headers
+     * @param suffix the suffix to add to the base url (eg "deletesnapshots", "capturesnapshot")
+     * @return the response message from the limelight
+     */
     private String getRequest(String suffix) {
         return getRequest(suffix, new ArrayList<Pair<String, String>>());
     }
 
+    /**
+     * @param supplier the function to run asynchronously
+     * @return the result of the function
+     */
     private String async(Supplier<Object> supplier) {
         try {
             return (String) CompletableFuture.supplyAsync(supplier).get();
@@ -550,6 +564,10 @@ public class Limelight {
         return parseJson(rawReport);
     }
 
+    /**
+     * @param raw a raw String containing json data
+     * @return a JsonNode containing parsed json data, or null if the data is invalid
+     */
     private JsonNode parseJson(String raw) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
