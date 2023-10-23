@@ -59,7 +59,7 @@ public class TargetingResult {
     }
 
     /**
-     * Equivalent to calling {@link frc.lib.util.Limelight#getPipeline()} assuming json data is up to date
+     * Equivalent to calling {@link frc.thunder.vision.Limelight#getPipeline()} assuming json data is up to date
      * @return Current pipeline index
      */
     public int getPipeline() {
@@ -67,7 +67,7 @@ public class TargetingResult {
     }
     
     /**
-     * Equivalent to calling {@link frc.lib.util.Limelight#getPipelineLatency()} assuming json data is up to date
+     * Equivalent to calling {@link frc.thunder.vision.Limelight#getPipelineLatency()} assuming json data is up to date
      * @return Targeting latency (milliseconds consumed by tracking loop this frame)
      */
     public double getPipelineLatency() {
@@ -75,7 +75,7 @@ public class TargetingResult {
     }
 
     /**
-     * Equivalent to calling {@link frc.lib.util.Limelight#getCaptureLatency()} assuming json data is up to date
+     * Equivalent to calling {@link frc.thunder.vision.Limelight#getCaptureLatency()} assuming json data is up to date
      * @return Capture latency (milliseconds between the end of the exposure of the middle row to the beginning of the tracking loop)
      */
     public double getCaptureLatency() {
@@ -91,7 +91,7 @@ public class TargetingResult {
     }
 
     /**
-     * Equivalent to calling {@link frc.lib.util.Limelight#hasTarget()} assuming json data is up to date
+     * Equivalent to calling {@link frc.thunder.vision.Limelight#hasTarget()} assuming json data is up to date
      * @return True if a target is detected
      */
     public boolean hasTarget() {
@@ -100,7 +100,7 @@ public class TargetingResult {
 
     //TODO: COMMENTED OUT FOR NOW, NEED TO ARGUE WITH JUSNOOR ABOUT THIS
     // /**
-    //  * Equivalent to calling {@link frc.lib.util.Limelight#getBotPose()} assuming json data is up to date
+    //  * Equivalent to calling {@link frc.thunder.vision.Limelight#getBotPose()} assuming json data is up to date
     //  * @return
     //  */
     // public Pose3d getBotpose() {
@@ -108,7 +108,7 @@ public class TargetingResult {
     // }
 
     /**
-     * Equivalent to calling {@link frc.lib.util.Limelight#getAlliancePose()} assuming json data is up to date
+     * Equivalent to calling {@link frc.thunder.vision.Limelight#getAlliancePose()} assuming json data is up to date
      * @return Pose3d of the robot relative to the appropriate alliance wall
      */
     public Pose3d getAlliancePose() {
