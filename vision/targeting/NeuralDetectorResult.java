@@ -2,8 +2,6 @@ package frc.thunder.vision.targeting;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import edu.wpi.first.math.geometry.Pose3d;
-
 public class NeuralDetectorResult extends NeuralClassifierResult {
     private Object points;
     private double area;
@@ -11,16 +9,6 @@ public class NeuralDetectorResult extends NeuralClassifierResult {
     private double txp;
     private double ty;
     private double typ;
-
-    // public NeuralDetectorResult(int pipeline, double targetLatency, double captureLatency, double timestamp, double hasTarget, Pose3d botpose, Pose3d botpose_wpired, Pose3d botpose_wpiblue, String className, int classId, double confidence, Object points, double area, double tx, double txp, double ty, double typ) {
-    //     super(pipeline, targetLatency, captureLatency, timestamp, hasTarget, botpose, botpose_wpired, botpose_wpiblue, className, classId, confidence);
-    //     this.points = points;
-    //     this.area = area;
-    //     this.tx = tx;
-    //     this.txp = txp;
-    //     this.ty = ty;
-    //     this.typ = typ;
-    // }
 
     public NeuralDetectorResult(JsonNode jsonData) {
         super(jsonData);

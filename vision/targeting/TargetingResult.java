@@ -98,15 +98,6 @@ public class TargetingResult {
         return v == 1;
     }
 
-    //TODO: COMMENTED OUT FOR NOW, NEED TO ARGUE WITH JUSNOOR ABOUT THIS
-    // /**
-    //  * Equivalent to calling {@link frc.thunder.vision.Limelight#getBotPose()} assuming json data is up to date
-    //  * @return
-    //  */
-    // public Pose3d getBotpose() {
-    //     return botpose;
-    // }
-
     /**
      * Equivalent to calling {@link frc.thunder.vision.Limelight#getAlliancePose()} assuming json data is up to date
      * @return Pose3d of the robot relative to the appropriate alliance wall
