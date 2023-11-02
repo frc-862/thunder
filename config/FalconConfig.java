@@ -19,7 +19,7 @@ public class FalconConfig {
      * @return TalonFX motor
      */
     public static TalonFX createMotor(int ID, boolean invert, int supplyCurrentLimit, int statorCurrentLimit, NeutralModeValue NeutralMode) {
-        TalonFX motor = new TalonFX(1);
+        TalonFX motor = new TalonFX(ID);
 
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.MotorOutput.Inverted = invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
@@ -46,7 +46,7 @@ public class FalconConfig {
      * @return TalonFX motor
      */
     public static TalonFX createMotor(int ID, String canbus, boolean invert, int supplyCurrentLimit, int statorCurrentLimit, NeutralModeValue NeutralMode) {
-        TalonFX motor = new TalonFX(1, canbus);
+        TalonFX motor = new TalonFX(ID, canbus);
 
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.MotorOutput.Inverted = invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
@@ -75,7 +75,7 @@ public class FalconConfig {
      * @return TalonFX motor
      */
     public static TalonFX createMotor(int ID, String CanBus, boolean invert, int supplyCurrentLimit, int statorCurrentLimit, NeutralModeValue NeutralMode, double kP, double kI, double kD) {
-        TalonFX motor = new TalonFX(1, CanBus);
+        TalonFX motor = new TalonFX(ID, CanBus);
 
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.MotorOutput.Inverted = invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
@@ -111,7 +111,7 @@ public class FalconConfig {
      * @return TalonFX motor
      */
     public static TalonFX createMotor(int ID, String CanBus, boolean invert, int supplyCurrentLimit, int statorCurrentLimit, NeutralModeValue NeutralMode, double kP0, double kI0, double kD0, double kP1, double kI1, double kD1) {
-        TalonFX motor = new TalonFX(1, CanBus);
+        TalonFX motor = new TalonFX(ID, CanBus);
 
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.MotorOutput.Inverted = invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
