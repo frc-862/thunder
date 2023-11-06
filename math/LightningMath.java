@@ -93,6 +93,10 @@ public final class LightningMath {
         return Math.abs(input) >= deadband ? input : 0;
     }
 
+    public static double constrain(double value, double low, double high) {
+        return Math.max(low, Math.min(value, high));
+    }
+
     /**
      * Linearly interpolates between two values.
      *
