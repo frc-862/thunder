@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
+import java.net.SocketException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
@@ -63,7 +63,7 @@ public class Limelight {
      * @see Limelight#Limelight(String, String)
      */
     public Limelight(String name) {
-        this(name, "10.8.62.11");
+        this(name, "10.8.62.12");
     }
 
     /**
@@ -232,11 +232,11 @@ public class Limelight {
             if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
                 if(getArrayNT("botpose_wpiblue") != null){
                     return PoseConverter.toPose4d(getArrayNT("botpose_wpiblue"));
-                } else return null;
+                } else return new Pose4d();
             } else {
                 if(getArrayNT("botpose_wpired") != null){
                 return PoseConverter.toPose4d(getArrayNT("botpose_wpired"));
-                } else return null;
+                } else return new Pose4d();
             }
     }
 
@@ -485,9 +485,12 @@ public class Limelight {
                 content.append(line);
             }
             return content.toString();
+        } catch (SocketException e) {
+            return null;
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;  
+            // e.printStackTrace();
+            System.err.println("Limelight brokey: " + e.getMessage());
+            return null;
         }
     }
 
@@ -550,6 +553,8 @@ public class Limelight {
      */
     public JsonNode getSnapshotNames() {
         String rawReport = async(() -> getRequest("snapshotmanifest"));
+        //Return empty object if rawReport is null
+        if(rawReport == null) return parseJson("{}");
         return parseJson(rawReport);
     }
 
@@ -567,6 +572,7 @@ public class Limelight {
      */
     public JsonNode getHWReport() {
         String rawReport = async(() -> getRequest("hwreport"));
+        if(rawReport == null) return parseJson("{}");
         return parseJson(rawReport);
     }
 

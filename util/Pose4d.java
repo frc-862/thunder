@@ -7,6 +7,11 @@ import edu.wpi.first.math.geometry.Translation3d;
 public class Pose4d extends Pose3d {
     double latency;
 
+    public Pose4d() {
+        super();
+        this.latency = 0d;
+    }
+
     /**
      * In general, translation units should be meters (but other units can work)
      */
