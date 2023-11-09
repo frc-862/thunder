@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
@@ -46,6 +47,7 @@ public class Limelight {
         try {
             this.baseUrl = new URL("http://" + ip);
         } catch (MalformedURLException e) {
+            e.printStackTrace();
             throw new IllegalArgumentException("Invalid IP");
         }
     }
@@ -443,6 +445,8 @@ public class Limelight {
         try {
             return new URL(baseUrl.toString() + ":5807/" + suffix);
         } catch (MalformedURLException e) {
+            //we want the code to crash if this happens, since it means something is catastrophically wrong with the limelight code
+            e.printStackTrace();
             throw new IllegalArgumentException("Invalid Suffix");
         }
     }
@@ -454,10 +458,11 @@ public class Limelight {
      * @param type the type of request to send (eg "GET", "POST")
      * @param headers the headers to send with the request
      * @return the response message from the limelight
+     * Errors are printed to stderr, and a null value is returned
      */
     private String httpRequest(String suffix, String type, ArrayList<Pair<String, String>> headers) {
-        URL url = generateURL(suffix);
         try {
+            URL url = generateURL(suffix);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(type);
             int responseCode = connection.getResponseCode();
@@ -465,25 +470,24 @@ public class Limelight {
                 connection.setRequestProperty(header.getFirst(), header.getSecond());
             }
             if (responseCode != 200) {
-                System.err.println("Bad LL Request: " + responseCode + " " + connection.getResponseMessage());
+                System.err.println("Bad HTTP Request to Limelight: " + responseCode + " " + connection.getResponseMessage());
             }
 
             //Chatgpt wrote this lol
             // Read the response content as a String
             StringBuilder content = new StringBuilder();
-            try (InputStream inputStream = connection.getInputStream();
-                InputStreamReader reader = new InputStreamReader(inputStream);
-                BufferedReader bufferedReader = new BufferedReader(reader)) {
-                String line;
-                while ((line = bufferedReader.readLine()) != null) {
-                    content.append(line);
-                }
+            InputStream inputStream = connection.getInputStream();
+            InputStreamReader reader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(reader);
+            String line;
+            
+            while ((line = bufferedReader.readLine()) != null) {
+                content.append(line);
             }
-
             return content.toString();
         } catch (IOException e) {
             e.printStackTrace();
-            throw new IllegalArgumentException("I'm on Crack");
+            return null;  
         }
     }
 
@@ -492,6 +496,7 @@ public class Limelight {
      * @param suffix the suffix to add to the base url (eg "deletesnapshots", "capturesnapshot")
      * @param headers the headers to send with the request
      * @return the response message from the limelight
+     * Errors are printed to stderr, and a null value is returned
      */
     private String getRequest(String suffix, ArrayList<Pair<String, String>> headers) {
         return httpRequest(suffix, "GET", headers);
@@ -501,6 +506,7 @@ public class Limelight {
      * send a GET request to the limelight with the specified suffix, with no headers
      * @param suffix the suffix to add to the base url (eg "deletesnapshots", "capturesnapshot")
      * @return the response message from the limelight
+     * Errors are printed to stderr, and a null value is returned
      */
     private String getRequest(String suffix) {
         return getRequest(suffix, new ArrayList<Pair<String, String>>());
@@ -509,14 +515,14 @@ public class Limelight {
     /**
      * @param supplier the function to run asynchronously
      * @return the result of the function
+     * Errors are printed to stderr, and a null value is returned
      */
     private String async(Supplier<Object> supplier) {
         try {
             return (String) CompletableFuture.supplyAsync(supplier).get();
         } catch (InterruptedException | ExecutionException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
-            return "";
+            return null;
         }
     }
 
@@ -567,6 +573,7 @@ public class Limelight {
     /**
      * @param raw a raw String containing json data
      * @return a JsonNode containing parsed json data, or null if the data is invalid
+     * Errors are printed to stderr, and a null value is returned
      */
     private JsonNode parseJson(String raw) {
         ObjectMapper objectMapper = new ObjectMapper();
