@@ -18,7 +18,7 @@ public class PoseConverter {
         if (ntValues.length == 7){
             return new Pose4d(new Translation3d(ntValues[0], ntValues[1], ntValues[2]), new Rotation3d(Math.toRadians(ntValues[3]), Math.toRadians(ntValues[4]), Math.toRadians(ntValues[5])), ntValues[6]);
         } else {
-            return null;
+            return new Pose4d();
         }
     }
 
@@ -44,13 +44,13 @@ public class PoseConverter {
         if (jsonData.isArray()) {
             jsonData = (ArrayNode) jsonData;
         } else {
-            return null;
+            return new Pose3d();
         }
 
         if (jsonData.size() == 6) {
             return new Pose3d(new Translation3d(jsonData.get(0).asDouble(), jsonData.get(1).asDouble(), jsonData.get(2).asDouble()), new Rotation3d(Math.toRadians(jsonData.get(3).asDouble()), Math.toRadians(jsonData.get(4).asDouble()), Math.toRadians(jsonData.get(5).asDouble())));
         } else {
-            return null;
+            return new Pose3d();
         }
     }
 }
