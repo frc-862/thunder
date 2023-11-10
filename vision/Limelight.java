@@ -24,6 +24,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.thunder.util.Pose4d;
 import frc.thunder.util.PoseConverter;
+import frc.thunder.vision.targeting.TargetingResult;
 
 public class Limelight {
     private NetworkTable table;
@@ -203,8 +204,8 @@ public class Limelight {
     /**
      * @return Full JSON dump of targeting results
      */
-    public JsonNode getTargetJSON() {
-        return parseJson(getStringNT("json"));
+    public TargetingResult getTargetJSON() {
+        return new TargetingResult(parseJson(getStringNT("json")));
     }
 
     /**
