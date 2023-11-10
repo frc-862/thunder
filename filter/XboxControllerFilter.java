@@ -20,6 +20,14 @@ public class XboxControllerFilter {
         CUBIC, SQUARED, LINEAR
     }
 
+    /**
+     * Constructor for XboxControllerFilter
+     * @param controller XboxController to filter
+     * @param deadBand  Deadband to apply to controller
+     * @param minPower  Minimum power to apply to controller
+     * @param maxPower  Maximum power to apply to controller
+     * @param mode      Filter mode to apply to controller
+     */
     public XboxControllerFilter(XboxController controller, double deadBand, double minPower, double maxPower, filterMode mode) {
         this.controller = controller;
         this.mode = mode;
@@ -28,22 +36,44 @@ public class XboxControllerFilter {
         this.maxPower = maxPower;
     }
 
+    /**
+     * Get the filtered left X value
+     * @return Get the filtered left X value
+     */
     public double getLeftX() {
         return filter(controller.getLeftX(), controller.getLeftY())[0];
     }
 
+    /**
+     * Get the filtered left Y value
+     * @return Filtered left Y value
+     */
     public double getLeftY() {
         return filter(controller.getLeftX(), controller.getLeftY())[1];
     }
 
+    /**
+     * Get the filtered right X value
+     * @return Filtered right x value
+     */
     public double getRightX() {
         return filter(controller.getRightX(), controller.getRightY())[0];
     }
 
+    /**
+     * Get the filtered right Y value
+     * @return Filtered right Y value
+     */
     public double getRightY() {
         return filter(controller.getRightX(), controller.getRightY())[1];
     }
 
+    /**
+     * Get the filtered x and y values
+     * @param X X value to filter
+     * @param Y Y value to filter
+     * @return Returns a double[] with the filtered X and Y values
+     */    
     private double[] filter(double X, double Y) {
         double xOutput = 0;
         double yOutput = 0;
