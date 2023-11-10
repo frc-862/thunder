@@ -93,6 +93,13 @@ public final class LightningMath {
         return Math.abs(input) >= deadband ? input : 0;
     }
 
+    /**
+     * Takes the input value and checks if it is within the range. If its outside it sets it to the bound it is closest to.
+     * @param value input value
+     * @param low Minimun value
+     * @param high Maximum value
+     * @return value if it is between low and high, otherwise the closest bound
+     */
     public static double constrain(double value, double low, double high) {
         return Math.max(low, Math.min(value, high));
     }
