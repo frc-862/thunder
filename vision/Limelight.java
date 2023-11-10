@@ -64,7 +64,7 @@ public class Limelight {
      * @see Limelight#Limelight(String, String)
      */
     public Limelight(String name) {
-        this(name, "10.8.62.12");
+        this(name, "10.8.62.11");
     }
 
     /**
@@ -590,5 +590,23 @@ public class Limelight {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * Current checks:
+     * <ul>
+     * <li> Pose is not null </li>
+     * <li> Pose is not an empty Pose4d </li>
+     * <li> Limelight has a target </li>
+     * </ul>
+     * @return true if all checks pass, otherwise false
+     */
+    public boolean trustPose() {
+        Pose4d pose = getAlliancePose();
+        return (
+            pose != null &&
+            pose != new Pose4d() &&
+            hasTarget()
+        );
     }
 }
