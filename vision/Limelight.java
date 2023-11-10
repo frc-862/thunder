@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
@@ -608,5 +609,21 @@ public class Limelight {
             pose != new Pose4d() &&
             hasTarget()
         );
+    }
+
+    /**
+     * @param limelights an array containing all limelights to filter
+     * @return an array containing only the limelights that pass the trustPose() check
+     */
+    public static Limelight[] filterLimelights(Limelight[] limelights) {
+        Limelight[] out = {};
+        for (Limelight limelight : limelights) {
+            if(limelight.trustPose()) {
+                out = Arrays.copyOf(out, out.length + 1);
+                out[out.length-1] = limelight;
+            }
+        }
+
+        return out;
     }
 }
