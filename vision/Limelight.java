@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
@@ -64,7 +65,7 @@ public class Limelight {
      * @see Limelight#Limelight(String, String)
      */
     public Limelight(String name) {
-        this(name, "10.8.62.12");
+        this(name, "10.8.62.11");
     }
 
     /**
@@ -590,5 +591,39 @@ public class Limelight {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * Current checks:
+     * <ul>
+     * <li> Pose is not null </li>
+     * <li> Pose is not an empty Pose4d </li>
+     * <li> Limelight has a target </li>
+     * </ul>
+     * @return true if all checks pass, otherwise false
+     */
+    public boolean trustPose() {
+        Pose4d pose = getAlliancePose();
+        return (
+            pose != null &&
+            pose != new Pose4d() &&
+            hasTarget()
+        );
+    }
+
+    /**
+     * @param limelights an array containing all limelights to filter
+     * @return an array containing only the limelights that pass the trustPose() check
+     */
+    public static Limelight[] filterLimelights(Limelight[] limelights) {
+        Limelight[] out = {};
+        for (Limelight limelight : limelights) {
+            if(limelight.trustPose()) {
+                out = Arrays.copyOf(out, out.length + 1);
+                out[out.length-1] = limelight;
+            }
+        }
+
+        return out;
     }
 }
