@@ -20,9 +20,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.constraint.RectangularRegionConstraint;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.Constants.VisionConstants;
 import frc.thunder.util.Pose4d;
 import frc.thunder.util.PoseConverter;
 import frc.thunder.vision.targeting.TargetingResult;
@@ -607,7 +610,13 @@ public class Limelight {
         return (
             pose != null &&
             pose != new Pose4d() &&
-            hasTarget()
+            hasTarget() &&
+            //Ensure reported pose is on the field
+            new RectangularRegionConstraint(
+                new Translation2d(0, 0),
+                VisionConstants.FIELD_LIMIT,
+                null
+            ).isPoseInRegion(pose.toPose2d())
         );
     }
 
