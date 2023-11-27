@@ -35,10 +35,10 @@ public class Limelight {
     private String name;
     private String ip;
     private URL baseUrl;
-    private final double ntDefaultDouble = 0.0;
-    private final long ntDefaultInt = 0;
-    private final String ntDefaultString = "";
-    private final double[] ntDefaultArray = {};
+    private double ntDefaultDouble = 0.0;
+    private long ntDefaultInt = 0;
+    private String ntDefaultString = "";
+    private double[] ntDefaultArray = {};
 
     /**
      * Create a new Limelight object with the specified name and ip
@@ -72,6 +72,20 @@ public class Limelight {
     }
 
     /**
+     * Configure the default network table values
+     * @param ntDefaultDouble the default value for doubles, defaults to 0.0
+     * @param ntDefaultInt the default value for ints, defaults to 0
+     * @param ntDefaultString the default value for strings, defaults to ""
+     * @param ntDefaultArray the default value for an array, defaults to {}
+     */
+    public void configNTDefaults(double defaultDouble, int defaultInt, String defaultString, double[] defaultArray) {
+        this.ntDefaultDouble = defaultDouble;
+        this.ntDefaultInt = defaultInt;
+        this.ntDefaultString = defaultString;
+        this.ntDefaultArray = defaultArray;
+    }
+
+    /**
      * get a double from network tables with the specified key
      * @param key the key to get the value from
      * @return the value of the key, or ntDefaultDouble if the key does not exist or has some other error
@@ -83,7 +97,7 @@ public class Limelight {
     /**
      * get a boolean from network tables with the specified key
      * @param key the key to get the value from
-     * @return the value of the key, or ntDefaultDouble if the key does not exist or has some other error
+     * @return the value of the key, or ntDefaultInt if the key does not exist or has some other error
      */
     private int getIntNT(String key) {
         return (int) table.getEntry(key).getInteger(ntDefaultInt);
@@ -140,10 +154,9 @@ public class Limelight {
         return getDoubleNT("tx");
     }
 
-    //TODO: add limelight 3 fov
     /**
      * Vertical Offset From Crosshair To Target
-     * @return (LL1: -20.5 degrees to 20.5 degrees | LL2: -24.85 to 24.85 degrees | -24 to 24 degrees)
+     * @return (LL1: -20.5 degrees to 20.5 degrees | LL2&3: -24.85 to 24.85 degrees)
      */
     public double getTargetY() {
         return getDoubleNT("ty");
