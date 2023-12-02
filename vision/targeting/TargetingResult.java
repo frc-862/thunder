@@ -1,5 +1,6 @@
 package frc.thunder.vision.targeting;
 
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 import edu.wpi.first.math.geometry.Pose3d;
@@ -103,7 +104,7 @@ public class TargetingResult {
      * @return Pose3d of the robot relative to the appropriate alliance wall
      */
     public Pose3d getAlliancePose() {
-        if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
+        if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
             return botpose_wpiblue;
         } else {
             return botpose_wpired;

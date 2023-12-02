@@ -1,6 +1,6 @@
 package frc.thunder;
 
-import frc.thunder.auto.AutonomousCommandFactory;
+// import frc.thunder.auto.AutonomousCommandFactory; TODO implement auto
 
 // import frc.thunder.subsystem.drivetrain.LightningDrivetrain;
 

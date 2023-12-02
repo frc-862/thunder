@@ -4,7 +4,6 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import org.apache.commons.lang3.ArrayUtils;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -258,40 +257,6 @@ public class LightningShuffleboard {
         // automatically)
         if (hasComponent) {
             // do nothing
-        } else {
-            tab.add(key, value);
-        }
-    }
-
-    /**
-     * Creates a graph on the shuffleboard, still requires you to set the output as a graph on the
-     * shuffleboard
-     * 
-     * @param tabName
-     * @param key
-     * @param targetValue
-     * @param currentValue
-     */
-    public static void createGraph(String tabName, String key, double targetValue, double... currentValue) {
-        // create the array for the graph
-        double[] value = {targetValue};
-        value = ArrayUtils.addAll(value, currentValue);
-
-        boolean hasComponent = false;
-        ShuffleboardTab tab = Shuffleboard.getTab(tabName);
-
-        // iterate through the components in the tab, check if the component exists
-        for (int i = 0; i < tab.getComponents().size(); i++) {
-            if (tab.getComponents().get(i).getTitle() == key) {
-                hasComponent = true;
-                break;
-            }
-        }
-
-        // if the component exists, write to it using the NetworkTable, and if not, create the
-        // component
-        if (hasComponent) {
-            NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setDoubleArray(value);
         } else {
             tab.add(key, value);
         }

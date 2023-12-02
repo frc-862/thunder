@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.thunder.auto.Autonomous;
-import frc.thunder.auto.AutonomousCommandFactory;
+// import frc.thunder.auto.AutonomousCommandFactory; // TODO FIX Auto
 import frc.thunder.fault.FaultCode;
 import frc.thunder.fault.FaultMonitor;
 import frc.thunder.fault.LightningFaultCodes;
@@ -124,8 +124,8 @@ public class LightningRobot extends TimedRobot {
         // Load our system tests to the dashboard
         SystemTest.loadTests();
 
-        // Connects to the path planner server
-        AutonomousCommandFactory.connectToServer(5811);
+        // Connects to the path planner server 
+        // AutonomousCommandFactory.connectToServer(5811); TODO REadd once auto factory is back
     }
 
     /**

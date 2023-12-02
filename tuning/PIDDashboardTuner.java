@@ -1,6 +1,6 @@
 package frc.thunder.tuning;
 
-import com.revrobotics.SparkMaxPIDController;
+// import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.networktables.GenericEntry;
@@ -12,7 +12,7 @@ public class PIDDashboardTuner extends SubsystemBase {
 
     private PIDController pidController;
     private ProfiledPIDController profiledPIDController;
-    private SparkMaxPIDController sparkMaxPIDController;
+//     private SparkMaxPIDController sparkMaxPIDController;
 
     private GenericEntry kPTuner;
     private GenericEntry kITuner;
@@ -94,7 +94,7 @@ public class PIDDashboardTuner extends SubsystemBase {
      * @param name name of the tab to put the PID Tuner on
      * @param controller the PIDController to be tuned
      */
-    public PIDDashboardTuner(String name, SparkMaxPIDController sparkMaxPIDController) {
+    /* public PIDDashboardTuner(String name, SparkMaxPIDController sparkMaxPIDController) {
         this.sparkMaxPIDController = sparkMaxPIDController;
         tunerNumber++;
 
@@ -121,7 +121,7 @@ public class PIDDashboardTuner extends SubsystemBase {
                     .withPosition(6, tunerNumber).getEntry();
         }
 
-    }
+    } */
 
     private void updateGains() {
         kP = kPTuner.getDouble(0);
@@ -148,13 +148,13 @@ public class PIDDashboardTuner extends SubsystemBase {
             profiledPIDController.setI(kITuner.getDouble(profiledPIDController.getI()));
             profiledPIDController.setD(kDTuner.getDouble(profiledPIDController.getD()));
 
-        } else if (sparkMaxPIDController != null && checkGains()) {
+        } /*else if (sparkMaxPIDController != null && checkGains()) {
             sparkMaxPIDController.setP(kPTuner.getDouble(sparkMaxPIDController.getP()));
             sparkMaxPIDController.setI(kITuner.getDouble(sparkMaxPIDController.getI()));
             sparkMaxPIDController.setD(kDTuner.getDouble(sparkMaxPIDController.getD()));
             sparkMaxPIDController.setFF(kFFTuner.getDouble(sparkMaxPIDController.getFF()));
 
-        }
+        } */
 
         updateGains();
     }
