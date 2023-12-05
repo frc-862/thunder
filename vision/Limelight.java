@@ -25,7 +25,7 @@ import edu.wpi.first.math.trajectory.constraint.RectangularRegionConstraint;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.VisionConstants;
+import frc.robot.Constants.VisionConstants;
 import frc.thunder.util.Pose4d;
 import frc.thunder.util.PoseConverter;
 import frc.thunder.vision.targeting.TargetingResult;
