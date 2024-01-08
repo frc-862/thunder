@@ -35,10 +35,10 @@ public class Limelight {
     private String name;
     private String ip;
     private URL baseUrl;
-    private double ntDefaultDouble = 0.0;
-    private long ntDefaultInt = 0;
-    private String ntDefaultString = "";
-    private double[] ntDefaultArray = {};
+    private final double ntDefaultDouble = 0.0;
+    private final long ntDefaultInt = 0;
+    private final String ntDefaultString = "";
+    private final double[] ntDefaultArray = {};
 
     /**
      * Create a new Limelight object with the specified name and ip
@@ -72,20 +72,6 @@ public class Limelight {
     }
 
     /**
-     * Configure the default network table values
-     * @param ntDefaultDouble the default value for doubles, defaults to 0.0
-     * @param ntDefaultInt the default value for ints, defaults to 0
-     * @param ntDefaultString the default value for strings, defaults to ""
-     * @param ntDefaultArray the default value for an array, defaults to {}
-     */
-    public void configNTDefaults(double defaultDouble, int defaultInt, String defaultString, double[] defaultArray) {
-        this.ntDefaultDouble = defaultDouble;
-        this.ntDefaultInt = defaultInt;
-        this.ntDefaultString = defaultString;
-        this.ntDefaultArray = defaultArray;
-    }
-
-    /**
      * get a double from network tables with the specified key
      * @param key the key to get the value from
      * @return the value of the key, or ntDefaultDouble if the key does not exist or has some other error
@@ -97,7 +83,7 @@ public class Limelight {
     /**
      * get a boolean from network tables with the specified key
      * @param key the key to get the value from
-     * @return the value of the key, or ntDefaultInt if the key does not exist or has some other error
+     * @return the value of the key, or ntDefaultDouble if the key does not exist or has some other error
      */
     private int getIntNT(String key) {
         return (int) table.getEntry(key).getInteger(ntDefaultInt);
@@ -154,9 +140,10 @@ public class Limelight {
         return getDoubleNT("tx");
     }
 
+    //TODO: add limelight 3 fov
     /**
      * Vertical Offset From Crosshair To Target
-     * @return (LL1: -20.5 degrees to 20.5 degrees | LL2&3: -24.85 to 24.85 degrees)
+     * @return (LL1: -20.5 degrees to 20.5 degrees | LL2: -24.85 to 24.85 degrees | -24 to 24 degrees)
      */
     public double getTargetY() {
         return getDoubleNT("ty");
@@ -247,7 +234,7 @@ public class Limelight {
      * @return Translation (X,Y,Z) Rotation(Roll,Pitch,Yaw), total latency (cl+tl)
      */
     public Pose4d getAlliancePose() {
-            if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
+            if (DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
                 if(getArrayNT("botpose_wpiblue") != null){
                     return PoseConverter.toPose4d(getArrayNT("botpose_wpiblue"));
                 } else return new Pose4d();
@@ -420,7 +407,6 @@ public class Limelight {
     public void setCropSize(double xMin, double yMin, double xMax, double yMax) {
         setArrayNT("crop", new double[] {xMin, xMax, yMin, yMax});
     }
-    //I'm way too lazy to make a getter for this lol
 
     @Deprecated
     /**
@@ -491,7 +477,6 @@ public class Limelight {
                 System.err.println("Bad HTTP Request to Limelight: " + responseCode + " " + connection.getResponseMessage());
             }
 
-            //Chatgpt wrote this lol
             // Read the response content as a String
             StringBuilder content = new StringBuilder();
             InputStream inputStream = connection.getInputStream();
@@ -627,7 +612,7 @@ public class Limelight {
             //Ensure reported pose is on the field
             new RectangularRegionConstraint(
                 new Translation2d(0, 0),
-                VisionConstants.FIELD_LIMIT,
+                VisionConstants.VISION_LIMIT,
                 null
             ).isPoseInRegion(pose.toPose2d())
         );

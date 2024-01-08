@@ -2,12 +2,12 @@ package frc.thunder.command.core;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+
 
 /**
  * Command to run a command for a set time.
  */
-public class TimedCommand extends CommandBase {
+public class TimedCommand extends Command {
 
 	protected Command command;
 	protected Timer timer;

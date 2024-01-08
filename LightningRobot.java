@@ -8,13 +8,13 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.thunder.auto.Autonomous;
-import frc.thunder.auto.AutonomousCommandFactory;
 import frc.thunder.fault.FaultCode;
 import frc.thunder.fault.FaultMonitor;
 import frc.thunder.fault.LightningFaultCodes;
 import frc.thunder.fault.TimedFaultMonitor;
 import frc.thunder.testing.SystemTest;
 
+import com.pathplannerLib.lib.server.PathPlannerServer;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -123,9 +123,6 @@ public class LightningRobot extends TimedRobot {
 
         // Load our system tests to the dashboard
         SystemTest.loadTests();
-
-        // Connects to the path planner server
-        AutonomousCommandFactory.connectToServer(5811);
     }
 
     /**
