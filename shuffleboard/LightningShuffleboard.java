@@ -22,8 +22,7 @@ public class LightningShuffleboard {
             }
         }
 
-        // if the component exists, write to it using the NetworkTable, and if not, create the
-        // component
+        // if the component exists, write to it using the NetworkTable, and if not, create the component
         if (hasComponent) {
             NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setDouble(value);
         } else {
@@ -43,8 +42,7 @@ public class LightningShuffleboard {
             }
         }
 
-        // if the component doesnt exist, create it (since its a supplier, it will be updated
-        // automatically)
+        // if the component doesnt exist, create it (since its a supplier, it will be updated automatically)
         if (hasComponent) {
             // do nothing
         } else {
@@ -85,8 +83,7 @@ public class LightningShuffleboard {
             }
         }
 
-        // if the component exists, write to it using the NetworkTable, and if not, create the
-        // component
+        // if the component exists, write to it using the NetworkTable, and if not, create the component
         if (hasComponent) {
             NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setString(value);
         } else {
@@ -127,8 +124,7 @@ public class LightningShuffleboard {
             }
         }
 
-        // if the component exists, write to it using the NetworkTable, and if not, create the
-        // component
+        // if the component exists, write to it using the NetworkTable, and if not, create the component
         if (hasComponent) {
             NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setBoolean(value);
         } else {
@@ -148,8 +144,7 @@ public class LightningShuffleboard {
             }
         }
 
-        // if the component doesnt exist, create it (since its a supplier, it will be updated
-        // automatically)
+        // if the component doesnt exist, create it (since its a supplier, it will be updated automatically)
         if (hasComponent) {
             // do nothing
         } else {
@@ -190,8 +185,7 @@ public class LightningShuffleboard {
             }
         }
 
-        // if the component exists, write to it using the NetworkTable, and if not, create the
-        // component
+        // if the component exists, write to it using the NetworkTable, and if not, create the component
         if (hasComponent) {
             // do nothing
         } else {
@@ -211,8 +205,7 @@ public class LightningShuffleboard {
             }
         }
 
-        // if the component exists, write to it using the NetworkTable, and if not, create the
-        // component
+        // if the component exists, write to it using the NetworkTable, and if not, create the component
         if (hasComponent) {
             // do nothing
         } else {
@@ -232,8 +225,7 @@ public class LightningShuffleboard {
             }
         }
 
-        // if the component doesnt exist, create it (since its a supplier, it will be updated
-        // automatically)
+        // if the component doesnt exist, create it (since its a supplier, it will be updated automatically)
         if (hasComponent) {
             // do nothing
         } else {
@@ -253,8 +245,7 @@ public class LightningShuffleboard {
             }
         }
 
-        // if the component doesnt exist, create it (since its a supplier, it will be updated
-        // automatically)
+        // if the component doesnt exist, create it (since its a supplier, it will be updated automatically)
         if (hasComponent) {
             // do nothing
         } else {
@@ -274,8 +265,7 @@ public class LightningShuffleboard {
             }
         }
 
-        // if the component exists, write to it using the NetworkTable, and if not, create the
-        // component
+        // if the component exists, write to it using the NetworkTable, and if not, create the component
         if (hasComponent) {
             // do nothing
         } else {
@@ -295,8 +285,7 @@ public class LightningShuffleboard {
             }
         }
 
-        // if the component doesnt exist, create it (since its a supplier, it will be updated
-        // automatically)
+        // if the component doesnt exist, create it (since its a supplier, it will be updated automatically)
         if (hasComponent) {
             // do nothing
         } else {

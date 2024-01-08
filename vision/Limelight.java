@@ -407,7 +407,6 @@ public class Limelight {
     public void setCropSize(double xMin, double yMin, double xMax, double yMax) {
         setArrayNT("crop", new double[] {xMin, xMax, yMin, yMax});
     }
-    //I'm way too lazy to make a getter for this lol
 
     @Deprecated
     /**
@@ -478,7 +477,6 @@ public class Limelight {
                 System.err.println("Bad HTTP Request to Limelight: " + responseCode + " " + connection.getResponseMessage());
             }
 
-            //Chatgpt wrote this lol
             // Read the response content as a String
             StringBuilder content = new StringBuilder();
             InputStream inputStream = connection.getInputStream();
