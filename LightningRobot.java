@@ -14,7 +14,6 @@ import frc.thunder.fault.LightningFaultCodes;
 import frc.thunder.fault.TimedFaultMonitor;
 import frc.thunder.testing.SystemTest;
 
-import com.pathplannerLib.lib.server.PathPlannerServer;
 import java.io.IOException;
 import java.util.Properties;
 
