@@ -164,7 +164,7 @@ public class FalconConfig {
         config.Slot0.kP = kP;
         config.Slot0.kI = kI;
         config.Slot0.kD = kD;
-        congif.Slot0.kF = kS;
+        config.Slot0.kS = kS;
         config.Slot0.kV = kV;
 
 
