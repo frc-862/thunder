@@ -135,4 +135,42 @@ public class FalconConfig {
         return motor;
     }
 
+    /**
+     * Create TalonFX motor without CAN loop name and 1 Pid slot with kS and kV
+     * @param ID CAN ID
+     * @param invert Boolean (true = clockwise positive, false = counterclockwise positive)
+     * @param supplyCurrentLimit Input current limit from the pdh (zero to disable)
+     * @param statorCurrentLimit Output current limit for the motor (zero to disable)
+     * @param NeutralMode Brake or Coast
+     * @param kP slot 0 kP
+     * @param kI slot 0 kI
+     * @param kD slot 0 kD
+     * @param kS slot 0 kS
+     * @param kV slot 0 kV
+     * @return TalonFX motor
+     */
+    public static TalonFX createMotor(int ID, String CanBus, boolean invert, int supplyCurrentLimit, int statorCurrentLimit, NeutralModeValue NeutralMode, double kP, double kI, double kD, double kS, double kV) {
+        TalonFX motor = new TalonFX(ID, CanBus);
+
+        TalonFXConfiguration config = new TalonFXConfiguration();
+        config.MotorOutput.Inverted = invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+        config.CurrentLimits.SupplyCurrentLimitEnable = supplyCurrentLimit > 0;
+        config.CurrentLimits.SupplyCurrentLimit = supplyCurrentLimit;
+        config.CurrentLimits.StatorCurrentLimitEnable = statorCurrentLimit > 0;
+        config.CurrentLimits.StatorCurrentLimit = statorCurrentLimit;
+        config.MotorOutput.NeutralMode = NeutralMode;
+        //TODO: supply current limit thresholds
+
+        config.Slot0.kP = kP;
+        config.Slot0.kI = kI;
+        config.Slot0.kD = kD;
+        config.Slot0.kS = kS;
+        config.Slot0.kV = kV;
+
+
+        motor.getConfigurator().apply(config);
+        
+        return motor;
+    }
+
 }
