@@ -136,7 +136,7 @@ public class FalconConfig {
     }
 
     /**
-     * Create TalonFX motor without CAN loop name and 1 Pid slot
+     * Create TalonFX motor without CAN loop name and 1 Pid slot with kS and kV
      * @param ID CAN ID
      * @param invert Boolean (true = clockwise positive, false = counterclockwise positive)
      * @param supplyCurrentLimit Input current limit from the pdh (zero to disable)
