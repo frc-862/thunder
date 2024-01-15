@@ -12,6 +12,7 @@ package frc.thunder;
 public abstract class LightningContainer {
 
     public LightningContainer() {
+        initializeSubsystems();
 
         // Setup driver commands and defaults
         configureButtonBindings();
@@ -29,6 +30,11 @@ public abstract class LightningContainer {
         configureSystemTests();
 
     }
+
+    /**
+     * Instantialize subsystems/static methods
+     */
+    protected abstract void initializeSubsystems();
 
     /**
      * Connects commands with buttons on joysticks
