@@ -22,7 +22,7 @@ public abstract class LightningContainer {
         initializeDashboardCommands();
 
         // Configure autonomous
-        configureAutonomousCommands();
+        // configureAutonomousCommands();
 
         // Setup fault monitoring
         configureFaultCodes();
@@ -67,7 +67,7 @@ public abstract class LightningContainer {
     /**
      * Configures list of possible commands that can be run during autonomous
      */
-    protected abstract Command configureAutonomousCommands();
+    // protected abstract Command configureAutonomousCommands();
 
     /**
      * Configures all robot-specific fault codes
@@ -78,4 +78,9 @@ public abstract class LightningContainer {
      * Configures listeners for fault codes
      */
     protected abstract void configureFaultMonitors();
+
+    /**
+     * Gets output from sendable chooser
+     */
+    protected abstract Command getAutonomousCommand();
 }

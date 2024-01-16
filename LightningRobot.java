@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.thunder.auto.Autonomous;
 import frc.thunder.fault.FaultCode;
 import frc.thunder.fault.FaultMonitor;
 import frc.thunder.fault.LightningFaultCodes;
@@ -49,6 +48,8 @@ LightningRobot extends TimedRobot {
     private int backgroundPriorityFreq = (int) Math.round(10 / getPeriod());
 
     private Command autonomousCommand;
+
+    
 
     public LightningRobot(LightningContainer container) {
         this.container = container;
@@ -121,9 +122,6 @@ LightningRobot extends TimedRobot {
         FaultMonitor.register(new TimedFaultMonitor(LightningFaultCodes.getFaultCode("SLOW_LOOPER"),
                 () -> getLoopTime() > getPeriod(),
                 0.08, "Loop is running slow: " + getLoopTime()));
-
-        // Load our autonomous chooser to the dashboard
-        Autonomous.load();
 
         // Load our system tests to the dashboard
         SystemTest.loadTests();
@@ -217,7 +215,7 @@ LightningRobot extends TimedRobot {
     @Override
     public void autonomousInit() {
         System.out.println("LightningRobot.autonomousInit");
-        autonomousCommand = Autonomous.getAutonomous();
+        autonomousCommand = container.getAutonomousCommand();
         if (autonomousCommand != null)
             autonomousCommand.schedule();
     }
