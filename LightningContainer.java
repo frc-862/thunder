@@ -21,9 +21,6 @@ public abstract class LightningContainer {
         configureDefaultCommands();
         initializeDashboardCommands();
 
-        // Configure autonomous
-        // configureAutonomousCommands();
-
         // Setup fault monitoring
         configureFaultCodes();
         configureFaultMonitors();
@@ -63,11 +60,6 @@ public abstract class LightningContainer {
      * Puts command buttons on the dashboard
      */
     protected abstract void initializeDashboardCommands();
-
-    /**
-     * Configures list of possible commands that can be run during autonomous
-     */
-    // protected abstract Command configureAutonomousCommands();
 
     /**
      * Configures all robot-specific fault codes
