@@ -31,7 +31,8 @@ import java.util.Properties;
  * self-testing support with
  * {@link frc.thunder.testing.SystemTestCommand}.
  */
-public class LightningRobot extends TimedRobot {
+public class 
+LightningRobot extends TimedRobot {
 
     private LightningContainer container;
 
@@ -51,6 +52,10 @@ public class LightningRobot extends TimedRobot {
 
     public LightningRobot(LightningContainer container) {
         this.container = container;
+    }
+
+    public double getSettleTime(){
+        return SETTLE_TIME;
     }
 
     /**
