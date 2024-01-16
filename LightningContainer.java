@@ -1,5 +1,7 @@
 package frc.thunder;
 
+import edu.wpi.first.wpilibj2.command.Command;
+
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -18,9 +20,6 @@ public abstract class LightningContainer {
         configureButtonBindings();
         configureDefaultCommands();
         initializeDashboardCommands();
-
-        // Configure autonomous
-        configureAutonomousCommands();
 
         // Setup fault monitoring
         configureFaultCodes();
@@ -63,11 +62,6 @@ public abstract class LightningContainer {
     protected abstract void initializeDashboardCommands();
 
     /**
-     * Configures list of possible commands that can be run during autonomous
-     */
-    protected abstract void configureAutonomousCommands();
-
-    /**
      * Configures all robot-specific fault codes
      */
     protected abstract void configureFaultCodes();
@@ -76,4 +70,9 @@ public abstract class LightningContainer {
      * Configures listeners for fault codes
      */
     protected abstract void configureFaultMonitors();
+
+    /**
+     * Gets output from sendable chooser
+     */
+    protected abstract Command getAutonomousCommand();
 }
