@@ -612,7 +612,7 @@ public class Limelight {
             //Ensure reported pose is on the field
             new RectangularRegionConstraint(
                 new Translation2d(0, 0),
-                VisionConstants.VISION_LIMIT,
+                VisionConstants.FIELD_LIMIT,
                 null
             ).isPoseInRegion(pose.toPose2d())
         );
