@@ -155,6 +155,13 @@ public class Limelight {
     public double getTargetArea() {
         return getDoubleNT("ta");
     }
+    
+    /**
+     * @return The limelight's name
+     */
+    public String getName() {
+        return name;
+    }
 
     /**
      * @return The pipeline’s latency contribution (ms)
