@@ -237,7 +237,12 @@ public class Limelight {
     }
 
     DoubleArrayEntry poseEntry = null;
-
+    /**
+     * This function only does the lookup, once which should be slightly more
+     * efficient.
+     * 
+     * @return the Network Table Entry for the pose, based on current alliance
+     */
     private DoubleArrayEntry getPoseEntry() {
         if (poseEntry != null) return poseEntry;
 
