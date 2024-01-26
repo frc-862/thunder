@@ -28,6 +28,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.TimestampedDoubleArray;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.VisionConstants;
 import frc.thunder.util.Pose4d;
 import frc.thunder.util.PoseConverter;
@@ -647,7 +648,8 @@ public class Limelight {
         return (
             pose != null &&
             pose != new Pose4d() &&
-            FIELD.isPoseInRegion(pose.toPose2d())
+            FIELD.isPoseInRegion(pose.toPose2d()) &&
+            (Timer.getFPGATimestamp() - pose.getFPGATimestamp() < 0.03)
         );
     }
 
