@@ -639,16 +639,15 @@ public class Limelight {
      */
     public boolean trustPose() {
         Pose4d pose = getAlliancePose();
+        return hasTarget() && trustPose(pose);
+    }
+
+    static RectangularRegionConstraint FIELD = new RectangularRegionConstraint(new Translation2d(0, 0), VisionConstants.FIELD_LIMIT, null);
+    public static boolean trustPose(Pose4d pose) {
         return (
             pose != null &&
             pose != new Pose4d() &&
-            hasTarget() &&
-            //Ensure reported pose is on the field
-            new RectangularRegionConstraint(
-                new Translation2d(0, 0),
-                VisionConstants.FIELD_LIMIT,
-                null
-            ).isPoseInRegion(pose.toPose2d())
+            FIELD.isPoseInRegion(pose.toPose2d())
         );
     }
 
@@ -666,5 +665,15 @@ public class Limelight {
         }
 
         return out;
+    }
+
+    /**
+     * prevent race condition where we will get incorrect poses -- also should be more efficent
+     * 
+     * @param limelights an array containing all limelights to filter
+     * @return an array containing only the Pose4d objects that pass the trustPose() check
+     */
+    public static Pose4d[] filteredPoses(Limelight[] limelights) {
+        return (Pose4d[]) Arrays.stream(limelights).map(l -> l.getAlliancePose()).filter(p -> trustPose(p)).toArray();
     }
 }
