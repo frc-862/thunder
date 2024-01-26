@@ -22,8 +22,11 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.constraint.RectangularRegionConstraint;
+import edu.wpi.first.networktables.DoubleArrayEntry;
+import edu.wpi.first.networktables.DoubleArrayTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.TimestampedDoubleArray;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants.VisionConstants;
 import frc.thunder.util.Pose4d;
@@ -233,6 +236,27 @@ public class Limelight {
         return getArrayNT("tc");
     }
 
+    DoubleArrayEntry poseEntry = null;
+
+    private DoubleArrayEntry getPoseEntry() {
+        if (poseEntry != null) return poseEntry;
+
+        DoubleArrayTopic topic;
+        switch (DriverStation.getAlliance().get()) {
+            case Blue:
+                topic = table.getDoubleArrayTopic("botpose_wpiblue");
+                break;
+            case Red:
+                topic = table.getDoubleArrayTopic("botpose_wpired");
+                break;
+            default:
+                return null;
+        }
+
+        poseEntry = topic.getEntry(ntDefaultArray);
+        return poseEntry;
+    }
+
     /**
      * Automatically return either the blue or red alliance pose based on which alliance the driver station reports
      * @see Limelight#getBotPoseBlue()
@@ -241,17 +265,15 @@ public class Limelight {
      * @return Translation (X,Y,Z) Rotation(Roll,Pitch,Yaw), total latency (cl+tl)
      */
     public Pose4d getAlliancePose() {
-            if (DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
-                if(getArrayNT("botpose_wpiblue") != null){
-                    return PoseConverter.toPose4d(getArrayNT("botpose_wpiblue"));
-                } else return new Pose4d();
-            } else {
-                if(getArrayNT("botpose_wpired") != null){
-                return PoseConverter.toPose4d(getArrayNT("botpose_wpired"));
-                } else return new Pose4d();
-            }
+        var entry = getPoseEntry();
+        if (entry != null) {
+            TimestampedDoubleArray rawPose = entry.getAtomic();
+            var lastPoseAt = rawPose.timestamp / 1000000.0;
+            return PoseConverter.toPose4d(rawPose.value, lastPoseAt);
+        } else {
+            return new Pose4d();
+        }
     }
-
 
     /**
      * @return 3D transform of the camera in the coordinate system of the primary in-view AprilTag
