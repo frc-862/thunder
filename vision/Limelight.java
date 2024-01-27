@@ -294,7 +294,7 @@ public class Limelight {
         var entry = getPoseEntry();
         if (entry != null) {
             TimestampedDoubleArray rawPose = entry.getAtomic();
-            var lastPoseAt = rawPose.timestamp / 1000000.0;
+            var lastPoseAt = rawPose.timestamp / 1.0e6; // Convert from microseconds to seconds
             return PoseConverter.toPose4d(rawPose.value, lastPoseAt);
         } else {
             return new Pose4d();
@@ -687,8 +687,8 @@ public class Limelight {
             new Translation2d(0, 0), VisionConstants.FIELD_LIMIT, null);
 
     public static boolean trustPose(Pose4d pose) {
-        return (pose != null && pose != new Pose4d() && FIELD.isPoseInRegion(pose.toPose2d())
-                && (Timer.getFPGATimestamp() - pose.getFPGATimestamp() < 0.03));
+        return (pose != null && pose != new Pose4d() && FIELD.isPoseInRegion(pose.toPose2d()));
+                // && (Timer.getFPGATimestamp() - pose.getFPGATimestamp() < 0.03));
     }
 
     /**
@@ -714,7 +714,19 @@ public class Limelight {
      * @return an array containing only the Pose4d objects that pass the trustPose() check
      */
     public static Pose4d[] filteredPoses(Limelight[] limelights) {
-        return (Pose4d[]) Arrays.stream(limelights).map(l -> l.getAlliancePose())
-                .filter(p -> trustPose(p)).toArray(Pose4d[]::new);
+       // return (Pose4d[]) Arrays.stream(limelights).map(l -> l.getAlliancePose())
+       //         .filter(p -> trustPose(p)).toArray(Pose4d[]::new);
+        Pose4d[] out = {};
+        for (Limelight limelight : limelights) {
+            if(limelight.hasTarget()) {
+                Pose4d pose = limelight.getAlliancePose();
+                if (trustPose(pose)) {
+                    out = Arrays.copyOf(out, out.length + 1);
+                    out[out.length - 1] = pose;
+                }
+            }
+        }
+
+        return out;
     }
 }
