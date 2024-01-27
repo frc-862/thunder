@@ -6,40 +6,39 @@ package frc.thunder.testing;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public class SystemTestCommand extends Command {
 
-  private Command test;
+  public SystemTestCommand() {}
 
-  public SystemTestCommand(Command test) {
-    this.test = test;
-
-    addRequirements(test.getRequirements().toArray(new Subsystem[0]));
-  }
-
-  private boolean canRun() {
+  protected boolean canRun() {
     return DriverStation.isTest();
   }
+
+  protected void initializeTest() {}
+
+  protected void executeTest() {}
+
+  protected void endTest(boolean interrupted) {}
 
   @Override
   public void initialize() {
     if (canRun()) {
-      test.initialize();
+      initializeTest();
     }
   }
 
   @Override
   public void execute() {
-    if (canRun() && !test.isFinished()) {
-      test.execute();
+    if (canRun()) {
+      executeTest();
     }
   }
 
   @Override
   public void end(boolean interrupted) {
-    if (canRun() && !test.isFinished()) {
-      test.end(interrupted);
+    if (canRun()) {
+      endTest(interrupted);
     }
   }
 
