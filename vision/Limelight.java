@@ -22,9 +22,13 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.constraint.RectangularRegionConstraint;
+import edu.wpi.first.networktables.DoubleArrayEntry;
+import edu.wpi.first.networktables.DoubleArrayTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.TimestampedDoubleArray;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.VisionConstants;
 import frc.thunder.util.Pose4d;
 import frc.thunder.util.PoseConverter;
@@ -233,6 +237,32 @@ public class Limelight {
         return getArrayNT("tc");
     }
 
+    DoubleArrayEntry poseEntry = null;
+    /**
+     * This function only does the lookup, once which should be slightly more
+     * efficient.
+     * 
+     * @return the Network Table Entry for the pose, based on current alliance
+     */
+    private DoubleArrayEntry getPoseEntry() {
+        if (poseEntry != null) return poseEntry;
+
+        DoubleArrayTopic topic;
+        switch (DriverStation.getAlliance().get()) {
+            case Blue:
+                topic = table.getDoubleArrayTopic("botpose_wpiblue");
+                break;
+            case Red:
+                topic = table.getDoubleArrayTopic("botpose_wpired");
+                break;
+            default:
+                return null;
+        }
+
+        poseEntry = topic.getEntry(ntDefaultArray);
+        return poseEntry;
+    }
+
     /**
      * Automatically return either the blue or red alliance pose based on which alliance the driver station reports
      * @see Limelight#getBotPoseBlue()
@@ -241,17 +271,15 @@ public class Limelight {
      * @return Translation (X,Y,Z) Rotation(Roll,Pitch,Yaw), total latency (cl+tl)
      */
     public Pose4d getAlliancePose() {
-            if (DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
-                if(getArrayNT("botpose_wpiblue") != null){
-                    return PoseConverter.toPose4d(getArrayNT("botpose_wpiblue"));
-                } else return new Pose4d();
-            } else {
-                if(getArrayNT("botpose_wpired") != null){
-                return PoseConverter.toPose4d(getArrayNT("botpose_wpired"));
-                } else return new Pose4d();
-            }
+        var entry = getPoseEntry();
+        if (entry != null) {
+            TimestampedDoubleArray rawPose = entry.getAtomic();
+            var lastPoseAt = rawPose.timestamp / 1000000.0;
+            return PoseConverter.toPose4d(rawPose.value, lastPoseAt);
+        } else {
+            return new Pose4d();
+        }
     }
-
 
     /**
      * @return 3D transform of the camera in the coordinate system of the primary in-view AprilTag
@@ -612,16 +640,16 @@ public class Limelight {
      */
     public boolean trustPose() {
         Pose4d pose = getAlliancePose();
+        return hasTarget() && trustPose(pose);
+    }
+
+    static RectangularRegionConstraint FIELD = new RectangularRegionConstraint(new Translation2d(0, 0), VisionConstants.FIELD_LIMIT, null);
+    public static boolean trustPose(Pose4d pose) {
         return (
             pose != null &&
             pose != new Pose4d() &&
-            hasTarget() &&
-            //Ensure reported pose is on the field
-            new RectangularRegionConstraint(
-                new Translation2d(0, 0),
-                VisionConstants.FIELD_LIMIT,
-                null
-            ).isPoseInRegion(pose.toPose2d())
+            FIELD.isPoseInRegion(pose.toPose2d()) &&
+            (Timer.getFPGATimestamp() - pose.getFPGATimestamp() < 0.03)
         );
     }
 
@@ -639,5 +667,15 @@ public class Limelight {
         }
 
         return out;
+    }
+
+    /**
+     * prevent race condition where we will get incorrect poses -- also should be more efficent
+     * 
+     * @param limelights an array containing all limelights to filter
+     * @return an array containing only the Pose4d objects that pass the trustPose() check
+     */
+    public static Pose4d[] filteredPoses(Limelight[] limelights) {
+        return (Pose4d[]) Arrays.stream(limelights).map(l -> l.getAlliancePose()).filter(p -> trustPose(p)).toArray();
     }
 }
