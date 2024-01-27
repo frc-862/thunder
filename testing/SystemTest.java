@@ -25,7 +25,7 @@ public class SystemTest {
      * @param command command to be run from the dashboard
      */
     public static void registerTest(String name, Command command) {
-        systemTests.put(name, command.until(() -> interrupt.getBoolean(false)));
+        systemTests.put(name, (new SystemTestCommand(command, interrupt)).until(() -> interrupt.getBoolean(false)));
     }
 
     /**
