@@ -23,6 +23,19 @@ public class PoseConverter {
     }
 
     /**
+     * Convert an array of 7 doubles to a Pose4d
+     * @param ntValues array of 7 doubles containing translation (X,Y,Z) Rotation(Roll,Pitch,Yaw), total latency (cl+tl)
+     * @return a new Pose4d object with the values from the array
+     */
+    public static Pose4d toPose4d(double[] ntValues, double timestamp) {
+        if (ntValues.length == 7){
+            return new Pose4d(new Translation3d(ntValues[0], ntValues[1], ntValues[2]), new Rotation3d(Math.toRadians(ntValues[3]), Math.toRadians(ntValues[4]), Math.toRadians(ntValues[5])), ntValues[6], timestamp);
+        } else {
+            return new Pose4d();
+        }
+    }
+
+    /**
      * Convert an array of 6 doubles to a Pose3d
      * @param ntValues array of 6 doubles containing translation (X,Y,Z) Rotation(Roll,Pitch,Yaw)
      * @return a new Pose3d object with the values from the array
