@@ -72,7 +72,14 @@ public class OTFShootingMath {
         return new Rotation2d(targetPose.getX() - robotPose.getX(), targetPose.getY() - robotPose.getY());
     }
 
-    public static Translation2d transformToTargetRelative(Translation2d vector, Rotation2d rot) {
+    /**
+     * a completely redundant function that michael fought hard for us not to include. Performs a coordinate transform on a vector by the given rotation
+     * @param vector the vector to rotate, as a Translation2d
+     * @param rot how much to rotate the vector by, as a Rotation2d
+     * @return rotated vector, as a Translation2d
+     * @see Translation2d#rotateBy(Rotation2d)
+     */
+    public static Translation2d vectorTransform(Translation2d vector, Rotation2d rot) {
         return vector.rotateBy(rot);
     }
 }
