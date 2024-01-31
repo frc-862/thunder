@@ -37,4 +37,14 @@ public class SystemTest {
         }
     }
 
+    /**
+     * Cancels all system tests
+     */
+    public static void cancelAllTests() {
+        for (Command command : systemTests.values()) {
+            command.end(true);
+            command.cancel();
+        }
+    }
+
 }

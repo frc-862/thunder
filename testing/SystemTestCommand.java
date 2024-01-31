@@ -24,6 +24,7 @@ public class SystemTestCommand extends Command {
   @Override
   public void initialize() {
     if (canRun()) {
+      SystemTest.cancelAllTests();
       initializeTest();
     }
   }
