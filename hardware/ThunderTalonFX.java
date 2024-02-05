@@ -54,15 +54,27 @@ public class ThunderTalonFX extends TalonFX {
         config.CurrentLimits.SupplyTimeThreshold = timeThreshold;
     }
 
+    /**
+     * @param statorLimit Stator current limit for the motor (zero to disable)
+     */
     public void configStatorLimit(double statorLimit) {
         config.CurrentLimits.StatorCurrentLimitEnable = statorLimit > 0;
         config.CurrentLimits.StatorCurrentLimit = statorLimit;
     }
 
+    /**
+     * @param brake boolean (true = brake, false = coast)
+     */
     public void configBrake(boolean brake) {
         config.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
     }
 
+    /**
+     * @param kP specified slot kP
+     * @param kI specified slot kI
+     * @param kD specified slot kD
+     * @param slotNumber pid slot to use: 0, 1, or 2
+     */
     public void configPID(double kP, double kI, double kD, int slotNumber) {
         switch (slotNumber) {
             case 0:
@@ -83,6 +95,10 @@ public class ThunderTalonFX extends TalonFX {
         }
     }
 
+    /**
+     * @param kS specified slot kS
+     * @param slotNumber pid slot to use: 0, 1, or 2
+     */
     public void configKs(double kS, int slotNumber) {
         switch (slotNumber) {
             case 0:
@@ -97,6 +113,10 @@ public class ThunderTalonFX extends TalonFX {
         }
     }
 
+    /**
+     * @param kV specified slot kV
+     * @param slotNumber pid slot to use: 0, 1, or 2
+     */
     public void configKv(double kV, int slotNumber) {
         switch (slotNumber) {
             case 0:
@@ -111,15 +131,27 @@ public class ThunderTalonFX extends TalonFX {
         }
     }
 
+    /**
+     * @param config TalonFXConfiguration object to apply
+     * @return StatusCode of set command
+     */
     public StatusCode applyConfig(TalonFXConfiguration config) {
         this.config = config;
         return super.getConfigurator().apply(config);
     }
 
+    /**
+     * Apply the stored configuration to the motor, use this after using built-in config methods
+     * @return StatusCode of set command
+     */
     public StatusCode applyConfig() {
         return super.getConfigurator().apply(this.config);
     }
 
+    /**
+     * Get the stored config
+     * @return TalonFXConfiguration object of the stored config
+     */
     public TalonFXConfiguration getConfig() {
         return this.config;
     }
