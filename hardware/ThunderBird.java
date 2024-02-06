@@ -7,18 +7,18 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-public class ThunderTalonFX extends TalonFX {
-    TalonFXConfiguration config;
+public class ThunderBird extends TalonFX {
+    private TalonFXConfiguration config;
 
     /**
-     * Creat ThunderTalonFX instance with default supply limit settings (for a 40A breaker)
+     * Creat ThunderBird instance with default supply limit settings (for a 40A breaker)
      * @param deviceId CAN Id Of the TalonFX
      * @param canbus CAN Bus name ("rio" for rio bus)
      * @param invert boolean (true = clockwise positive, false = counterclockwise positive)
      * @param statorLimit Stator current limit for the motor (zero to disable)
      * @param brake boolean (true = brake, false = coast)
      */
-    public ThunderTalonFX(int deviceId, String canbus, boolean invert, double statorLimit, boolean brake) {
+    public ThunderBird(int deviceId, String canbus, boolean invert, double statorLimit, boolean brake) {
         super(deviceId, canbus);
         this.config = new TalonFXConfiguration();
         configInvert(invert);
@@ -91,6 +91,44 @@ public class ThunderTalonFX extends TalonFX {
                 config.Slot2.kP = kP;
                 config.Slot2.kI = kI;
                 config.Slot2.kD = kD;
+                break;
+        }
+    }
+
+    /**
+     * @param kP specified slot kP
+     * @param kI specified slot kI
+     * @param kD specified slot kD
+     * @param kS specified slot kS
+     * @param kV specified slot kV
+     * @param kA specified slot kA
+     * @param slotNumber pid slot to use: 0, 1, or 2
+     */
+    public void configPIDF(double kP, double kI, double kD, double kS, double kV, double kA, int slotNumber) {
+        switch (slotNumber) {
+            case 0:
+                config.Slot0.kP = kP;
+                config.Slot0.kI = kI;
+                config.Slot0.kD = kD;
+                config.Slot0.kS = kS;
+                config.Slot0.kV = kV;
+                config.Slot0.kA = kA;
+                break;
+            case 1:
+                config.Slot1.kP = kP;
+                config.Slot1.kI = kI;
+                config.Slot1.kD = kD;
+                config.Slot1.kS = kS;
+                config.Slot1.kV = kV;
+                config.Slot1.kA = kA;
+                break;
+            case 2:
+                config.Slot2.kP = kP;
+                config.Slot2.kI = kI;
+                config.Slot2.kD = kD;
+                config.Slot2.kS = kS;
+                config.Slot2.kV = kV;
+                config.Slot2.kA = kA;
                 break;
         }
     }
