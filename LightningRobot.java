@@ -36,6 +36,7 @@ LightningRobot extends TimedRobot {
     private LightningContainer container;
 
     private final static double SETTLE_TIME = 3.0;
+    private final static double LOOP_TIME = 0.01;
 
     private int counter = 0;
 
@@ -52,6 +53,8 @@ LightningRobot extends TimedRobot {
     
 
     public LightningRobot(LightningContainer container) {
+        //timed robot has default constructor of 20ms and we want it at 10ms. 
+        super(LOOP_TIME);
         this.container = container;
     }
 
