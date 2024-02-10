@@ -70,6 +70,8 @@ public class ThunderBird extends TalonFX {
     }
 
     /**
+     * @deprecated use {@link #configPIDF()} instead
+     * 
      * @param kP specified slot kP
      * @param kI specified slot kI
      * @param kD specified slot kD
@@ -96,15 +98,22 @@ public class ThunderBird extends TalonFX {
     }
 
     /**
+     * @param slotNumber pid slot to use: 0, 1, or 2
      * @param kP specified slot kP
      * @param kI specified slot kI
      * @param kD specified slot kD
-     * @param kS specified slot kS
-     * @param kV specified slot kV
-     * @param kA specified slot kA
-     * @param slotNumber pid slot to use: 0, 1, or 2
+     * @param kF optional parameters kS, kV, and kA for the slot. If not provided, they will be set to 0.
      */
-    public void configPIDF(double kP, double kI, double kD, double kS, double kV, double kA, int slotNumber) {
+    public void configPIDF(int slotNumber, double kP, double kI, double kD, double... kF) {
+        
+        // Ensure kF is the correct length (if 0 or >3, set all to 0)
+        kF = kF.length == 0 || kF.length > 3 ? new double[]{0d, 0d, 0d} : kF;
+        kF = kF.length == 1 ? new double[]{kF[0], 0d, 0d} : kF;
+        kF = kF.length == 2 ? new double[]{kF[0], kF[1], 0d} : kF;
+
+        double kS = kF[0], kV = kF[1], kA = kF[2];
+
+
         switch (slotNumber) {
             case 0:
                 config.Slot0.kP = kP;
