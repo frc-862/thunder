@@ -1,11 +1,15 @@
 package frc.thunder.hardware;
 
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.ParentConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import java.util.function.Consumer;
+
+import frc.thunder.tuning.SlotConfiguration;
 
 public class ThunderBird extends TalonFX {
     private TalonFXConfiguration config;
@@ -113,33 +117,16 @@ public class ThunderBird extends TalonFX {
 
         double kS = kF[0], kV = kF[1], kA = kF[2];
 
+        SlotConfiguration slotConfig = new SlotConfiguration(slotNumber, config);
 
-        switch (slotNumber) {
-            case 0:
-                config.Slot0.kP = kP;
-                config.Slot0.kI = kI;
-                config.Slot0.kD = kD;
-                config.Slot0.kS = kS;
-                config.Slot0.kV = kV;
-                config.Slot0.kA = kA;
-                break;
-            case 1:
-                config.Slot1.kP = kP;
-                config.Slot1.kI = kI;
-                config.Slot1.kD = kD;
-                config.Slot1.kS = kS;
-                config.Slot1.kV = kV;
-                config.Slot1.kA = kA;
-                break;
-            case 2:
-                config.Slot2.kP = kP;
-                config.Slot2.kI = kI;
-                config.Slot2.kD = kD;
-                config.Slot2.kS = kS;
-                config.Slot2.kV = kV;
-                config.Slot2.kA = kA;
-                break;
-        }
+        slotConfig.kP = kP;
+        slotConfig.kI = kI;
+        slotConfig.kD = kD;
+        slotConfig.kS = kS;
+        slotConfig.kV = kV;
+        slotConfig.kA = kA;
+
+        config = slotConfig.getConfig();
     }
 
     /**
@@ -147,17 +134,9 @@ public class ThunderBird extends TalonFX {
      * @param slotNumber pid slot to use: 0, 1, or 2
      */
     public void configKs(double kS, int slotNumber) {
-        switch (slotNumber) {
-            case 0:
-                config.Slot0.kS = kS;
-                break;
-            case 1:
-                config.Slot1.kS = kS;
-                break;
-            case 2:
-                config.Slot2.kS = kS;
-                break;
-        }
+        SlotConfiguration slotConfig = new SlotConfiguration(slotNumber, config);
+        slotConfig.kS = kS;
+        config = slotConfig.getConfig();
     }
 
     /**
@@ -165,17 +144,9 @@ public class ThunderBird extends TalonFX {
      * @param slotNumber pid slot to use: 0, 1, or 2
      */
     public void configKv(double kV, int slotNumber) {
-        switch (slotNumber) {
-            case 0:
-                config.Slot0.kV = kV;
-                break;
-            case 1:
-                config.Slot1.kV = kV;
-                break;
-            case 2:
-                config.Slot2.kV = kV;
-                break;
-        }
+        SlotConfiguration slotConfig = new SlotConfiguration(slotNumber, config);
+        slotConfig.kV = kV;
+        config = slotConfig.getConfig();
     }
 
     /**
