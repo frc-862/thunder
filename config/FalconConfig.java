@@ -6,8 +6,9 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class FalconConfig {
-
     /**
+     * @see {@link frc.thunder.hardware.ThunderBird}
+     * 
      * Create TalonFX motor without CAN loop name
      * @param ID CAN ID
      * @param invert Boolean (true = clockwise positive, false = counterclockwise positive)
@@ -34,6 +35,8 @@ public class FalconConfig {
     }
 
     /**
+     * @see {@link frc.thunder.hardware.ThunderBird}
+     * 
      * Create TalonFX motor without CAN loop name
      * @param ID CAN ID
      * @param canbus CanBus
@@ -61,6 +64,8 @@ public class FalconConfig {
     }
 
     /**
+     * @see {@link frc.thunder.hardware.ThunderBird}
+     * 
      * Create TalonFX motor without CAN loop name and 1 Pid slot
      * @param ID CAN ID
      * @param invert Boolean (true = clockwise positive, false = counterclockwise positive)
@@ -94,6 +99,8 @@ public class FalconConfig {
     }
 
     /**
+     * 
+     * 
      * Create TalonFX motor without CAN loop name and 2 Pid slot
      * @param ID CAN ID
      * @param invert Boolean (true = clockwise positive, false = counterclockwise positive)
@@ -136,6 +143,8 @@ public class FalconConfig {
     }
 
     /**
+     * @see {@link frc.thunder.hardware.ThunderBird}
+     * 
      * Create TalonFX motor without CAN loop name and 1 Pid slot with kS and kV
      * @param ID CAN ID
      * @param invert Boolean (true = clockwise positive, false = counterclockwise positive)
@@ -172,5 +181,4 @@ public class FalconConfig {
         
         return motor;
     }
-
 }
