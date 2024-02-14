@@ -16,16 +16,14 @@ public class SystemTestCommandGroup extends SystemTestCommand {
 
   @Override
   protected void initializeTest() {
-    commandGroup.initialize();
+    commandGroup.schedule();
   }
 
   @Override
-  protected void executeTest() {
-    commandGroup.execute();
-  }
+  protected void executeTest() {}
 
   @Override
   protected void endTest(boolean interrupted) {
-    commandGroup.end(interrupted);
+    commandGroup.cancel();
   }
 }
