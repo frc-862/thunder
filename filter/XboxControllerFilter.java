@@ -16,7 +16,7 @@ public class XboxControllerFilter {
     private double rampDelta;
     private double lastOutput;
 
-    private enum filterMode {
+    public enum filterMode {
         CUBIC, SQUARED, LINEAR
     }
 
