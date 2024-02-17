@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.Timer;
 public class Pose4d extends Pose3d {
     double timestamp;
     double latency;
+    double distance;
+    boolean moreThanOneTarget;
 
     public Pose4d() {
         super();
@@ -22,6 +24,8 @@ public class Pose4d extends Pose3d {
         super(translation, rotation);
         this.latency = latency;
         this.timestamp = timestamp;
+        this.distance = 0;
+        this.moreThanOneTarget = false;
     }
 
     /**
@@ -31,6 +35,8 @@ public class Pose4d extends Pose3d {
         super(translation, rotation);
         this.latency = latency;
         this.timestamp = Timer.getFPGATimestamp();
+        this.distance = 0;
+        this.moreThanOneTarget = false;
     }
 
     /**
@@ -61,5 +67,17 @@ public class Pose4d extends Pose3d {
 
     public double getFPGATimestamp() {
         return timestamp - latency / 1000d;
+    }
+    public void setDistance(double distance){
+        this.distance = distance;
+    }
+    public void setMoreThanOneTarget(boolean moreThanOneTarget){
+        this.moreThanOneTarget = moreThanOneTarget;
+    }
+    public double getDistance(){
+        return distance;
+    }
+    public boolean getMoreThanOneTarget(){
+        return moreThanOneTarget;
     }
 }

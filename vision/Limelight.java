@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.constraint.RectangularRegionConstraint;
 import edu.wpi.first.networktables.DoubleArrayEntry;
 import edu.wpi.first.networktables.DoubleArrayTopic;
@@ -261,7 +262,7 @@ public class Limelight {
      * 
      * @return the Network Table Entry for the pose, based on current alliance
      */
-    private DoubleArrayEntry getPoseEntry() {
+    private DoubleArrayEntry  getPoseEntry() {
         if (poseEntry != null)
             return poseEntry;
 
@@ -295,7 +296,10 @@ public class Limelight {
         if (entry != null) {
             TimestampedDoubleArray rawPose = entry.getAtomic();
             var lastPoseAt = rawPose.timestamp / 1.0e6; // Convert from microseconds to seconds
-            return PoseConverter.toPose4d(rawPose.value, lastPoseAt);
+            var result = PoseConverter.toPose4d(rawPose.value, lastPoseAt);
+            result.setDistance(getTargetPoseCameraSpace().getTranslation().getDistance(new Translation3d()));
+            result.setMoreThanOneTarget(Math.abs(getIntNT("tvert")-getIntNT("thor"))>75);
+            return result;
         } else {
             return new Pose4d();
         }
@@ -719,6 +723,7 @@ public class Limelight {
         Pose4d[] out = {};
         for (Limelight limelight : limelights) {
             if(limelight.hasTarget()) {
+                limelight.getTargetPoseRobotSpace();
                 Pose4d pose = limelight.getAlliancePose();
                 if (trustPose(pose)) {
                     out = Arrays.copyOf(out, out.length + 1);
