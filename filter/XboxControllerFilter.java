@@ -5,7 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.thunder.math.LightningMath;
 
-public class XboxControllerFilter {
+public class XboxControllerFilter extends XboxController{
 
     private XboxController controller;
     private filterMode mode;
@@ -22,14 +22,14 @@ public class XboxControllerFilter {
 
     /**
      * Constructor for XboxControllerFilter
-     * @param controller XboxController to filter
+     * @param port      Port of controller
      * @param deadBand  Deadband to apply to controller
      * @param minPower  Minimum power to apply to controller
      * @param maxPower  Maximum power to apply to controller
      * @param mode      Filter mode to apply to controller
      */
-    public XboxControllerFilter(XboxController controller, double deadBand, double minPower, double maxPower, filterMode mode) {
-        this.controller = controller;
+    public XboxControllerFilter(int port, double deadBand, double minPower, double maxPower, filterMode mode) {
+        super(port);
         this.mode = mode;
         this.deadband = deadBand;
         this.minPower = minPower;
