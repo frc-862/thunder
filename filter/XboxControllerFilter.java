@@ -7,7 +7,6 @@ import frc.thunder.math.LightningMath;
 
 public class XboxControllerFilter extends XboxController{
 
-    private XboxController controller;
     private filterMode mode;
 
     private double deadband;
@@ -41,7 +40,7 @@ public class XboxControllerFilter extends XboxController{
      * @return Get the filtered left X value
      */
     public double getLeftX() {
-        return filter(controller.getLeftX(), controller.getLeftY())[0];
+        return filter(super.getLeftX(), super.getLeftY())[0];
     }
 
     /**
@@ -49,7 +48,7 @@ public class XboxControllerFilter extends XboxController{
      * @return Filtered left Y value
      */
     public double getLeftY() {
-        return filter(controller.getLeftX(), controller.getLeftY())[1];
+        return filter(super.getLeftX(), super.getLeftY())[1];
     }
 
     /**
@@ -57,7 +56,7 @@ public class XboxControllerFilter extends XboxController{
      * @return Filtered right x value
      */
     public double getRightX() {
-        return filter(controller.getRightX(), controller.getRightY())[0];
+        return filter(super.getRightX(), super.getRightY())[0];
     }
 
     /**
@@ -65,7 +64,7 @@ public class XboxControllerFilter extends XboxController{
      * @return Filtered right Y value
      */
     public double getRightY() {
-        return filter(controller.getRightX(), controller.getRightY())[1];
+        return filter(super.getRightX(), super.getRightY())[1];
     }
 
     /**
