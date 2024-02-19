@@ -88,6 +88,7 @@ public class FalconTuner {
         kA = LightningShuffleboard.getDouble(tabName, "kA", kA);
         MMAGIC_ACCEL = LightningShuffleboard.getDouble(tabName, "acceleration", MMAGIC_ACCEL);
         MMAGIC_CRUISE_VELOCITY = LightningShuffleboard.getDouble(tabName, "cruiseVelocity", MMAGIC_CRUISE_VELOCITY);
+        MMAGIC_JERK = LightningShuffleboard.getDouble(tabName, "jerk", MMAGIC_JERK);
 
         setPointSupplier.accept(LightningShuffleboard.getDouble(tabName, "setpoint", defaultSetPoint));
             
