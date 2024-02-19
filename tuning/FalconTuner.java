@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 
 public class FalconTuner {
     private Slot0Configs PIDConfigs;
+    private MotionMagicConfigs MMagicConfigs;
     private ThunderBird motor;
     private Consumer<Double> setPointSupplier;
     private double defaultSetPoint = 0;
@@ -18,6 +19,10 @@ public class FalconTuner {
     private double kS = 0;
     private double kV = 0;
     private double kA = 0;
+    
+    private double MMAGIC_ACCEL = 0;
+    private double MMAGIC_CRUISE_VELOCITY = 0;
+    private double MMAGIC_JERK = 0;
 
     /**
      * creates a new FalconTuner, which publishes *Slot0* PIDF gains to shuffleboard and applies them when changed; existing PID gains are copied
@@ -43,6 +48,12 @@ public class FalconTuner {
         kS = PIDConfigs.kS;
         kV = PIDConfigs.kV;
         kA = PIDConfigs.kA;
+
+        MMagicConfigs = motor.getConfig().MotionMagic;
+        MMAGIC_ACCEL = MMagicConfigs.acceleration;
+        MMAGIC_CRUISE_VELOCITY = MMagicConfigs.cruiseVelocity;
+        MMAGIC_JERK = MMagicConfigs.jerk;
+
     }
 
     /**
@@ -50,12 +61,16 @@ public class FalconTuner {
      */
     private boolean checkGains() {
         PIDConfigs = motor.getConfig().Slot0;
+        MMagicConfigs = motor.getConfig().MotionMagic;
         return  PIDConfigs.kP != kP ||
                 PIDConfigs.kI != kI ||
                 PIDConfigs.kD != kD ||
                 PIDConfigs.kS != kS ||
                 PIDConfigs.kV != kV ||
-                PIDConfigs.kA != kA;
+                PIDConfigs.kA != kA ||
+                MMagicConfigs.acceleration != MMAGIC_ACCEL ||
+                MMagicConfigs.cruiseVelocity != MMAGIC_CRUISE_VELOCITY ||
+                MMagicConfigs.jerk != MMAGIC_JERK;
     }
 
     /**
@@ -70,11 +85,14 @@ public class FalconTuner {
         kS = LightningShuffleboard.getDouble(tabName, "kS", kS);
         kV = LightningShuffleboard.getDouble(tabName, "kV", kV);
         kA = LightningShuffleboard.getDouble(tabName, "kA", kA);
+        MMAGIC_ACCEL = LightningShuffleboard.getDouble(tabName, "acceleration", MMAGIC_ACCEL);
+        MMAGIC_CRUISE_VELOCITY = LightningShuffleboard.getDouble(tabName, "cruiseVelocity", MMAGIC_CRUISE_VELOCITY);
 
         setPointSupplier.accept(LightningShuffleboard.getDouble(tabName, "setpoint", defaultSetPoint));
             
         if(checkGains()) {
             motor.configPIDF(0, kP, kI, kD, kS, kV, kA);
+            motor.configMotionMagic(MMAGIC_ACCEL, MMAGIC_CRUISE_VELOCITY, MMAGIC_JERK);
             motor.applyConfig();
         }
     }
