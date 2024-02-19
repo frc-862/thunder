@@ -1,5 +1,6 @@
 package frc.thunder.tuning;
 
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import frc.thunder.hardware.ThunderBird;
 import frc.thunder.shuffleboard.LightningShuffleboard;
@@ -50,9 +51,9 @@ public class FalconTuner {
         kA = PIDConfigs.kA;
 
         MMagicConfigs = motor.getConfig().MotionMagic;
-        MMAGIC_ACCEL = MMagicConfigs.acceleration;
-        MMAGIC_CRUISE_VELOCITY = MMagicConfigs.cruiseVelocity;
-        MMAGIC_JERK = MMagicConfigs.jerk;
+        MMAGIC_ACCEL = MMagicConfigs.MotionMagicAcceleration;
+        MMAGIC_CRUISE_VELOCITY = MMagicConfigs.MotionMagicCruiseVelocity;
+        MMAGIC_JERK = MMagicConfigs.MotionMagicJerk;
 
     }
 
@@ -68,9 +69,9 @@ public class FalconTuner {
                 PIDConfigs.kS != kS ||
                 PIDConfigs.kV != kV ||
                 PIDConfigs.kA != kA ||
-                MMagicConfigs.acceleration != MMAGIC_ACCEL ||
-                MMagicConfigs.cruiseVelocity != MMAGIC_CRUISE_VELOCITY ||
-                MMagicConfigs.jerk != MMAGIC_JERK;
+                MMagicConfigs.MotionMagicAcceleration != MMAGIC_ACCEL ||
+                MMagicConfigs.MotionMagicCruiseVelocity != MMAGIC_CRUISE_VELOCITY ||
+                MMagicConfigs.MotionMagicJerk != MMAGIC_JERK;
     }
 
     /**
@@ -92,7 +93,9 @@ public class FalconTuner {
             
         if(checkGains()) {
             motor.configPIDF(0, kP, kI, kD, kS, kV, kA);
-            motor.configMotionMagic(MMAGIC_ACCEL, MMAGIC_CRUISE_VELOCITY, MMAGIC_JERK);
+            motor.getConfig().MotionMagic.MotionMagicAcceleration = MMAGIC_ACCEL;
+            motor.getConfig().MotionMagic.MotionMagicCruiseVelocity = MMAGIC_CRUISE_VELOCITY;
+            motor.getConfig().MotionMagic.MotionMagicJerk = MMAGIC_JERK;
             motor.applyConfig();
         }
     }
