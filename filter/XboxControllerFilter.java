@@ -12,8 +12,9 @@ public class XboxControllerFilter extends XboxController{
     private double deadband;
     private double minPower;
     private double maxPower;
-    private double rampDelta;
-    private double lastOutput;
+    private double rampDelta = 1;
+    private double lastOutputX = 0;
+    private double lastOutputY = 0;
 
     public enum filterMode {
         CUBIC, SQUARED, LINEAR
@@ -76,7 +77,7 @@ public class XboxControllerFilter extends XboxController{
     private double[] filter(double X, double Y) {
         double xOutput = 0;
         double yOutput = 0;
-        double magnitude = Math.sqrt(Math.pow(X, 2) + Math.pow(Y, 2));
+        double magnitude = Math.hypot(X, Y);
         Rotation2d theta = Rotation2d.fromRadians(Math.atan2(Y, X));
 
         if (Math.abs(magnitude) < deadband) {
@@ -99,7 +100,10 @@ public class XboxControllerFilter extends XboxController{
             }
         }
 
-        return new double[] {MathUtil.clamp(xOutput, lastOutput - rampDelta, lastOutput + rampDelta), MathUtil.clamp(yOutput, lastOutput - rampDelta, lastOutput + rampDelta)};
-    }
+        var result = new double[] {MathUtil.clamp(xOutput, lastOutputX - rampDelta, lastOutputX + rampDelta), MathUtil.clamp(yOutput, lastOutputY - rampDelta, lastOutputY + rampDelta)};
+        lastOutputX = result[0];
+        lastOutputY = result[1];
 
+        return result;
+    }
 }
