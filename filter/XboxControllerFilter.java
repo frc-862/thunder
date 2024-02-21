@@ -86,16 +86,16 @@ public class XboxControllerFilter extends XboxController{
         } else {
             switch (mode) {
                 case CUBIC:
-                    xOutput = LightningMath.scale(Math.pow(magnitude, 3) * theta.getCos(), deadband, 1, minPower, maxPower);
-                    yOutput = LightningMath.scale(Math.pow(magnitude, 3) * theta.getSin(), deadband, 1, minPower, maxPower);
+                    xOutput = Math.pow(magnitude, 3) * theta.getCos();
+                    yOutput = Math.pow(magnitude, 3) * theta.getSin();
                     break;
                 case SQUARED:
                     xOutput = LightningMath.scale(Math.pow(magnitude, 2) * theta.getCos(), deadband, 1, minPower, maxPower);
                     yOutput = LightningMath.scale(Math.pow(magnitude, 2) * theta.getSin(), deadband, 1, minPower, maxPower);
                     break;
                 case LINEAR:
-                    xOutput = LightningMath.scale(magnitude * theta.getCos(), deadband, 1, minPower, maxPower);
-                    yOutput = LightningMath.scale(magnitude * theta.getSin(), deadband, 1, minPower, maxPower);
+                    xOutput = magnitude * theta.getCos();
+                    yOutput = magnitude * theta.getSin();
                     break;
             }
         }
@@ -103,10 +103,6 @@ public class XboxControllerFilter extends XboxController{
         var result = new double[] {MathUtil.clamp(xOutput, lastOutputX - rampDelta, lastOutputX + rampDelta), MathUtil.clamp(yOutput, lastOutputY - rampDelta, lastOutputY + rampDelta)};
         lastOutputX = result[0];
         lastOutputY = result[1];
-
-        System.out.println("xoutput " + xOutput);
-        System.out.println("youtput " + yOutput);
-
         return result;
     }
 }
