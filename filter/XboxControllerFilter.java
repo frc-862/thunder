@@ -17,7 +17,7 @@ public class XboxControllerFilter extends XboxController{
     private double lastOutputY = 0;
 
     public enum filterMode {
-        CUBIC, QUADRATIC, LINEAR
+        CUBIC, QUADRATIC, LINEAR, EXPONENTIAL
     }
 
     /**
@@ -77,44 +77,52 @@ public class XboxControllerFilter extends XboxController{
     private double[] filter(double X, double Y) {
         double xOutput = 0;
         double yOutput = 0;
-        double magnitude = Math.hypot(X, Y);
-        Rotation2d theta = Rotation2d.fromRadians(Math.atan2(Y, X));
+        double magnitude = Math.hypot(X, -Y);
+        Rotation2d theta = Rotation2d.fromRadians(Math.atan2(-Y, X));
 
         if (Math.abs(magnitude) < deadband) {
             xOutput = 0;
             yOutput = 0;
         } else {
             switch (mode) {
+                case EXPONENTIAL:
+                    xOutput = Math.pow(1, magnitude) * theta.getCos();
+                    yOutput = Math.pow(1, magnitude) * theta.getSin();
                 case CUBIC:
                     xOutput = Math.pow(magnitude, 3) * theta.getCos();
                     yOutput = Math.pow(magnitude, 3) * theta.getSin();
                     break;
                 case QUADRATIC:
-                    xOutput = LightningMath.scale(Math.pow(magnitude, 2) * theta.getCos(), deadband, 1, minPower, maxPower);
-                    yOutput = LightningMath.scale(Math.pow(magnitude, 2) * theta.getSin(), deadband, 1, minPower, maxPower);
+                    xOutput = Math.pow(magnitude, 2) * theta.getCos();
+                    yOutput = Math.pow(magnitude, 2) * theta.getSin();
                     break;
                 case LINEAR:
-                double u2 = X * X;
-                double v2 = Y * Y;
-                double twosqrt2 = 2.0 * Math.sqrt(2.0);
-                double subtermx = 2.0 + u2 - v2;
-                double subtermy = 2.0 - u2 + v2;
-                double termx1 = subtermx + X * twosqrt2;
-                double termx2 = subtermx - X * twosqrt2;
-                double termy1 = subtermy + Y * twosqrt2;
-                double termy2 = subtermy - Y * twosqrt2;
-                xOutput = 0.5 * Math.sqrt(termx1) - 0.5 * Math.sqrt(termx2);
-                yOutput = 0.5 * Math.sqrt(termy1) - 0.5 * Math.sqrt(termy2);
-                   
+                    xOutput = X;
+                    yOutput = -Y;
+                    break;
             }
         }
+
+        if (xOutput > 1){
+            xOutput = 1;
+        }
+        if (yOutput > 1){
+            yOutput = 1;
+        }
+        if (xOutput < -1){
+            xOutput = -1;
+        }
+        if (yOutput < -1){
+            yOutput = -1;
+        }
+
 
         var result = new double[] {MathUtil.clamp(xOutput, lastOutputX - rampDelta, lastOutputX + rampDelta), MathUtil.clamp(yOutput, lastOutputY - rampDelta, lastOutputY + rampDelta)};
         lastOutputX = result[0];
         lastOutputY = result[1];
 
-        System.out.println("xoutput " +  xOutput);   
-        System.out.println("youtput " + yOutput);
+        System.out.println("xoutput " +  result[0]);   
+        System.out.println("youtput " + result[1]);
         // System.out.println("theta " + theta.getDegrees());
 
         return result;
