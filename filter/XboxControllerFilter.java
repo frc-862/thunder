@@ -17,7 +17,7 @@ public class XboxControllerFilter extends XboxController{
     private double lastOutputY = 0;
 
     public enum filterMode {
-        CUBIC, SQUARED, LINEAR
+        CUBIC, QUADRATIC, LINEAR
     }
 
     /**
@@ -89,20 +89,34 @@ public class XboxControllerFilter extends XboxController{
                     xOutput = Math.pow(magnitude, 3) * theta.getCos();
                     yOutput = Math.pow(magnitude, 3) * theta.getSin();
                     break;
-                case SQUARED:
+                case QUADRATIC:
                     xOutput = LightningMath.scale(Math.pow(magnitude, 2) * theta.getCos(), deadband, 1, minPower, maxPower);
                     yOutput = LightningMath.scale(Math.pow(magnitude, 2) * theta.getSin(), deadband, 1, minPower, maxPower);
                     break;
                 case LINEAR:
-                    xOutput = magnitude * theta.getCos();
-                    yOutput = magnitude * theta.getSin();
-                    break;
+                double u2 = X * X;
+                double v2 = Y * Y;
+                double twosqrt2 = 2.0 * Math.sqrt(2.0);
+                double subtermx = 2.0 + u2 - v2;
+                double subtermy = 2.0 - u2 + v2;
+                double termx1 = subtermx + X * twosqrt2;
+                double termx2 = subtermx - X * twosqrt2;
+                double termy1 = subtermy + Y * twosqrt2;
+                double termy2 = subtermy - Y * twosqrt2;
+                xOutput = 0.5 * Math.sqrt(termx1) - 0.5 * Math.sqrt(termx2);
+                yOutput = 0.5 * Math.sqrt(termy1) - 0.5 * Math.sqrt(termy2);
+                   
             }
         }
 
         var result = new double[] {MathUtil.clamp(xOutput, lastOutputX - rampDelta, lastOutputX + rampDelta), MathUtil.clamp(yOutput, lastOutputY - rampDelta, lastOutputY + rampDelta)};
         lastOutputX = result[0];
         lastOutputY = result[1];
+
+        System.out.println("xoutput " +  xOutput);   
+        System.out.println("youtput " + yOutput);
+        // System.out.println("theta " + theta.getDegrees());
+
         return result;
     }
 }
