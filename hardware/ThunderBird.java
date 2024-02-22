@@ -144,7 +144,7 @@ public class ThunderBird extends TalonFX {
      * Apply the stored configuration to the motor, use this after using built-in config methods
      * @return StatusCode of set command
      */
-    public StatusCode applyCOnfig() {
+    public StatusCode applyConfig() {
         StatusCode status = StatusCode.StatusCodeNotInitialized;
         for(int i = 0; i < 5; ++i) {
           status = super.getConfigurator().apply(config);
