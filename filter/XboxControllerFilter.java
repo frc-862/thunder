@@ -17,7 +17,7 @@ public class XboxControllerFilter extends XboxController{
     private double lastOutputY = 0;
 
     public enum filterMode {
-        CUBIC, QUADRATIC, LINEAR, EXPONENTIAL
+        CUBIC, SQUARED, LINEAR, EXPONENTIAL
     }
 
     /**
@@ -92,7 +92,7 @@ public class XboxControllerFilter extends XboxController{
                     xOutput = Math.pow(magnitude, 3) * theta.getCos();
                     yOutput = Math.pow(magnitude, 3) * theta.getSin();
                     break;
-                case QUADRATIC:
+                case SQUARED:
                     xOutput = Math.pow(magnitude, 2) * theta.getCos();
                     yOutput = Math.pow(magnitude, 2) * theta.getSin();
                     break;
