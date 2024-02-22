@@ -29,6 +29,7 @@ public class ThunderBird extends TalonFX {
         configSupplyLimit(40d, 40d, 100d);
         configStatorLimit(statorLimit);
         configBrake(brake);
+        
         applyConfig();
     }
 
@@ -74,34 +75,6 @@ public class ThunderBird extends TalonFX {
     }
 
     /**
-     * @deprecated use {@link #configPIDF()} instead
-     * 
-     * @param kP specified slot kP
-     * @param kI specified slot kI
-     * @param kD specified slot kD
-     * @param slotNumber pid slot to use: 0, 1, or 2
-     */
-    public void configPID(double kP, double kI, double kD, int slotNumber) {
-        switch (slotNumber) {
-            case 0:
-                config.Slot0.kP = kP;
-                config.Slot0.kI = kI;
-                config.Slot0.kD = kD;
-                break;
-            case 1:
-                config.Slot1.kP = kP;
-                config.Slot1.kI = kI;
-                config.Slot1.kD = kD;
-                break;
-            case 2:
-                config.Slot2.kP = kP;
-                config.Slot2.kI = kI;
-                config.Slot2.kD = kD;
-                break;
-        }
-    }
-
-    /**
      * @param slotNumber pid slot to use: 0, 1, or 2
      * @param kP specified slot kP
      * @param kI specified slot kI
@@ -126,6 +99,7 @@ public class ThunderBird extends TalonFX {
         slotConfig.kV = kV;
         slotConfig.kA = kA;
 
+        
         config = slotConfig.getConfig();
     }
 
@@ -155,15 +129,31 @@ public class ThunderBird extends TalonFX {
      */
     public StatusCode applyConfig(TalonFXConfiguration config) {
         this.config = config;
-        return super.getConfigurator().apply(config);
+        StatusCode status = StatusCode.StatusCodeNotInitialized;
+        for(int i = 0; i < 5; ++i) {
+            status = super.getConfigurator().apply(config);
+        if (status.isOK()) break;
+        }
+        if (!status.isOK()) {
+            System.out.println("Could not configure device. Error: " + status.toString());
+        }
+        return status;
     }
-
+    
     /**
      * Apply the stored configuration to the motor, use this after using built-in config methods
      * @return StatusCode of set command
      */
-    public StatusCode applyConfig() {
-        return super.getConfigurator().apply(this.config);
+    public StatusCode applyCOnfig() {
+        StatusCode status = StatusCode.StatusCodeNotInitialized;
+        for(int i = 0; i < 5; ++i) {
+          status = super.getConfigurator().apply(config);
+          if (status.isOK()) break;
+        }
+        if (!status.isOK()) {
+          System.out.println("Could not configure device. Error: " + status.toString());
+        }
+        return status;
     }
 
     /**
