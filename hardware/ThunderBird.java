@@ -7,7 +7,6 @@ import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import java.util.function.Consumer;
 
 import frc.thunder.tuning.SlotConfiguration;
 
@@ -35,6 +34,8 @@ public class ThunderBird extends TalonFX {
 
     /**
      * @param inverted boolean (true = clockwise positive, false = counterclockwise positive)
+     * <p> YOU MUST CALL applyConfig() AFTER USING THIS METHOD </p>
+     * @see #applyConfig()
      */
     public void configInvert(boolean inverted) {
         this.config.MotorOutput.Inverted = inverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
@@ -42,6 +43,8 @@ public class ThunderBird extends TalonFX {
 
     /**
      * @param supplyLimit Input current limit from the pdh (zero to disable)
+     * <p> YOU MUST CALL applyConfig() AFTER USING THIS METHOD </p>
+     * @see #applyConfig()
      */
     public void configSupplyLimit(double supplyLimit) {
         config.CurrentLimits.SupplyCurrentLimitEnable = supplyLimit > 0;
@@ -52,6 +55,8 @@ public class ThunderBird extends TalonFX {
      * @param supplyLimit Input current limit from the pdh (zero to disable)
      * @param triggerThreshold allow the current to exceed the limit for the given time
      * @param timeThreshold time where current is allowed to exceed the threshold
+     * <p> YOU MUST CALL applyConfig() AFTER USING THIS METHOD </p>
+     * @see #applyConfig()
      */
     public void configSupplyLimit(double supplyLimit, double triggerThreshold, double timeThreshold) {
         configSupplyLimit(supplyLimit);
@@ -61,6 +66,8 @@ public class ThunderBird extends TalonFX {
 
     /**
      * @param statorLimit Stator current limit for the motor (zero to disable)
+     * <p> YOU MUST CALL applyConfig() AFTER USING THIS METHOD </p>
+     * @see #applyConfig()
      */
     public void configStatorLimit(double statorLimit) {
         config.CurrentLimits.StatorCurrentLimitEnable = statorLimit > 0;
@@ -69,6 +76,8 @@ public class ThunderBird extends TalonFX {
 
     /**
      * @param brake boolean (true = brake, false = coast)
+     * <p> YOU MUST CALL applyConfig() AFTER USING THIS METHOD </p>
+     * @see #applyConfig()
      */
     public void configBrake(boolean brake) {
         config.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
@@ -80,6 +89,8 @@ public class ThunderBird extends TalonFX {
      * @param kI specified slot kI
      * @param kD specified slot kD
      * @param kF optional parameters kS, kV, and kA for the slot. If not provided, they will be set to 0.
+     * <p> YOU MUST CALL applyConfig() AFTER USING THIS METHOD </p>
+     * @see #applyConfig()
      */
     public void configPIDF(int slotNumber, double kP, double kI, double kD, double... kF) {
         
@@ -106,6 +117,8 @@ public class ThunderBird extends TalonFX {
     /**
      * @param kS specified slot kS
      * @param slotNumber pid slot to use: 0, 1, or 2
+     * <p> YOU MUST CALL applyConfig() AFTER USING THIS METHOD </p>
+     * @see #applyConfig()
      */
     public void configKs(double kS, int slotNumber) {
         SlotConfiguration slotConfig = new SlotConfiguration(slotNumber, config);
@@ -116,6 +129,8 @@ public class ThunderBird extends TalonFX {
     /**
      * @param kV specified slot kV
      * @param slotNumber pid slot to use: 0, 1, or 2
+     * <p> YOU MUST CALL applyConfig() AFTER USING THIS METHOD </p>
+     * @see #applyConfig()
      */
     public void configKv(double kV, int slotNumber) {
         SlotConfiguration slotConfig = new SlotConfiguration(slotNumber, config);
