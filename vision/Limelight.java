@@ -718,10 +718,15 @@ public class Limelight {
      * @return an array containing only the Pose4d objects that pass the trustPose() check
      */
     public static Pose4d[] filteredPoses(Limelight[] limelights) {
-       // return (Pose4d[]) Arrays.stream(limelights).map(l -> l.getAlliancePose())
+
+      // return (Pose4d[]) Arrays.stream(limelights).map(l -> l.getAlliancePose())
        //         .filter(p -> trustPose(p)).toArray(Pose4d[]::new);
         Pose4d[] out = {};
-        for (Limelight limelight : limelights) {
+        if (limelights == null) {
+            return out;
+        }
+        
+         for (Limelight limelight : limelights) {
             if(limelight.hasTarget()) {
                 limelight.getTargetPoseRobotSpace();
                 Pose4d pose = limelight.getAlliancePose();

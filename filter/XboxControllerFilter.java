@@ -12,11 +12,12 @@ public class XboxControllerFilter extends XboxController{
     private double deadband;
     private double minPower;
     private double maxPower;
-    private double rampDelta;
-    private double lastOutput;
+    private double rampDelta = 1;
+    private double lastOutputX = 0;
+    private double lastOutputY = 0;
 
     public enum filterMode {
-        CUBIC, SQUARED, LINEAR
+        CUBIC, SQUARED, LINEAR, EXPONENTIAL
     }
 
     /**
@@ -76,30 +77,54 @@ public class XboxControllerFilter extends XboxController{
     private double[] filter(double X, double Y) {
         double xOutput = 0;
         double yOutput = 0;
-        double magnitude = Math.sqrt(Math.pow(X, 2) + Math.pow(Y, 2));
-        Rotation2d theta = Rotation2d.fromRadians(Math.atan2(Y, X));
+        double magnitude = Math.hypot(X, -Y);
+        Rotation2d theta = Rotation2d.fromRadians(Math.atan2(-Y, X));
 
         if (Math.abs(magnitude) < deadband) {
             xOutput = 0;
             yOutput = 0;
         } else {
             switch (mode) {
+                case EXPONENTIAL:
+                    xOutput = Math.pow(1, magnitude) * theta.getCos();
+                    yOutput = Math.pow(1, magnitude) * theta.getSin();
                 case CUBIC:
-                    xOutput = LightningMath.scale(Math.pow(magnitude, 3) * theta.getCos(), deadband, 1, minPower, maxPower);
-                    yOutput = LightningMath.scale(Math.pow(magnitude, 3) * theta.getSin(), deadband, 1, minPower, maxPower);
+                    xOutput = Math.pow(magnitude, 3) * theta.getCos();
+                    yOutput = Math.pow(magnitude, 3) * theta.getSin();
                     break;
                 case SQUARED:
-                    xOutput = LightningMath.scale(Math.pow(magnitude, 2) * theta.getCos(), deadband, 1, minPower, maxPower);
-                    yOutput = LightningMath.scale(Math.pow(magnitude, 2) * theta.getSin(), deadband, 1, minPower, maxPower);
+                    xOutput = Math.pow(magnitude, 2) * theta.getCos();
+                    yOutput = Math.pow(magnitude, 2) * theta.getSin();
                     break;
                 case LINEAR:
-                    xOutput = LightningMath.scale(magnitude * theta.getCos(), deadband, 1, minPower, maxPower);
-                    yOutput = LightningMath.scale(magnitude * theta.getSin(), deadband, 1, minPower, maxPower);
+                    xOutput = X;
+                    yOutput = -Y;
                     break;
             }
         }
 
-        return new double[] {MathUtil.clamp(xOutput, lastOutput - rampDelta, lastOutput + rampDelta), MathUtil.clamp(yOutput, lastOutput - rampDelta, lastOutput + rampDelta)};
-    }
+        if (xOutput > 1){
+            xOutput = 1;
+        }
+        if (yOutput > 1){
+            yOutput = 1;
+        }
+        if (xOutput < -1){
+            xOutput = -1;
+        }
+        if (yOutput < -1){
+            yOutput = -1;
+        }
 
+
+        var result = new double[] {MathUtil.clamp(xOutput, lastOutputX - rampDelta, lastOutputX + rampDelta), MathUtil.clamp(yOutput, lastOutputY - rampDelta, lastOutputY + rampDelta)};
+        lastOutputX = result[0];
+        lastOutputY = result[1];
+
+        System.out.println("xoutput " +  result[0]);   
+        System.out.println("youtput " + result[1]);
+        // System.out.println("theta " + theta.getDegrees());
+
+        return result;
+    }
 }
