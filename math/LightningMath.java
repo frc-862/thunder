@@ -86,8 +86,7 @@ public final class LightningMath {
         final double inputRange = highInput - lowInput;
         final double outputRange = highOutput - lowOutput;
 
-        return (input - lowInput) * outputRange / inputRange + lowOutput;
-    }
+        return (input - lowInput) * outputRange / inputRange + lowOutput;    }
 
     public static double deadZone(double input, double deadband) {
         return Math.abs(input) >= deadband ? input : 0;
@@ -115,6 +114,8 @@ public final class LightningMath {
      */
     public static Pose2d lerp(Pose2d startValue, Pose2d endValue, double t) {
         return startValue.plus((endValue.minus(startValue)).times(t));
+
+        
     }
 
     /**

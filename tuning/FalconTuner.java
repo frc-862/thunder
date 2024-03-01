@@ -1,5 +1,6 @@
 package frc.thunder.tuning;
 
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import frc.thunder.hardware.ThunderBird;
 import frc.thunder.shuffleboard.LightningShuffleboard;
@@ -7,6 +8,7 @@ import java.util.function.Consumer;
 
 public class FalconTuner {
     private Slot0Configs PIDConfigs;
+    private MotionMagicConfigs MMagicConfigs;
     private ThunderBird motor;
     private Consumer<Double> setPointSupplier;
     private double defaultSetPoint = 0;
@@ -18,6 +20,10 @@ public class FalconTuner {
     private double kS = 0;
     private double kV = 0;
     private double kA = 0;
+    
+    private double MMAGIC_ACCEL = 0;
+    private double MMAGIC_CRUISE_VELOCITY = 0;
+    private double MMAGIC_JERK = 0;
 
     /**
      * creates a new FalconTuner, which publishes *Slot0* PIDF gains to shuffleboard and applies them when changed; existing PID gains are copied
@@ -43,6 +49,12 @@ public class FalconTuner {
         kS = PIDConfigs.kS;
         kV = PIDConfigs.kV;
         kA = PIDConfigs.kA;
+
+        MMagicConfigs = motor.getConfig().MotionMagic;
+        MMAGIC_ACCEL = MMagicConfigs.MotionMagicAcceleration;
+        MMAGIC_CRUISE_VELOCITY = MMagicConfigs.MotionMagicCruiseVelocity;
+        MMAGIC_JERK = MMagicConfigs.MotionMagicJerk;
+
     }
 
     /**
@@ -50,12 +62,16 @@ public class FalconTuner {
      */
     private boolean checkGains() {
         PIDConfigs = motor.getConfig().Slot0;
+        MMagicConfigs = motor.getConfig().MotionMagic;
         return  PIDConfigs.kP != kP ||
                 PIDConfigs.kI != kI ||
                 PIDConfigs.kD != kD ||
                 PIDConfigs.kS != kS ||
                 PIDConfigs.kV != kV ||
-                PIDConfigs.kA != kA;
+                PIDConfigs.kA != kA ||
+                MMagicConfigs.MotionMagicAcceleration != MMAGIC_ACCEL ||
+                MMagicConfigs.MotionMagicCruiseVelocity != MMAGIC_CRUISE_VELOCITY ||
+                MMagicConfigs.MotionMagicJerk != MMAGIC_JERK;
     }
 
     /**
@@ -70,11 +86,17 @@ public class FalconTuner {
         kS = LightningShuffleboard.getDouble(tabName, "kS", kS);
         kV = LightningShuffleboard.getDouble(tabName, "kV", kV);
         kA = LightningShuffleboard.getDouble(tabName, "kA", kA);
+        MMAGIC_ACCEL = LightningShuffleboard.getDouble(tabName, "acceleration", MMAGIC_ACCEL);
+        MMAGIC_CRUISE_VELOCITY = LightningShuffleboard.getDouble(tabName, "cruiseVelocity", MMAGIC_CRUISE_VELOCITY);
+        MMAGIC_JERK = LightningShuffleboard.getDouble(tabName, "jerk", MMAGIC_JERK);
 
         setPointSupplier.accept(LightningShuffleboard.getDouble(tabName, "setpoint", defaultSetPoint));
             
         if(checkGains()) {
             motor.configPIDF(0, kP, kI, kD, kS, kV, kA);
+            motor.getConfig().MotionMagic.MotionMagicAcceleration = MMAGIC_ACCEL;
+            motor.getConfig().MotionMagic.MotionMagicCruiseVelocity = MMAGIC_CRUISE_VELOCITY;
+            motor.getConfig().MotionMagic.MotionMagicJerk = MMAGIC_JERK;
             motor.applyConfig();
         }
     }

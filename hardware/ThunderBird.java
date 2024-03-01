@@ -7,7 +7,6 @@ import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import java.util.function.Consumer;
 
 import frc.thunder.tuning.SlotConfiguration;
 
@@ -29,11 +28,14 @@ public class ThunderBird extends TalonFX {
         configSupplyLimit(40d, 40d, 100d);
         configStatorLimit(statorLimit);
         configBrake(brake);
+        
         applyConfig();
     }
 
     /**
      * @param inverted boolean (true = clockwise positive, false = counterclockwise positive)
+     * <p> YOU MUST CALL applyConfig() AFTER USING THIS METHOD </p>
+     * @see #applyConfig()
      */
     public void configInvert(boolean inverted) {
         this.config.MotorOutput.Inverted = inverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
@@ -41,6 +43,8 @@ public class ThunderBird extends TalonFX {
 
     /**
      * @param supplyLimit Input current limit from the pdh (zero to disable)
+     * <p> YOU MUST CALL applyConfig() AFTER USING THIS METHOD </p>
+     * @see #applyConfig()
      */
     public void configSupplyLimit(double supplyLimit) {
         config.CurrentLimits.SupplyCurrentLimitEnable = supplyLimit > 0;
@@ -51,6 +55,8 @@ public class ThunderBird extends TalonFX {
      * @param supplyLimit Input current limit from the pdh (zero to disable)
      * @param triggerThreshold allow the current to exceed the limit for the given time
      * @param timeThreshold time where current is allowed to exceed the threshold
+     * <p> YOU MUST CALL applyConfig() AFTER USING THIS METHOD </p>
+     * @see #applyConfig()
      */
     public void configSupplyLimit(double supplyLimit, double triggerThreshold, double timeThreshold) {
         configSupplyLimit(supplyLimit);
@@ -60,6 +66,8 @@ public class ThunderBird extends TalonFX {
 
     /**
      * @param statorLimit Stator current limit for the motor (zero to disable)
+     * <p> YOU MUST CALL applyConfig() AFTER USING THIS METHOD </p>
+     * @see #applyConfig()
      */
     public void configStatorLimit(double statorLimit) {
         config.CurrentLimits.StatorCurrentLimitEnable = statorLimit > 0;
@@ -68,37 +76,11 @@ public class ThunderBird extends TalonFX {
 
     /**
      * @param brake boolean (true = brake, false = coast)
+     * <p> YOU MUST CALL applyConfig() AFTER USING THIS METHOD </p>
+     * @see #applyConfig()
      */
     public void configBrake(boolean brake) {
         config.MotorOutput.NeutralMode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
-    }
-
-    /**
-     * @deprecated use {@link #configPIDF()} instead
-     * 
-     * @param kP specified slot kP
-     * @param kI specified slot kI
-     * @param kD specified slot kD
-     * @param slotNumber pid slot to use: 0, 1, or 2
-     */
-    public void configPID(double kP, double kI, double kD, int slotNumber) {
-        switch (slotNumber) {
-            case 0:
-                config.Slot0.kP = kP;
-                config.Slot0.kI = kI;
-                config.Slot0.kD = kD;
-                break;
-            case 1:
-                config.Slot1.kP = kP;
-                config.Slot1.kI = kI;
-                config.Slot1.kD = kD;
-                break;
-            case 2:
-                config.Slot2.kP = kP;
-                config.Slot2.kI = kI;
-                config.Slot2.kD = kD;
-                break;
-        }
     }
 
     /**
@@ -107,6 +89,8 @@ public class ThunderBird extends TalonFX {
      * @param kI specified slot kI
      * @param kD specified slot kD
      * @param kF optional parameters kS, kV, and kA for the slot. If not provided, they will be set to 0.
+     * <p> YOU MUST CALL applyConfig() AFTER USING THIS METHOD </p>
+     * @see #applyConfig()
      */
     public void configPIDF(int slotNumber, double kP, double kI, double kD, double... kF) {
         
@@ -126,12 +110,15 @@ public class ThunderBird extends TalonFX {
         slotConfig.kV = kV;
         slotConfig.kA = kA;
 
+        
         config = slotConfig.getConfig();
     }
 
     /**
      * @param kS specified slot kS
      * @param slotNumber pid slot to use: 0, 1, or 2
+     * <p> YOU MUST CALL applyConfig() AFTER USING THIS METHOD </p>
+     * @see #applyConfig()
      */
     public void configKs(double kS, int slotNumber) {
         SlotConfiguration slotConfig = new SlotConfiguration(slotNumber, config);
@@ -142,6 +129,8 @@ public class ThunderBird extends TalonFX {
     /**
      * @param kV specified slot kV
      * @param slotNumber pid slot to use: 0, 1, or 2
+     * <p> YOU MUST CALL applyConfig() AFTER USING THIS METHOD </p>
+     * @see #applyConfig()
      */
     public void configKv(double kV, int slotNumber) {
         SlotConfiguration slotConfig = new SlotConfiguration(slotNumber, config);
@@ -155,15 +144,31 @@ public class ThunderBird extends TalonFX {
      */
     public StatusCode applyConfig(TalonFXConfiguration config) {
         this.config = config;
-        return super.getConfigurator().apply(config);
+        StatusCode status = StatusCode.StatusCodeNotInitialized;
+        for(int i = 0; i < 5; ++i) {
+            status = super.getConfigurator().apply(config);
+        if (status.isOK()) break;
+        }
+        if (!status.isOK()) {
+            System.out.println("Could not configure device. Error: " + status.toString());
+        }
+        return status;
     }
-
+    
     /**
      * Apply the stored configuration to the motor, use this after using built-in config methods
      * @return StatusCode of set command
      */
     public StatusCode applyConfig() {
-        return super.getConfigurator().apply(this.config);
+        StatusCode status = StatusCode.StatusCodeNotInitialized;
+        for(int i = 0; i < 5; ++i) {
+          status = super.getConfigurator().apply(config);
+          if (status.isOK()) break;
+        }
+        if (!status.isOK()) {
+          System.out.println("Could not configure device. Error: " + status.toString());
+        }
+        return status;
     }
 
     /**

@@ -121,6 +121,10 @@ public class XboxControllerFilter extends XboxController{
         lastOutputX = result[0];
         lastOutputY = result[1];
 
+        System.out.println("xoutput " +  result[0]);   
+        System.out.println("youtput " + result[1]);
+        // System.out.println("theta " + theta.getDegrees());
+
         return result;
     }
 }
