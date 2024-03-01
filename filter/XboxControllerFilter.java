@@ -77,8 +77,8 @@ public class XboxControllerFilter extends XboxController{
     private double[] filter(double X, double Y) {
         double xOutput = 0;
         double yOutput = 0;
-        double magnitude = Math.hypot(X, -Y);
-        Rotation2d theta = Rotation2d.fromRadians(Math.atan2(-Y, X));
+        double magnitude = Math.hypot(X, Y);
+        Rotation2d theta = Rotation2d.fromRadians(Math.atan2(Y, X));
 
         if (Math.abs(magnitude) < deadband) {
             xOutput = 0;
@@ -98,7 +98,7 @@ public class XboxControllerFilter extends XboxController{
                     break;
                 case LINEAR:
                     xOutput = X;
-                    yOutput = -Y;
+                    yOutput = Y;
                     break;
             }
         }
