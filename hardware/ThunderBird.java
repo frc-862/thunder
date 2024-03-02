@@ -1,6 +1,7 @@
 package frc.thunder.hardware;
 
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.ParentConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
@@ -28,8 +29,19 @@ public class ThunderBird extends TalonFX {
         configSupplyLimit(40d, 40d, 100d);
         configStatorLimit(statorLimit);
         configBrake(brake);
-        
+        configRampRate();
         applyConfig();
+    }
+
+    private void configRampRate() {
+
+        this.config.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.1;
+        this.config.OpenLoopRamps.TorqueOpenLoopRampPeriod = 0.1;
+        this.config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.1; 
+        this.config.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.1;
+        this.config.ClosedLoopRamps.TorqueClosedLoopRampPeriod = 0.1;
+        this.config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
+
     }
 
     /**
