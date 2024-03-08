@@ -9,7 +9,6 @@ import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
@@ -20,17 +19,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.trajectory.constraint.RectangularRegionConstraint;
 import edu.wpi.first.networktables.DoubleArrayEntry;
-import edu.wpi.first.networktables.DoubleArrayTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.TimestampedDoubleArray;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
-import frc.robot.Constants.VisionConstants;
 import frc.thunder.util.Pose4d;
 import frc.thunder.util.PoseConverter;
 import frc.thunder.vision.targeting.TargetingResult;
@@ -49,7 +41,7 @@ public class Limelight {
      * Create a new Limelight object with the specified name and ip
      * 
      * @param name the name of the limelight used in network tables
-     * @param ip the ip of the limelight (no slashes or http://)
+     * @param ip   the ip of the limelight (no slashes or http://)
      */
     public Limelight(String name, String ip) {
         this.name = name;
@@ -70,7 +62,8 @@ public class Limelight {
     /**
      * Create a new Limelight object with the specified name and default ip
      * 
-     * @param name the name of the limelight used in network tables ip defaults to 10.8.62.11
+     * @param name the name of the limelight used in network tables ip defaults to
+     *             10.8.62.11
      * @see Limelight#Limelight(String, String)
      */
     public Limelight(String name) {
@@ -81,7 +74,8 @@ public class Limelight {
      * get a double from network tables with the specified key
      * 
      * @param key the key to get the value from
-     * @return the value of the key, or ntDefaultDouble if the key does not exist or has some other
+     * @return the value of the key, or ntDefaultDouble if the key does not exist or
+     *         has some other
      *         error
      */
     private double getDoubleNT(String key) {
@@ -92,7 +86,8 @@ public class Limelight {
      * get a boolean from network tables with the specified key
      * 
      * @param key the key to get the value from
-     * @return the value of the key, or ntDefaultDouble if the key does not exist or has some other
+     * @return the value of the key, or ntDefaultDouble if the key does not exist or
+     *         has some other
      *         error
      */
     private int getIntNT(String key) {
@@ -103,7 +98,8 @@ public class Limelight {
      * get a String from network tables with the specified key
      * 
      * @param key the key to get the value from
-     * @return the value of the key, or ntDefaultString if the key does not exist or has some other
+     * @return the value of the key, or ntDefaultString if the key does not exist or
+     *         has some other
      *         error
      */
     private String getStringNT(String key) {
@@ -114,7 +110,8 @@ public class Limelight {
      * get a double array from network tables with the specified key
      * 
      * @param key the key to get the value from
-     * @return the value of the key, or ntDefaultArray if the key does not exist or has some other
+     * @return the value of the key, or ntDefaultArray if the key does not exist or
+     *         has some other
      *         error
      */
     private double[] getArrayNT(String key) {
@@ -124,7 +121,7 @@ public class Limelight {
     /**
      * set a double in network tables with the specified key
      * 
-     * @param key the key to set the value of
+     * @param key   the key to set the value of
      * @param value the value to set the key to (can be int or double)
      */
     private void setNumNT(String key, Number value) {
@@ -134,7 +131,7 @@ public class Limelight {
     /**
      * set a String in network tables with the specified key
      * 
-     * @param key the key to set the value of
+     * @param key   the key to set the value of
      * @param value the value to set the key to
      */
     private void setArrayNT(String key, double[] value) {
@@ -151,7 +148,8 @@ public class Limelight {
     /**
      * Horizontal Offset From Crosshair To Target
      * 
-     * @return (LL1: -27 degrees to 27 degrees | LL2: -29.8 to 29.8 degrees | LL3: -30 to 30
+     * @return (LL1: -27 degrees to 27 degrees | LL2: -29.8 to 29.8 degrees | LL3:
+     *         -30 to 30
      *         degrees)
      */
     public double getTargetX() {
@@ -162,7 +160,8 @@ public class Limelight {
     /**
      * Vertical Offset From Crosshair To Target
      * 
-     * @return (LL1: -20.5 degrees to 20.5 degrees | LL2: -24.85 to 24.85 degrees | -24 to 24
+     * @return (LL1: -20.5 degrees to 20.5 degrees | LL2: -24.85 to 24.85 degrees |
+     *         -24 to 24
      *         degrees)
      */
     public double getTargetY() {
@@ -191,7 +190,8 @@ public class Limelight {
     }
 
     /**
-     * @return Capture pipeline latency (ms). Time between the end of the exposure of the middle row
+     * @return Capture pipeline latency (ms). Time between the end of the exposure
+     *         of the middle row
      *         of the sensor to the beginning of the tracking pipeline.
      */
     public double getCaptureLatency() {
@@ -199,7 +199,8 @@ public class Limelight {
     }
 
     /**
-     * @return the total latency of the limelight (ms). This is the sum of the pipeline and capture
+     * @return the total latency of the limelight (ms). This is the sum of the
+     *         pipeline and capture
      *         latency.
      */
     public double getTotalLatency() {
@@ -242,14 +243,16 @@ public class Limelight {
     }
 
     /**
-     * @return Class ID of primary neural detector result or neural classifier result
+     * @return Class ID of primary neural detector result or neural classifier
+     *         result
      */
     public String getNeuralClassID() {
         return getStringNT("tclass");
     }
 
     /**
-     * @return Get the average HSV color underneath the crosshair region as a NumberArray
+     * @return Get the average HSV color underneath the crosshair region as a
+     *         NumberArray
      */
     public double[] getAverageHSV() {
         return getArrayNT("tc");
@@ -258,55 +261,44 @@ public class Limelight {
     DoubleArrayEntry poseEntry = null;
 
     /**
-     * This function only does the lookup, once which should be slightly more efficient.
+     * This function only does the lookup, once which should be slightly more
+     * efficient.
      * 
      * @return the Network Table Entry for the pose, based on current alliance
      */
-    private DoubleArrayEntry  getPoseEntry() {
+    private DoubleArrayEntry getBluePoseEntry() {
         if (poseEntry != null)
             return poseEntry;
 
-        DoubleArrayTopic topic;
-        switch (DriverStation.getAlliance().get()) {
-            case Blue:
-                topic = table.getDoubleArrayTopic("botpose_wpiblue");
-                break;
-            case Red:
-                topic = table.getDoubleArrayTopic("botpose_wpired");
-                break;
-            default:
-                return null;
-        }
-
+        var topic = table.getDoubleArrayTopic("botpose_wpiblue");
         poseEntry = topic.getEntry(ntDefaultArray);
         return poseEntry;
     }
 
     /**
-     * Automatically return either the blue or red alliance pose based on which alliance the driver
+     * Automatically return either the blue or red alliance pose based on which
+     * alliance the driver
      * station reports
      * 
      * @see Limelight#getBotPoseBlue()
-     * @see Limelight#getBotPoseRed() Robot transform is in field-space (alliance color
+     * @see Limelight#getBotPoseRed() Robot transform is in field-space (alliance
+     *      color
      *      driverstation WPILIB origin)
      * @return Translation (X,Y,Z) Rotation(Roll,Pitch,Yaw), total latency (cl+tl)
      */
-    public Pose4d getAlliancePose() {
-        var entry = getPoseEntry();
+    public Pose4d getBlueAlliancePose() {
+        var entry = getBluePoseEntry();
         if (entry != null) {
             TimestampedDoubleArray rawPose = entry.getAtomic();
-            var lastPoseAt = rawPose.timestamp / 1.0e6; // Convert from microseconds to seconds
-            var result = PoseConverter.toPose4d(rawPose.value, lastPoseAt);
-            result.setDistance(getTargetPoseCameraSpace().getTranslation().getDistance(new Translation3d()));
-            result.setMoreThanOneTarget(Math.abs(getIntNT("tvert")-getIntNT("thor"))>75);
-            return result;
+            return new Pose4d(rawPose.value, rawPose.timestamp / 1.0e6);
         } else {
             return new Pose4d();
         }
     }
 
     /**
-     * @return 3D transform of the camera in the coordinate system of the primary in-view AprilTag
+     * @return 3D transform of the camera in the coordinate system of the primary
+     *         in-view AprilTag
      */
     public Pose3d getCamPoseTargetSpace() {
         return PoseConverter.toPose3d(getArrayNT("camerapose_targetspace"));
@@ -320,14 +312,16 @@ public class Limelight {
     }
 
     /**
-     * @return 3D transform of the primary in-view AprilTag in the coordinate system of the Camera
+     * @return 3D transform of the primary in-view AprilTag in the coordinate system
+     *         of the Camera
      */
     public Pose3d getTargetPoseCameraSpace() {
         return PoseConverter.toPose3d(getArrayNT("targetpose_cameraspace"));
     }
 
     /**
-     * @return 3D transform of the primary in-view AprilTag in the coordinate system of the Robot
+     * @return 3D transform of the primary in-view AprilTag in the coordinate system
+     *         of the Robot
      */
     public Pose3d getTargetPoseRobotSpace() {
         return PoseConverter.toPose3d(getArrayNT("targetpose_robotspace"));
@@ -355,7 +349,8 @@ public class Limelight {
     }
 
     /**
-     * Sets limelight’s LED state PIPELINE: use the LED Mode set in the current pipeline OFF: force
+     * Sets limelight’s LED state PIPELINE: use the LED Mode set in the current
+     * pipeline OFF: force
      * off BLINK: force blink ON: force on
      * 
      * @param mode LED Mode
@@ -386,7 +381,8 @@ public class Limelight {
     }
 
     /**
-     * Sets limelight’s operation mode VISION: use for vision processing DRIVER: Driver Camera
+     * Sets limelight’s operation mode VISION: use for vision processing DRIVER:
+     * Driver Camera
      * (Increases exposure, disables vision processing)
      * 
      * @param mode Cam Mode
@@ -417,9 +413,12 @@ public class Limelight {
     }
 
     /**
-     * Sets limelight’s streaming mode STANDARD: Side-by-side streams if a webcam is attached to
-     * Limelight PIP_MAIN: The secondary camera stream is placed in the lower-right corner of the
-     * primary camera stream PIP_SECONDARY: The primary camera stream is placed in the lower-right
+     * Sets limelight’s streaming mode STANDARD: Side-by-side streams if a webcam is
+     * attached to
+     * Limelight PIP_MAIN: The secondary camera stream is placed in the lower-right
+     * corner of the
+     * primary camera stream PIP_SECONDARY: The primary camera stream is placed in
+     * the lower-right
      * corner of the secondary camera stream
      * 
      * @param mode Stream Mode
@@ -450,7 +449,8 @@ public class Limelight {
     }
 
     /**
-     * Sets limelight’s crop rectangle. The pipeline must utilize the default crop rectangle in the
+     * Sets limelight’s crop rectangle. The pipeline must utilize the default crop
+     * rectangle in the
      * web interface.
      * 
      * @param xMin the minimum x value of the crop rectangle (-1 to 1)
@@ -459,14 +459,15 @@ public class Limelight {
      * @param yMax the maximum y value of the crop rectangle (-1 to 1)
      */
     public void setCropSize(double xMin, double yMin, double xMax, double yMax) {
-        setArrayNT("crop", new double[] {xMin, xMax, yMin, yMax});
+        setArrayNT("crop", new double[] { xMin, xMax, yMin, yMax });
     }
 
     @Deprecated
     /**
      * @deprecated use limelight pipeline instead
-     * @param pose the camera's position, with X as front/back, Y as left/right, and Z as up/down,
-     *        in meters
+     * @param pose the camera's position, with X as front/back, Y as left/right, and
+     *             Z as up/down,
+     *             in meters
      */
     public void setCameraPoseRobotSpace(Pose3d pose) {
         double[] ntValues = new double[6];
@@ -487,7 +488,6 @@ public class Limelight {
     public Pose3d getCameraPoseRobotSpace() {
         return getCamPoseRobotSpace();
     }
-
 
     /**
      * @return a URL object containing the ip of the limelight
@@ -511,14 +511,15 @@ public class Limelight {
         }
     }
 
-
     /**
      * generic http request to the limelight
      * 
-     * @param suffix the suffix to add to the base url (eg "deletesnapshots", "capturesnapshot")
-     * @param type the type of request to send (eg "GET", "POST")
+     * @param suffix  the suffix to add to the base url (eg "deletesnapshots",
+     *                "capturesnapshot")
+     * @param type    the type of request to send (eg "GET", "POST")
      * @param headers the headers to send with the request
-     * @return the response message from the limelight Errors are printed to stderr, and a null
+     * @return the response message from the limelight Errors are printed to stderr,
+     *         and a null
      *         value is returned
      */
     private String httpRequest(String suffix, String type,
@@ -559,9 +560,11 @@ public class Limelight {
     /**
      * send a GET request to the limelight with the specified suffix
      * 
-     * @param suffix the suffix to add to the base url (eg "deletesnapshots", "capturesnapshot")
+     * @param suffix  the suffix to add to the base url (eg "deletesnapshots",
+     *                "capturesnapshot")
      * @param headers the headers to send with the request
-     * @return the response message from the limelight Errors are printed to stderr, and a null
+     * @return the response message from the limelight Errors are printed to stderr,
+     *         and a null
      *         value is returned
      */
     private String getRequest(String suffix, ArrayList<Pair<String, String>> headers) {
@@ -569,10 +572,13 @@ public class Limelight {
     }
 
     /**
-     * send a GET request to the limelight with the specified suffix, with no headers
+     * send a GET request to the limelight with the specified suffix, with no
+     * headers
      * 
-     * @param suffix the suffix to add to the base url (eg "deletesnapshots", "capturesnapshot")
-     * @return the response message from the limelight Errors are printed to stderr, and a null
+     * @param suffix the suffix to add to the base url (eg "deletesnapshots",
+     *               "capturesnapshot")
+     * @return the response message from the limelight Errors are printed to stderr,
+     *         and a null
      *         value is returned
      */
     private String getRequest(String suffix) {
@@ -581,7 +587,8 @@ public class Limelight {
 
     /**
      * @param supplier the function to run asynchronously
-     * @return the result of the function Errors are printed to stderr, and a null value is returned
+     * @return the result of the function Errors are printed to stderr, and a null
+     *         value is returned
      */
     private String async(Supplier<Object> supplier) {
         try {
@@ -593,7 +600,8 @@ public class Limelight {
     }
 
     /**
-     * Take exactly one snapshot with the current limelight settings. Limited to 2 snapshots per
+     * Take exactly one snapshot with the current limelight settings. Limited to 2
+     * snapshots per
      * second.
      * 
      * @param name the name of the snapshot
@@ -608,7 +616,8 @@ public class Limelight {
     }
 
     /**
-     * Take exactly one snapshot with the current limelight settings with default naming (name
+     * Take exactly one snapshot with the current limelight settings with default
+     * naming (name
      * defaults to snap)
      * 
      * @see Limelight#SynchronousSnapshot(String)
@@ -659,7 +668,8 @@ public class Limelight {
 
     /**
      * @param raw a raw String containing json data
-     * @return a JsonNode containing parsed json data, or null if the data is invalid Errors are
+     * @return a JsonNode containing parsed json data, or null if the data is
+     *         invalid Errors are
      *         printed to stderr, and a null value is returned
      */
     private JsonNode parseJson(String raw) {
@@ -670,73 +680,5 @@ public class Limelight {
             e.printStackTrace();
             return null;
         }
-    }
-
-    /**
-     * Current checks:
-     * <ul>
-     * <li>Pose is not null</li>
-     * <li>Pose is not an empty Pose4d</li>
-     * <li>Limelight has a target</li>
-     * </ul>
-     * 
-     * @return true if all checks pass, otherwise false
-     */
-    public boolean trustPose() {
-        Pose4d pose = getAlliancePose();
-        return hasTarget() && trustPose(pose);
-    }
-
-    static RectangularRegionConstraint FIELD = new RectangularRegionConstraint(
-            new Translation2d(0, 0), VisionConstants.FIELD_LIMIT, null);
-
-    public static boolean trustPose(Pose4d pose) {
-        return (pose != null && pose != new Pose4d() && FIELD.isPoseInRegion(pose.toPose2d()));
-                // && (Timer.getFPGATimestamp() - pose.getFPGATimestamp() < 0.03));
-    }
-
-    /**
-     * @param limelights an array containing all limelights to filter
-     * @return an array containing only the limelights that pass the trustPose() check
-     */
-    public static Limelight[] filterLimelights(Limelight[] limelights) {
-        Limelight[] out = {};
-        for (Limelight limelight : limelights) {
-            if (limelight.trustPose()) {
-                out = Arrays.copyOf(out, out.length + 1);
-                out[out.length - 1] = limelight;
-            }
-        }
-
-        return out;
-    }
-
-    /**
-     * prevent race condition where we will get incorrect poses -- also should be more efficent
-     * 
-     * @param limelights an array containing all limelights to filter
-     * @return an array containing only the Pose4d objects that pass the trustPose() check
-     */
-    public static Pose4d[] filteredPoses(Limelight[] limelights) {
-
-      // return (Pose4d[]) Arrays.stream(limelights).map(l -> l.getAlliancePose())
-       //         .filter(p -> trustPose(p)).toArray(Pose4d[]::new);
-        Pose4d[] out = {};
-        if (limelights == null) {
-            return out;
-        }
-        
-         for (Limelight limelight : limelights) {
-            if(limelight.hasTarget()) {
-                limelight.getTargetPoseRobotSpace();
-                Pose4d pose = limelight.getAlliancePose();
-                if (trustPose(pose)) {
-                    out = Arrays.copyOf(out, out.length + 1);
-                    out[out.length - 1] = pose;
-                }
-            }
-        }
-
-        return out;
     }
 }
