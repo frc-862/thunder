@@ -290,10 +290,11 @@ public class Limelight {
         var entry = getBluePoseEntry();
         if (entry != null) {
             TimestampedDoubleArray rawPose = entry.getAtomic();
-            return new Pose4d(rawPose.value, rawPose.timestamp / 1.0e6);
-        } else {
-            return new Pose4d();
+            if(rawPose.value.length >= 10) {
+                return new Pose4d(rawPose.value, rawPose.timestamp / 1.0e6);
+            }
         }
+            return new Pose4d();
     }
 
     /**
