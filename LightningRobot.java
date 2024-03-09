@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.thunder.fault.FaultCode;
 import frc.thunder.fault.FaultMonitor;
 import frc.thunder.fault.LightningFaultCodes;
@@ -30,8 +31,7 @@ import java.util.Properties;
  * self-testing support with
  * {@link frc.thunder.testing.SystemTestCommand}.
  */
-public class 
-LightningRobot extends TimedRobot {
+public class LightningRobot extends TimedRobot {
 
     private LightningContainer container;
 
@@ -50,15 +50,13 @@ LightningRobot extends TimedRobot {
 
     private Command autonomousCommand;
 
-    
-
     public LightningRobot(LightningContainer container) {
-        //timed robot has default constructor of 20ms and we want it at 10ms. 
+        // timed robot has default constructor of 20ms and we want it at 10ms.
         super(LOOP_TIME);
         this.container = container;
     }
 
-    public double getSettleTime(){
+    public double getSettleTime() {
         return SETTLE_TIME;
     }
 
@@ -71,12 +69,21 @@ LightningRobot extends TimedRobot {
         return container;
     }
 
+    private boolean haveDriverStation = false;
+
     /**
      * Nothing should happen here.
      */
     @Override
     public void disabledPeriodic() {
-        /* Do Nothing */ }
+        if (!haveDriverStation && DriverStation.getAlliance().isPresent()) {
+            haveDriverStation = true;
+            allianceKnown(DriverStation.getAlliance().get());
+        }
+    }
+
+    protected void allianceKnown(Alliance alliance) {
+    }
 
     /**
      * This function is run when the robot is first started up and should be
@@ -88,7 +95,7 @@ LightningRobot extends TimedRobot {
     public void robotInit() {
         System.out.println("LightningRobot.robotInit");
 
-        //Starts WPILIB data logging
+        // Starts WPILIB data logging
         DataLogManager.start("/home/lvuser/datalog");
 
         // Start logging driverstation
@@ -117,8 +124,8 @@ LightningRobot extends TimedRobot {
             System.out.println("Unable to read build version information.");
         }
 
-
-        // Also by this point, all fault codes should be registered, so we can throw them up on the dashboard
+        // Also by this point, all fault codes should be registered, so we can throw
+        // them up on the dashboard
         FaultCode.init();
 
         // Set up a fault monitor for our loop time
@@ -174,7 +181,8 @@ LightningRobot extends TimedRobot {
      * long running operation, consider creating a background
      * thread.
      */
-    protected void robotBackgroundPeriodic() {}
+    protected void robotBackgroundPeriodic() {
+    }
 
     /**
      * A slow loop, running once a second
@@ -185,7 +193,8 @@ LightningRobot extends TimedRobot {
      * long running operation, consider creating a background
      * thread.
      */
-    protected void robotLowPriorityPeriodic() {}
+    protected void robotLowPriorityPeriodic() {
+    }
 
     /**
      * A loop, running 10 times a second
@@ -239,7 +248,7 @@ LightningRobot extends TimedRobot {
         if (autonomousCommand != null)
             autonomousCommand.cancel();
     }
-    
+
     @Override
     public void testInit() {
         System.out.println("LightningRobot.testInit");
