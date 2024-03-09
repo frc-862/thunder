@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.constraint.RectangularRegionConstraint;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.VisionConstants;
 
@@ -123,6 +124,9 @@ public class Pose4d extends Pose3d {
 
     public Matrix<N3, N1> getStdDevs() {
         var confidence = getConfidence();
+        if(DriverStation.isDisabled()) {
+            return VecBuilder.fill(confidence, confidence, Math.toRadians(confidence));
+        }
         return VecBuilder.fill(confidence, confidence, Math.toRadians(500 * confidence));
     }
 }
