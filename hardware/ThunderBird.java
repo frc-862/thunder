@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.ParentConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -100,18 +101,19 @@ public class ThunderBird extends TalonFX {
      * @param kP specified slot kP
      * @param kI specified slot kI
      * @param kD specified slot kD
-     * @param kF optional parameters kS, kV, and kA for the slot. If not provided, they will be set to 0.
+     * @param kF optional parameters kS, kV, kA, and kG for the slot. If not provided, they will be set to 0.
      * <p> YOU MUST CALL applyConfig() AFTER USING THIS METHOD </p>
      * @see #applyConfig()
      */
     public void configPIDF(int slotNumber, double kP, double kI, double kD, double... kF) {
         
         // Ensure kF is the correct length (if 0 or >3, set all to 0)
-        kF = kF.length == 0 || kF.length > 3 ? new double[]{0d, 0d, 0d} : kF;
-        kF = kF.length == 1 ? new double[]{kF[0], 0d, 0d} : kF;
-        kF = kF.length == 2 ? new double[]{kF[0], kF[1], 0d} : kF;
+        kF = kF.length == 0 || kF.length > 4 ? new double[]{0d, 0d, 0d, 0d} : kF;
+        kF = kF.length == 1 ? new double[]{kF[0], 0d, 0d, 0d} : kF;
+        kF = kF.length == 2 ? new double[]{kF[0], kF[1], 0d, 0d} : kF;
+        kF = kF.length == 3 ? new double[]{kF[0], kF[1], kF[2], 0d} : kF;
 
-        double kS = kF[0], kV = kF[1], kA = kF[2];
+        double kS = kF[0], kV = kF[1], kA = kF[2], kG = kF[3];
 
         SlotConfiguration slotConfig = new SlotConfiguration(slotNumber, config);
 
@@ -121,6 +123,7 @@ public class ThunderBird extends TalonFX {
         slotConfig.kS = kS;
         slotConfig.kV = kV;
         slotConfig.kA = kA;
+        slotConfig.kG = kG;
 
         
         config = slotConfig.getConfig();
@@ -151,6 +154,18 @@ public class ThunderBird extends TalonFX {
     }
 
     /**
+     * @param gravityType specified slot gravity type (either Arm_Cosine or Elevator_Static)
+     * @param slotNumber pid slot to use: 0, 1, or 2
+     * <p> YOU MUST CALL applyConfig() AFTER USING THIS METHOD </p>
+     * @see #applyConfig()
+     */
+    public void configGravity(GravityTypeValue gravityType, int slotNumber) {
+        SlotConfiguration slotConfig = new SlotConfiguration(slotNumber, config);
+        slotConfig.GravityType = gravityType;
+        config = slotConfig.getConfig();
+    }
+
+    /**
      * @param config TalonFXConfiguration object to apply
      * @return StatusCode of set command
      */
@@ -159,7 +174,9 @@ public class ThunderBird extends TalonFX {
         StatusCode status = StatusCode.StatusCodeNotInitialized;
         for(int i = 0; i < 5; ++i) {
             status = super.getConfigurator().apply(config);
-        if (status.isOK()) break;
+        if (status.isOK()) {
+            break;
+        }
         }
         if (!status.isOK()) {
             System.out.println("Could not configure device. Error: " + status.toString());
@@ -175,7 +192,9 @@ public class ThunderBird extends TalonFX {
         StatusCode status = StatusCode.StatusCodeNotInitialized;
         for(int i = 0; i < 5; ++i) {
           status = super.getConfigurator().apply(config);
-          if (status.isOK()) break;
+          if (status.isOK()) {
+            break;
+        } 
         }
         if (!status.isOK()) {
           System.out.println("Could not configure device. Error: " + status.toString());
