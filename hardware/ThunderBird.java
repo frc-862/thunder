@@ -26,7 +26,6 @@ public class ThunderBird extends TalonFX {
         super(deviceId, canbus);
         this.config = new TalonFXConfiguration();
         configInvert(invert);
-        configSupplyLimit(40d, 40d, 100d);
         configStatorLimit(statorLimit);
         configBrake(brake);
         configRampRate();
