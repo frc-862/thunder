@@ -105,11 +105,11 @@ public class Pose4d extends Pose3d {
         double confidence = 18.0;
 
         if (getMoreThanOneTarget() && getDistance() < 3) {
-            confidence = 0.5;
+            confidence = 0.3;
         } else if (getMoreThanOneTarget()) {
-            confidence = 0.5 + ((getDistance() - 3) / 5 * 18);
+            confidence = 0.3 + ((getDistance() - 3) / 5 * 18);
         } else if (getDistance() < 2) {
-            confidence = 1.5 + (getDistance() / 2 * 5.0);
+            confidence = 0.7 + (getDistance() / 2 * 5.0);
         }
 
         return confidence;
