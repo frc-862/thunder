@@ -69,7 +69,7 @@ public class LightningRobot extends TimedRobot {
         return container;
     }
 
-    private boolean haveDriverStation = false;
+    public boolean haveDriverStation = false;
 
     /**
      * Nothing should happen here.
@@ -79,6 +79,7 @@ public class LightningRobot extends TimedRobot {
         if (!haveDriverStation && DriverStation.getAlliance().isPresent()) {
             haveDriverStation = true;
             allianceKnown(DriverStation.getAlliance().get());
+            System.out.println("SET FORWARD");
         }
     }
 
