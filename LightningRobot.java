@@ -36,7 +36,7 @@ public class LightningRobot extends TimedRobot {
     private LightningContainer container;
 
     private final static double SETTLE_TIME = 3.0;
-    private final static double LOOP_TIME = 0.01;
+    private final static double LOOP_TIME = 0.02;
 
     private int counter = 0;
 
