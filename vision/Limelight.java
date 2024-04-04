@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.networktables.DoubleArrayEntry;
 import edu.wpi.first.networktables.NetworkTable;
@@ -681,5 +682,35 @@ public class Limelight {
             e.printStackTrace();
             return null;
         }
+    }
+    
+    /*
+     * Sets the robot's orientation to the given values
+     * Must be called in periodic (per Megatag2)
+     */
+    public void setRobotOrientation(double yaw, double yawRate, 
+        double pitch, double pitchRate, 
+        double roll, double rollRate) {
+
+        double[] entries = new double[6];
+        entries[0] = yaw;
+        entries[1] = yawRate;
+        entries[2] = pitch;
+        entries[3] = pitchRate;
+        entries[4] = roll;
+        entries[5] = rollRate;
+        setArrayNT("robot_orientation", entries);
+    }
+
+    /*
+     * Sets the ID filter of the current pipeline to the IDs given
+     * Whitelists only the validIDs given
+     */
+    public void setFiducialIDFiltersOverride(int[] validIDs) {
+        double[] validIDsDouble = new double[validIDs.length];
+        for (int i = 0; i < validIDs.length; i++) {
+            validIDsDouble[i] = validIDs[i];
+        }        
+        setArrayNT("fiducial_id_filters_set", validIDsDouble);
     }
 }
