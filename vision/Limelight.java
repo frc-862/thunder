@@ -271,7 +271,7 @@ public class Limelight {
         if (poseEntry != null)
             return poseEntry;
 
-        var topic = table.getDoubleArrayTopic("botpose_wpiblue_orb");
+        var topic = table.getDoubleArrayTopic("botpose_wpiblue");
         poseEntry = topic.getEntry(ntDefaultArray);
         return poseEntry;
     }
