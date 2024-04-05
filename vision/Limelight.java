@@ -699,7 +699,7 @@ public class Limelight {
         entries[3] = pitchRate;
         entries[4] = roll;
         entries[5] = rollRate;
-        setArrayNT("robot_orientation", entries);
+        setArrayNT("robot_orientation_set", entries);
     }
 
     /*

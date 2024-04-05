@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.thunder.fault.FaultCode;
 import frc.thunder.fault.FaultMonitor;
@@ -14,7 +15,9 @@ import frc.thunder.fault.LightningFaultCodes;
 import frc.thunder.fault.TimedFaultMonitor;
 import frc.thunder.testing.SystemTest;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 /**
@@ -97,7 +100,11 @@ public class LightningRobot extends TimedRobot {
         System.out.println("LightningRobot.robotInit");
 
         // Starts WPILIB data logging
-        DataLogManager.start("/home/lvuser/datalog");
+        if (Paths.get("/u/logs").toFile().exists()) {
+            DataLogManager.start("/u/logs");
+        } else {
+            DataLogManager.start("/home/lvuser/datalog");
+        }
 
         // Start logging driverstation
         DriverStation.startDataLog(DataLogManager.getLog());
