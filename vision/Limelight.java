@@ -656,6 +656,6 @@ public class Limelight {
      * @param id the id to set the targeting to
      */
     public void setPriorityTag(double id) {
-        setNumNT("priorityid", 1);
+        setNumNT("priorityid", id);
     }
 }
