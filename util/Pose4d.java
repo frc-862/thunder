@@ -11,7 +11,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.constraint.RectangularRegionConstraint;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.Constants.VisionConstants;
+import frc.robot.Constants.PoseConstants;
 
 public class Pose4d extends Pose3d {
     double timestamp;
@@ -116,7 +116,7 @@ public class Pose4d extends Pose3d {
     }
 
     static RectangularRegionConstraint FIELD = new RectangularRegionConstraint(
-            new Translation2d(0, 0), VisionConstants.FIELD_LIMIT, null);
+            new Translation2d(0, 0), PoseConstants.FIELD_LIMIT, null);
 
     public boolean trust() {
         return (getX() != 0 && getY() != 0) && distance < 5 && FIELD.isPoseInRegion(toPose2d());

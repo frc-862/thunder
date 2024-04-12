@@ -18,7 +18,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.networktables.DoubleArrayEntry;
 import edu.wpi.first.networktables.NetworkTable;
@@ -146,7 +145,6 @@ public class Limelight {
         return getDoubleNT("tx");
     }
 
-    // TODO: add limelight 3 fov
     /**
      * Vertical Offset From Crosshair To Target
      * 
