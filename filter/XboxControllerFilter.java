@@ -2,9 +2,9 @@ package frc.thunder.filter;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.XboxController;
+import frc.thunder.shuffleboard.LightningController;
 
-public class XboxControllerFilter extends XboxController{
+public class XboxControllerFilter extends LightningController{
 
     private filterMode mode;
 
@@ -29,6 +29,23 @@ public class XboxControllerFilter extends XboxController{
      */
     public XboxControllerFilter(int port, double deadBand, double minPower, double maxPower, filterMode mode) {
         super(port);
+        this.mode = mode;
+        this.deadband = deadBand;
+        this.minPower = minPower;
+        this.maxPower = maxPower;
+    }
+
+    /**
+     * Constructor for XboxControllerFilter
+     * @param port      Port of controller
+     * @param deadBand  Deadband to apply to controller
+     * @param minPower  Minimum power to apply to controller
+     * @param maxPower  Maximum power to apply to controller
+     * @param mode      Filter mode to apply to controller
+     * @param name      Name of controller for sim
+     */
+    public XboxControllerFilter(int port, double deadBand, double minPower, double maxPower, filterMode mode, String name) {
+        super(name, port);
         this.mode = mode;
         this.deadband = deadBand;
         this.minPower = minPower;
@@ -102,17 +119,17 @@ public class XboxControllerFilter extends XboxController{
             }
         }
 
-        if (xOutput > 1){
-            xOutput = 1;
+        if (xOutput > maxPower){
+            xOutput = maxPower;
         }
-        if (yOutput > 1){
-            yOutput = 1;
+        if (yOutput > maxPower){
+            yOutput = maxPower;
         }
-        if (xOutput < -1){
-            xOutput = -1;
+        if (xOutput < minPower){
+            xOutput = minPower;
         }
-        if (yOutput < -1){
-            yOutput = -1;
+        if (yOutput < minPower){
+            yOutput = minPower;
         }
 
 
