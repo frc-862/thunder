@@ -1,19 +1,32 @@
 package frc.thunder.shuffleboard;
 
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 
-public class LightningController extends XboxController{
+public class LightningController{
     
-    String name;
+    private String name;
+    public boolean portFound = true;
+    public XboxController realController;
 
     public LightningController(String name, int port){
-        super(port);
-        this.name = name;
+        try {
+            realController = new XboxController(port);
+        } catch (Exception e){
+            portFound = false;
+        } finally {
+            this.name = name;
+        }
     }
 
     public LightningController(int port){
-        super(port);
-        this.name = "Controller " + port + " ";
+        try {
+            realController = new XboxController(port);
+        } catch (Exception e){
+            portFound = false;
+        } finally {
+            this.name = "Controller " + port + " ";
+        }
     }
 
     public boolean simController(){
@@ -28,7 +41,7 @@ public class LightningController extends XboxController{
         if (simController()){
             return LightningShuffleboard.getDouble(name, name + "LeftX", 0d);
         } else {
-            return super.getLeftX();
+            return realController.getLeftX();
         }
     }
 
@@ -39,7 +52,7 @@ public class LightningController extends XboxController{
         if (simController()){
             return LightningShuffleboard.getDouble(name, name + "LeftY", 0d);
         } else {
-            return super.getLeftY();
+            return realController.getLeftY();
         }
     }
 
@@ -50,7 +63,7 @@ public class LightningController extends XboxController{
         if (simController()){
             return LightningShuffleboard.getDouble(name, name + "RightX", 0d);
         } else {
-            return super.getRightX();
+            return realController.getRightX();
         }
     }
 
@@ -61,7 +74,7 @@ public class LightningController extends XboxController{
         if (simController()){
             return LightningShuffleboard.getDouble(name, name + "RightY", 0d);
         } else {
-            return super.getRightY();
+            return realController.getRightY();
         }
     }
 
@@ -72,7 +85,7 @@ public class LightningController extends XboxController{
         if (simController()){
             return LightningShuffleboard.getDouble(name, name + "LeftTriggerAxis", 0d);
         } else {
-            return super.getLeftTriggerAxis();
+            return realController.getLeftTriggerAxis();
         }
     }
 
@@ -83,7 +96,7 @@ public class LightningController extends XboxController{
         if (simController()){
             return LightningShuffleboard.getDouble(name, name + "RightTriggerAxis", 0d);
         } else {
-            return super.getRightTriggerAxis();
+            return realController.getRightTriggerAxis();
         }
     }
 
@@ -94,7 +107,7 @@ public class LightningController extends XboxController{
         if (simController()){
             return LightningShuffleboard.getBool(name, name + "LeftBumper", false);
         } else {
-            return super.getLeftBumper();
+            return realController.getLeftBumper();
         }
     }
 
@@ -105,7 +118,7 @@ public class LightningController extends XboxController{
         if (simController()){
             return LightningShuffleboard.getBool(name, name + "RightBumper", false);
         } else {
-            return super.getRightBumper();
+            return realController.getRightBumper();
         }
     }
 
@@ -116,7 +129,7 @@ public class LightningController extends XboxController{
         if (simController()){
             return LightningShuffleboard.getBool(name, name + "LeftStickButton", false);
         } else {
-            return super.getLeftStickButton();
+            return realController.getLeftStickButton();
         }
     }
 
@@ -127,7 +140,7 @@ public class LightningController extends XboxController{
         if (simController()){
             return LightningShuffleboard.getBool(name, name + "RightStickButton", false);
         } else {
-            return super.getRightStickButton();
+            return realController.getRightStickButton();
         }
     }
 
@@ -138,7 +151,7 @@ public class LightningController extends XboxController{
         if (simController()){
             return LightningShuffleboard.getBool(name, name + "AButton", false);
         } else {
-            return super.getAButton();
+            return realController.getAButton();
         }
     }
 
@@ -149,7 +162,7 @@ public class LightningController extends XboxController{
         if (simController()){
             return LightningShuffleboard.getBool(name, name + "BButton", false);
         } else {
-            return super.getBButton();
+            return realController.getBButton();
         }
     }
 
@@ -160,7 +173,7 @@ public class LightningController extends XboxController{
         if (simController()){
             return LightningShuffleboard.getBool(name, name + "XButton", false);
         } else {
-            return super.getXButton();
+            return realController.getXButton();
         }
     }
 
@@ -171,7 +184,7 @@ public class LightningController extends XboxController{
         if (simController()){
             return LightningShuffleboard.getBool(name, name + "YButton", false);
         } else {
-            return super.getYButton();
+            return realController.getYButton();
         }
     }
 
@@ -182,7 +195,7 @@ public class LightningController extends XboxController{
         if (simController()){
             return LightningShuffleboard.getBool(name, name + "BackButton", false);
         } else {
-            return super.getBackButton();
+            return realController.getBackButton();
         }
     }
 
@@ -193,7 +206,42 @@ public class LightningController extends XboxController{
         if (simController()){
             return LightningShuffleboard.getBool(name, name + "StartButton", false);
         } else {
-            return super.getStartButton();
+            return realController.getStartButton();
+        }
+    }
+
+    /**
+     * @return the POV value from the controller/shuffleboard
+     */
+    public double getPOV(){
+        if (simController()){
+            return LightningShuffleboard.getDouble(name, name + "POV", 0d);
+        } else {
+            return realController.getPOV();
+        }
+    }
+
+    /**
+     * @return set controller rumble
+     */
+    public void setRumble(RumbleType type, double rumble){
+        if (simController()){
+            LightningShuffleboard.setDouble(name, name + "Rumble", rumble);
+        } else {
+            realController.setRumble(type, rumble);
+        }
+    }
+
+    
+
+    /**
+     * @return get controller
+     */
+    public XboxController getController(){
+        if (simController()){
+            return null;
+        } else {
+            return realController;
         }
     }
 
@@ -218,5 +266,6 @@ public class LightningController extends XboxController{
         LightningShuffleboard.getBool(name, name + "YButton", false);
         LightningShuffleboard.getBool(name, name + "BackButton", false);
         LightningShuffleboard.getBool(name, name + "StartButton", false);
+        LightningShuffleboard.getDouble(name, name + "POV", 0d);
     }
 }
