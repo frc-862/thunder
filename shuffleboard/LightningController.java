@@ -1,5 +1,9 @@
 package frc.thunder.shuffleboard;
 
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 
@@ -9,13 +13,41 @@ public class LightningController{
     public boolean portFound = true;
     public XboxController realController;
 
+    // values from shuffleboard
+
+    public DoubleSupplier leftX;
+    public DoubleSupplier leftY;
+    public DoubleSupplier rightX;
+    public DoubleSupplier rightY;
+    public DoubleSupplier leftTriggerAxis;
+    public DoubleSupplier rightTriggerAxis;
+    public BooleanSupplier simController;
+    public BooleanSupplier leftBumper;
+    public BooleanSupplier rightBumper;
+    public BooleanSupplier leftStickButton;
+    public BooleanSupplier rightStickButton;
+    public BooleanSupplier AButton;
+    public BooleanSupplier BButton;
+    public BooleanSupplier XButton;
+    public BooleanSupplier YButton;
+    public BooleanSupplier backButton;
+    public BooleanSupplier startButton;
+    public DoubleSupplier POV;
+
     public LightningController(String name, int port){
         try {
             realController = new XboxController(port);
         } catch (Exception e){
-            portFound = false;
+            if (!DriverStation.isFMSAttached()){
+                portFound = false;
+            } else {
+                throw e;
+            }
         } finally {
             this.name = name;
+            if (!DriverStation.isFMSAttached()){
+                initValues();
+            }
         }
     }
 
@@ -29,9 +61,11 @@ public class LightningController{
         }
     }
 
+    /**
+     * @return if the controller is being simulated
+     */
     public boolean simController(){
-        return LightningShuffleboard.getBool(name, name + "simController", false);
-    
+        return !portFound || simController.getAsBoolean();
     }
 
     /**
@@ -39,7 +73,7 @@ public class LightningController{
      */
     public double getLeftX(){
         if (simController()){
-            return LightningShuffleboard.getDouble(name, name + "LeftX", 0d);
+            return leftX.getAsDouble();
         } else {
             return realController.getLeftX();
         }
@@ -50,7 +84,7 @@ public class LightningController{
      */
     public double getLeftY(){
         if (simController()){
-            return LightningShuffleboard.getDouble(name, name + "LeftY", 0d);
+            return leftY.getAsDouble();
         } else {
             return realController.getLeftY();
         }
@@ -61,7 +95,7 @@ public class LightningController{
      */
     public double getRightX(){
         if (simController()){
-            return LightningShuffleboard.getDouble(name, name + "RightX", 0d);
+            return rightX.getAsDouble();
         } else {
             return realController.getRightX();
         }
@@ -72,7 +106,7 @@ public class LightningController{
      */
     public double getRightY(){
         if (simController()){
-            return LightningShuffleboard.getDouble(name, name + "RightY", 0d);
+            return rightY.getAsDouble();
         } else {
             return realController.getRightY();
         }
@@ -83,7 +117,7 @@ public class LightningController{
      */
     public double getLeftTriggerAxis(){
         if (simController()){
-            return LightningShuffleboard.getDouble(name, name + "LeftTriggerAxis", 0d);
+            return leftTriggerAxis.getAsDouble();
         } else {
             return realController.getLeftTriggerAxis();
         }
@@ -94,7 +128,7 @@ public class LightningController{
      */
     public double getRightTriggerAxis(){
         if (simController()){
-            return LightningShuffleboard.getDouble(name, name + "RightTriggerAxis", 0d);
+            return rightTriggerAxis.getAsDouble();
         } else {
             return realController.getRightTriggerAxis();
         }
@@ -105,7 +139,7 @@ public class LightningController{
      */
     public boolean getLeftBumper(){
         if (simController()){
-            return LightningShuffleboard.getBool(name, name + "LeftBumper", false);
+            return leftBumper.getAsBoolean();
         } else {
             return realController.getLeftBumper();
         }
@@ -116,7 +150,7 @@ public class LightningController{
      */
     public boolean getRightBumper(){
         if (simController()){
-            return LightningShuffleboard.getBool(name, name + "RightBumper", false);
+            return rightBumper.getAsBoolean();
         } else {
             return realController.getRightBumper();
         }
@@ -127,7 +161,7 @@ public class LightningController{
      */
     public boolean getLeftStickButton(){
         if (simController()){
-            return LightningShuffleboard.getBool(name, name + "LeftStickButton", false);
+            return leftStickButton.getAsBoolean();
         } else {
             return realController.getLeftStickButton();
         }
@@ -138,7 +172,7 @@ public class LightningController{
      */
     public boolean getRightStickButton(){
         if (simController()){
-            return LightningShuffleboard.getBool(name, name + "RightStickButton", false);
+            return rightStickButton.getAsBoolean();
         } else {
             return realController.getRightStickButton();
         }
@@ -149,7 +183,7 @@ public class LightningController{
      */
     public boolean getAButton(){
         if (simController()){
-            return LightningShuffleboard.getBool(name, name + "AButton", false);
+            return AButton.getAsBoolean();
         } else {
             return realController.getAButton();
         }
@@ -160,7 +194,7 @@ public class LightningController{
      */
     public boolean getBButton(){
         if (simController()){
-            return LightningShuffleboard.getBool(name, name + "BButton", false);
+            return BButton.getAsBoolean();
         } else {
             return realController.getBButton();
         }
@@ -171,7 +205,7 @@ public class LightningController{
      */
     public boolean getXButton(){
         if (simController()){
-            return LightningShuffleboard.getBool(name, name + "XButton", false);
+            return XButton.getAsBoolean();
         } else {
             return realController.getXButton();
         }
@@ -182,7 +216,7 @@ public class LightningController{
      */
     public boolean getYButton(){
         if (simController()){
-            return LightningShuffleboard.getBool(name, name + "YButton", false);
+            return YButton.getAsBoolean();
         } else {
             return realController.getYButton();
         }
@@ -193,7 +227,7 @@ public class LightningController{
      */
     public boolean getBackButton(){
         if (simController()){
-            return LightningShuffleboard.getBool(name, name + "BackButton", false);
+            return backButton.getAsBoolean();
         } else {
             return realController.getBackButton();
         }
@@ -204,7 +238,7 @@ public class LightningController{
      */
     public boolean getStartButton(){
         if (simController()){
-            return LightningShuffleboard.getBool(name, name + "StartButton", false);
+            return startButton.getAsBoolean();
         } else {
             return realController.getStartButton();
         }
@@ -215,7 +249,7 @@ public class LightningController{
      */
     public double getPOV(){
         if (simController()){
-            return LightningShuffleboard.getDouble(name, name + "POV", 0d);
+            return POV.getAsDouble();
         } else {
             return realController.getPOV();
         }
@@ -249,23 +283,25 @@ public class LightningController{
      * Initializes all the values for the controller on shuffleboard
      */
     public void initValues(){
-        LightningShuffleboard.getBool(name, name + "simController", false);
-        LightningShuffleboard.getDouble(name, name + "LeftX", 0d);
-        LightningShuffleboard.getDouble(name, name + "LeftY", 0d);
-        LightningShuffleboard.getDouble(name, name + "RightX", 0d);
-        LightningShuffleboard.getDouble(name, name + "RightY", 0d);
-        LightningShuffleboard.getDouble(name, name + "LeftTriggerAxis", 0d);
-        LightningShuffleboard.getDouble(name, name + "RightTriggerAxis", 0d);
-        LightningShuffleboard.getBool(name, name + "LeftBumper", false);
-        LightningShuffleboard.getBool(name, name + "RightBumper", false);
-        LightningShuffleboard.getBool(name, name + "LeftStickButton", false);
-        LightningShuffleboard.getBool(name, name + "RightStickButton", false);
-        LightningShuffleboard.getBool(name, name + "AButton", false);
-        LightningShuffleboard.getBool(name, name + "BButton", false);
-        LightningShuffleboard.getBool(name, name + "XButton", false);
-        LightningShuffleboard.getBool(name, name + "YButton", false);
-        LightningShuffleboard.getBool(name, name + "BackButton", false);
-        LightningShuffleboard.getBool(name, name + "StartButton", false);
-        LightningShuffleboard.getDouble(name, name + "POV", 0d);
+        simController = () -> LightningShuffleboard.getBool(name, name + "simController", false);
+        if (simController()){
+            leftX = () -> LightningShuffleboard.getDouble(name, name + "LeftX", 0d);
+            leftY = () -> LightningShuffleboard.getDouble(name, name + "LeftY", 0d);
+            rightX = () -> LightningShuffleboard.getDouble(name, name + "RightX", 0d);
+            rightY = () -> LightningShuffleboard.getDouble(name, name + "RightY", 0d);
+            leftTriggerAxis = () -> LightningShuffleboard.getDouble(name, name + "LeftTriggerAxis", 0d);
+            rightTriggerAxis = () -> LightningShuffleboard.getDouble(name, name + "RightTriggerAxis", 0d);
+            leftBumper = () -> LightningShuffleboard.getBool(name, name + "LeftBumper", false);
+            rightBumper = () -> LightningShuffleboard.getBool(name, name + "RightBumper", false);
+            leftStickButton = () -> LightningShuffleboard.getBool(name, name + "LeftStickButton", false);
+            rightStickButton = () -> LightningShuffleboard.getBool(name, name + "RightStickButton", false);
+            AButton = () -> LightningShuffleboard.getBool(name, name + "AButton", false);
+            BButton = () -> LightningShuffleboard.getBool(name, name + "BButton", false);
+            XButton = () -> LightningShuffleboard.getBool(name, name + "XButton", false);
+            YButton = () -> LightningShuffleboard.getBool(name, name + "YButton", false);
+            backButton = () -> LightningShuffleboard.getBool(name, name + "BackButton", false);
+            startButton = () -> LightningShuffleboard.getBool(name, name + "StartButton", false);
+            POV = () -> LightningShuffleboard.getDouble(name, name + "POV", 0d);
+        }
     }
 }
