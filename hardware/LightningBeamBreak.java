@@ -9,17 +9,17 @@ import frc.robot.Constants.RobotMap.DIO;
 public class LightningBeamBreak {
 
     private DigitalInput beamBreak;
-    private boolean isTriggered;
-    
+    private boolean simIsTriggered;
+
     /**
      * Constructs a new beambreak
      * @param channel DIO port
      */
-    public void lightningBeamBreak(int channel){
+    public LightningBeamBreak(int channel){
         if (RobotBase.isReal()){
-            beamBreak = new DigitalInput(DIO.INDEXER_ENTER_BEAMBREAK);
+            beamBreak = new DigitalInput(channel);
         } else {
-            isTriggered = false;
+            simIsTriggered = false;
         }
     }
 
@@ -28,7 +28,7 @@ public class LightningBeamBreak {
      * @param state
      */
     public void setIsTriggered(boolean state){
-        isTriggered = state;
+        simIsTriggered = state;
     }
 
     /**
@@ -38,9 +38,9 @@ public class LightningBeamBreak {
     public void trigger(double triggerDuration){
         double initialTime = Utils.getCurrentTimeSeconds();
         while(Utils.getCurrentTimeSeconds() < initialTime + triggerDuration){
-            isTriggered = true;
+            // isTriggered = true;
         }
-        isTriggered = false;
+        simIsTriggered = false;
 
     }
 
@@ -51,7 +51,7 @@ public class LightningBeamBreak {
         if (RobotBase.isReal()){
             return beamBreak.get();
         }
-        return isTriggered;
+        return simIsTriggered;
     }
 
     /**
