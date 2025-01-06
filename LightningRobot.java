@@ -100,7 +100,10 @@ public class LightningRobot extends TimedRobot {
         System.out.println("LightningRobot.robotInit");
 
         // Starts WPILIB data logging
-        if (Paths.get("/u/logs").toFile().exists()) {
+        final var envLogPath = System.getenv("LOG_PATH");
+        if (envLogPath != null) {
+            DataLogManager.start(envLogPath);
+        } else if (Paths.get("/u/logs").toFile().exists()) {
             DataLogManager.start("/u/logs");
         } else {
             DataLogManager.start("/home/lvuser/datalog");
