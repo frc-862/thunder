@@ -19,8 +19,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
  * Error codes for robot and means to log them
  */
 public class FaultCode {
-
-    private static final String FAULT_PATH = "/home/lvuser/faults.log";
+    private static final String envLogPath = System.getenv("LOG_PATH");
+    private static final String FAULT_PATH = envLogPath == null ? "/home/lvuser/faults.log" : envLogPath + "/faults.log";
     private static HashSet<LightningFaultCodes.Code> faults = new HashSet<>();
     private static Map<LightningFaultCodes.Code, GenericEntry> networkTableMap = new HashMap<>();
     private static boolean dummy_light = false;
