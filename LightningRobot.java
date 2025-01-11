@@ -9,10 +9,6 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import frc.thunder.fault.FaultCode;
-import frc.thunder.fault.FaultMonitor;
-import frc.thunder.fault.LightningFaultCodes;
-import frc.thunder.fault.TimedFaultMonitor;
 import frc.thunder.testing.SystemTest;
 
 import java.io.File;
@@ -132,15 +128,6 @@ public class LightningRobot extends TimedRobot {
             System.out.println("Unable to read build version information.");
         }
 
-        // Also by this point, all fault codes should be registered, so we can throw
-        // them up on the dashboard
-        FaultCode.init();
-
-        // Set up a fault monitor for our loop time
-        FaultMonitor.register(new TimedFaultMonitor(LightningFaultCodes.getFaultCode("SLOW_LOOPER"),
-                () -> getLoopTime() > getPeriod(),
-                0.08, "Loop is running slow: " + getLoopTime()));
-
         // Load our system tests to the dashboard
         SystemTest.loadTests();
     }
@@ -173,7 +160,6 @@ public class LightningRobot extends TimedRobot {
                 robotBackgroundPeriodic();
             }
 
-            FaultMonitor.checkMonitors();
             loopTime = Timer.getFPGATimestamp() - time;
         }
 
@@ -214,7 +200,6 @@ public class LightningRobot extends TimedRobot {
      * thread.
      */
     protected void robotMediumPriorityPeriodic() {
-        FaultCode.update();
     }
 
     /**

@@ -25,7 +25,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.TimestampedDoubleArray;
 import frc.thunder.util.Pose4d;
 import frc.thunder.util.PoseConverter;
-import frc.thunder.vision.targeting.TargetingResult;
 
 public class Limelight {
     private NetworkTable table;
@@ -217,12 +216,12 @@ public class Limelight {
         return getDoubleNT("tvert");
     }
 
-    /**
-     * @return Full JSON dump of targeting results
-     */
-    public TargetingResult getTargetJSON() {
-        return new TargetingResult(parseJson(getStringNT("json")));
-    }
+    // /**
+    //  * @return Full JSON dump of targeting results
+    //  */
+    // public TargetingResult getTargetJSON() {
+    //     return new TargetingResult(parseJson(getStringNT("json")));
+    // }
 
     /**
      * @return Class ID of primary neural detector result or neural classifier result
