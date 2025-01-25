@@ -19,7 +19,7 @@ jobs:
             ref: ''
             submodules: 'true'
         - name: Set Correct HEAD
-            run: cd src/main/java/frc/thunder && git checkout $GITHUB_THUNDER_HEAD
+          run: cd src/main/java/frc/thunder && git checkout $GITHUB_THUNDER_HEAD
         - name: Check Thunder Head
           run: git rev-parse HEAD
         # - name: Set Execution Permissions
