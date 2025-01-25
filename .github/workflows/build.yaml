@@ -10,7 +10,7 @@ jobs:
         # container: wpilib/roborio-cross-ubuntu:2025-22.04
         - name: Checkout Thunder
           uses: actions/checkout@v3
-        - name: Store Branch && Head
+        - name: Store Branch & Head
           run: |
                 echo "GITHUB_THUNDER_BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
                 echo "GITHUB_THUNDER_HEAD=$(git rev-parse HEAD)" >> $GITHUB_ENV
@@ -21,7 +21,11 @@ jobs:
             ref: ''
             submodules: 'true'
         - name: Set Correct HEAD
-          run: cd src/main/java/frc/thunder && git checkout $GITHUB_THUNDER_BRANCH && git checkout $GITHUB_THUNDER_HEAD
+          run: |
+                cd src/main/java/frc/thunder
+                git fetch
+                git checkout $GITHUB_THUNDER_BRANCH
+                git checkout $GITHUB_THUNDER_HEAD
         - name: Check Thunder Head
           run: git rev-parse HEAD
         # - name: Set Execution Permissions
