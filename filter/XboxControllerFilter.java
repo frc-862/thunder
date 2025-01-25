@@ -3,7 +3,6 @@ package frc.thunder.filter;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.thunder.math.LightningMath;
 
 public class XboxControllerFilter extends XboxController{
 

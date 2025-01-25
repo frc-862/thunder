@@ -2,7 +2,9 @@ package frc.thunder.util;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -11,7 +13,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.constraint.RectangularRegionConstraint;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.Constants.VisionConstants;
+import frc.robot.Constants.PoseConstants;
 
 public class Pose4d extends Pose3d {
     double timestamp;
@@ -105,26 +107,41 @@ public class Pose4d extends Pose3d {
         double confidence = 18.0;
 
         if (getMoreThanOneTarget() && getDistance() < 3) {
-            confidence = 0.5;
+            confidence = 0.3;
         } else if (getMoreThanOneTarget()) {
-            confidence = 0.5 + ((getDistance() - 3) / 5 * 18);
+            confidence = 0.3 + ((getDistance() - 3) / 5 * 18);
         } else if (getDistance() < 2) {
-            confidence = 1.5 + (getDistance() / 2 * 5.0);
+            confidence = 0.7 + (getDistance() / 2 * 5.0);
         }
 
         return confidence;
     }
 
+    static Translation2d FIELD_BOTTOM_CORNER = new Translation2d(0, 0);
+    static Translation2d FIELD_TOP_CORNER = PoseConstants.FIELD_LIMIT;
+
     static RectangularRegionConstraint FIELD = new RectangularRegionConstraint(
-            new Translation2d(0, 0), VisionConstants.FIELD_LIMIT, null);
+            new Rectangle2d(FIELD_BOTTOM_CORNER, FIELD_TOP_CORNER),
+            null);
+
+    /*
+     * This is a rip from the 2024 WPILib RectangularRegionConstraint class
+     * since the isPoseInRegion method was removed
+     */
+    private static boolean isPoseInRegion(Pose2d robotPose) {
+        return robotPose.getX() >= FIELD_BOTTOM_CORNER.getX()
+            && robotPose.getX() <= FIELD_TOP_CORNER.getX()
+            && robotPose.getY() >= FIELD_BOTTOM_CORNER.getY()
+            && robotPose.getY() <= FIELD_TOP_CORNER.getY();
+    }
 
     public boolean trust() {
-        return (getX() != 0 && getY() != 0) && distance < 5 && FIELD.isPoseInRegion(toPose2d());
+        return (getX() != 0 && getY() != 0) && distance < 5 && isPoseInRegion(toPose2d());
     }
 
     public Matrix<N3, N1> getStdDevs() {
         var confidence = getConfidence();
-        if(DriverStation.isDisabled()) {
+        if (DriverStation.isDisabled()) {
             return VecBuilder.fill(confidence, confidence, Math.toRadians(confidence));
         }
         return VecBuilder.fill(confidence, confidence, Math.toRadians(500 * confidence));

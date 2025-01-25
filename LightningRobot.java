@@ -7,14 +7,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import frc.thunder.fault.FaultCode;
-import frc.thunder.fault.FaultMonitor;
-import frc.thunder.fault.LightningFaultCodes;
-import frc.thunder.fault.TimedFaultMonitor;
 import frc.thunder.testing.SystemTest;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 /**
@@ -36,7 +35,7 @@ public class LightningRobot extends TimedRobot {
     private LightningContainer container;
 
     private final static double SETTLE_TIME = 3.0;
-    private final static double LOOP_TIME = 0.01;
+    private final static double LOOP_TIME = 0.02;
 
     private int counter = 0;
 
@@ -69,7 +68,7 @@ public class LightningRobot extends TimedRobot {
         return container;
     }
 
-    private boolean haveDriverStation = false;
+    public boolean haveDriverStation = false;
 
     /**
      * Nothing should happen here.
@@ -79,6 +78,7 @@ public class LightningRobot extends TimedRobot {
         if (!haveDriverStation && DriverStation.getAlliance().isPresent()) {
             haveDriverStation = true;
             allianceKnown(DriverStation.getAlliance().get());
+            System.out.println("SET FORWARD");
         }
     }
 
@@ -96,7 +96,14 @@ public class LightningRobot extends TimedRobot {
         System.out.println("LightningRobot.robotInit");
 
         // Starts WPILIB data logging
-        DataLogManager.start("/home/lvuser/datalog");
+        final var envLogPath = System.getenv("LOG_PATH");
+        if (envLogPath != null) {
+            DataLogManager.start(envLogPath);
+        } else if (Paths.get("/u/logs").toFile().exists()) {
+            DataLogManager.start("/u/logs");
+        } else {
+            DataLogManager.start("/home/lvuser/datalog");
+        }
 
         // Start logging driverstation
         DriverStation.startDataLog(DataLogManager.getLog());
@@ -123,15 +130,6 @@ public class LightningRobot extends TimedRobot {
         } catch (IOException e) {
             System.out.println("Unable to read build version information.");
         }
-
-        // Also by this point, all fault codes should be registered, so we can throw
-        // them up on the dashboard
-        FaultCode.init();
-
-        // Set up a fault monitor for our loop time
-        FaultMonitor.register(new TimedFaultMonitor(LightningFaultCodes.getFaultCode("SLOW_LOOPER"),
-                () -> getLoopTime() > getPeriod(),
-                0.08, "Loop is running slow: " + getLoopTime()));
 
         // Load our system tests to the dashboard
         SystemTest.loadTests();
@@ -165,7 +163,6 @@ public class LightningRobot extends TimedRobot {
                 robotBackgroundPeriodic();
             }
 
-            FaultMonitor.checkMonitors();
             loopTime = Timer.getFPGATimestamp() - time;
         }
 
@@ -206,7 +203,6 @@ public class LightningRobot extends TimedRobot {
      * thread.
      */
     protected void robotMediumPriorityPeriodic() {
-        FaultCode.update();
     }
 
     /**

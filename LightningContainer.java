@@ -21,14 +21,14 @@ public abstract class LightningContainer {
         // Setup driver commands and defaults
         configureButtonBindings();
         configureDefaultCommands();
-        initializeDashboardCommands();
+        // initializeDashboardCommands();
 
         // Setup fault monitoring
-        configureFaultCodes();
-        configureFaultMonitors();
+        // configureFaultCodes();
+        // configureFaultMonitors();
 
         // Configure System Tests
-        configureSystemTests();
+        // configureSystemTests();
 
     }
 
@@ -47,10 +47,10 @@ public abstract class LightningContainer {
      */
     protected abstract void configureButtonBindings();
 
-    /**
-     * Registers all systems tests for the robot to be run
-     */
-    protected abstract void configureSystemTests();
+    // /**
+    //  * Registers all systems tests for the robot to be run
+    //  */
+    // protected abstract void configureSystemTests();
 
     /**
      * Configures all default commands to run on subsystems when no other command
@@ -58,25 +58,25 @@ public abstract class LightningContainer {
      */
     protected abstract void configureDefaultCommands();
 
-    /**
-     * Cancles all default commands
-     */
-    protected abstract void releaseDefaultCommands();
+    // /**
+    //  * Cancels all default commands
+    //  */
+    // protected abstract void releaseDefaultCommands();
 
-    /**
-     * Puts command buttons on the dashboard
-     */
-    protected abstract void initializeDashboardCommands();
+    // /**
+    //  * Puts command buttons on the dashboard
+    //  */
+    // protected abstract void initializeDashboardCommands();
 
-    /**
-     * Configures all robot-specific fault codes
-     */
-    protected abstract void configureFaultCodes();
+    // /**
+    //  * Configures all robot-specific fault codes
+    //  */
+    // protected abstract void configureFaultCodes();
 
-    /**
-     * Configures listeners for fault codes
-     */
-    protected abstract void configureFaultMonitors();
+    // /**
+    //  * Configures listeners for fault codes
+    //  */
+    // protected abstract void configureFaultMonitors();
 
     /**
      * Gets output from sendable chooser
