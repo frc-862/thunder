@@ -1,0 +1,24 @@
+name: Gradle Build
+
+on: [push, pull_request]
+
+jobs:
+    Build:
+        runs-on: ubuntu-latest
+        container: wpilib/roborio-cross-ubuntu:2025-22.04
+        steps:
+        - name: Checkout and Initialize Thunder Base Test
+          uses: actions/checkout@v3
+          with:
+            name: frc-862/thunder-actionstest
+            ref: refs/heads/master
+            submodules: 'true'
+        - name: Init JDK
+          uses: actions/setup-java@v3
+          with:
+            distribution: 'zulu'
+            java-version: '17'
+        - name: Set Execution Permissions
+          run: chmod +x ./gradlew
+        - name: Gradle Build Test
+          run: ./gradlew build
