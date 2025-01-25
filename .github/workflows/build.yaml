@@ -1,11 +1,15 @@
 name: Gradle Build
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
     Build:
         runs-on: ubuntu-latest
         container: wpilib/roborio-cross-ubuntu:2025-22.04
+        - name: Set Execution Permissions
+          run: chmod +x ./gradlew && chmod +x .github/set_submodule.sh
+        - name: Find Thunder Commit
+          run: ./set_submodule.sh
         steps:
         - name: Checkout and Initialize Thunder Base Test
           uses: actions/checkout@v3
@@ -13,10 +17,6 @@ jobs:
             repository: frc-862/thunder-actionstest
             ref: ''
             submodules: 'true'
-        - name: Set Execution Permissions
-          run: chmod +x ./gradlew && chmod +x ./set_submodule.sh
-        - name: Find Commit
-          run: ./set_submodule.sh
         - name: Init JDK
           uses: actions/setup-java@v3
           with:
