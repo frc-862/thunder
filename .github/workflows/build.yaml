@@ -13,6 +13,8 @@ jobs:
             repository: frc-862/thunder-actionstest
             ref: ''
             submodules: 'true'
+        - name: Find Commit
+          run: echo "Commit: ${{ github.sha }}"
         - name: Init JDK
           uses: actions/setup-java@v3
           with:
