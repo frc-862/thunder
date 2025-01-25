@@ -21,6 +21,7 @@ jobs:
             ref: ''
         - name: Set Correct HEAD
           run: |
+                git config --global --add safe.directory '*'
                 git submodule update --init
                 cd src/main/java/frc/thunder
                 git fetch
