@@ -11,7 +11,9 @@ jobs:
         - name: Checkout Thunder
           uses: actions/checkout@v3
         - name: Store Branch && Head
-          run: echo "GITHUB_THUNDER_BRANCH=$(git rev-parse --abbrev-ref HEAD)\nGITHUB_THUNDER_HEAD=$(git rev-parse HEAD)" >> $GITHUB_ENV
+          run: |
+                echo "GITHUB_THUNDER_BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
+                echo "GITHUB_THUNDER_HEAD=$(git rev-parse HEAD)" >> $GITHUB_ENV
         - name: Checkout and Initialize Thunder Test Repository
           uses: actions/checkout@v3
           with:
