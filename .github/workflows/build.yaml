@@ -13,7 +13,7 @@ jobs:
         # - name: Set Execution Permissions for Script
         #   run: chmod +x .github/store_head.sh
         - name: Store Head
-          run: echo "GITHUB_THUNDER_HEAD=$(echo git rev-parse HEAD)" >> $GITHUB_ENV
+          run: echo "GITHUB_THUNDER_HEAD=$(git rev-parse HEAD)" >> $GITHUB_ENV
         - name: Checkout and Initialize Thunder Test Repository
           uses: actions/checkout@v3
           with:
