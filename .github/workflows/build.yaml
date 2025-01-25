@@ -1,0 +1,33 @@
+name: Thunder Build
+
+on: [push, pull_request]
+
+jobs:
+    Build:
+        runs-on: ubuntu-latest
+        container: wpilib/roborio-cross-ubuntu:2025-22.04
+        steps:
+        - name: Checkout Latest Thunder
+          uses: actions/checkout@v3
+        - name: Store Branch & Head
+          run: |
+                echo "GITHUB_THUNDER_BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
+                echo "GITHUB_THUNDER_HEAD=$(git rev-parse HEAD)" >> $GITHUB_ENV
+        - name: Checkout and Initialize Thunder Test Repository
+          uses: actions/checkout@v3
+          with:
+            repository: frc-862/thunder-actionstest
+            ref: ''
+        - name: Set Correct HEAD
+          run: |
+                git config --global --add safe.directory '*'
+                git submodule update --init
+                cd src/main/java/frc/thunder
+                git fetch
+                git checkout $GITHUB_THUNDER_BRANCH
+                git checkout $GITHUB_THUNDER_HEAD
+                cd ../../../../../
+        - name: Set Execution Permissions
+          run: chmod +x ./gradlew
+        - name: Gradle Build Test
+          run: ./gradlew build
