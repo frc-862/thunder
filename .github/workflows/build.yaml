@@ -5,12 +5,12 @@ on: [push, pull_request]
 jobs:
     Build:
         runs-on: ubuntu-latest
-        container: wpilib/roborio-cross-ubuntu:2025-22.04
+        container: wpilib/roborio-cross-ubuntu
         steps:
         - name: Checkout and Initialize Thunder Base Test
           uses: actions/checkout@v3
           with:
-            name: frc-862/thunder-actionstest
+            repository: frc-862/thunder-actionstest
             ref: ''
             submodules: 'true'
         - name: Init JDK
