@@ -1,4 +1,4 @@
-name: Gradle Build
+name: Thunder Build
 
 on:
     push:
@@ -8,7 +8,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
         # container: wpilib/roborio-cross-ubuntu:2025-22.04
-        - name: Checkout Thunder
+        - name: Checkout Latest Thunder
           uses: actions/checkout@v3
         - name: Store Branch & Head
           run: |
@@ -21,15 +21,13 @@ jobs:
             ref: ''
         - name: Set Correct HEAD
           run: |
-                echo "PLEASE WORK I BEGGGG"
                 git submodule update --init
                 cd src/main/java/frc/thunder
                 git fetch
                 git checkout $GITHUB_THUNDER_BRANCH
                 git checkout $GITHUB_THUNDER_HEAD
-        - name: Check Thunder Head
-          run: git rev-parse HEAD
-        # - name: Set Execution Permissions
-        #   run: chmod +x ./gradlew
-        # - name: Gradle Build Test
-        #   run: ./gradlew build
+                cd ../../../../../
+        - name: Set Execution Permissions
+          run: chmod +x ./gradlew
+        - name: Gradle Build Test
+          run: ./gradlew build
