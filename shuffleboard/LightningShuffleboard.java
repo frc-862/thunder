@@ -18,6 +18,7 @@
 
 package frc.thunder.shuffleboard;
 
+import java.util.HashMap;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -29,6 +30,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class LightningShuffleboard {
+    private static HashMap<String, Object> keyList = new HashMap<String, Object>();
+    
     /**
      * Creates and sets a double to NT through shuffleboard
      * @param tabName the tab this shuffleboard entry will be placed in
@@ -37,22 +40,21 @@ public class LightningShuffleboard {
      * @implNote must be called periodically to update
      */
     public static void setDouble(String tabName, String key, double value) {
-        boolean hasComponent = false;
         ShuffleboardTab tab = Shuffleboard.getTab(tabName);
 
-        // iterate through the components in the tab, check if the component exists
-        for (int i = 0; i < tab.getComponents().size(); i++) {
-            if (tab.getComponents().get(i).getTitle() == key) {
-                hasComponent = true;
-                break;
-            }
-        }
+        String index = tabName + "/" + key;
 
-        // if the component exists, write to it using the NetworkTable, and if not, create the component
-        if (hasComponent) {
-            NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setDouble(value);
-        } else {
+        /* logic breakdown:
+         * if the key does not exist, create it
+         * if they exists but is not updated, update it
+         * else, the key exists and is up-to-date, so nothing needs to be done
+         */
+        if(!keyList.containsKey(index)) {
+            keyList.put(index, value);
             tab.add(key, value);
+        } else if(!keyList.get(index).equals(value)) {
+            keyList.put(index, value);
+            NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setDouble(value);
         }
     }
 
@@ -64,22 +66,21 @@ public class LightningShuffleboard {
      * @implNote must be called periodically to update
      */
     public static void setBool(String tabName, String key, boolean value) {
-        boolean hasComponent = false;
         ShuffleboardTab tab = Shuffleboard.getTab(tabName);
 
-        // iterate through the components in the tab, check if the component exists
-        for (int i = 0; i < tab.getComponents().size(); i++) {
-            if (tab.getComponents().get(i).getTitle() == key) {
-                hasComponent = true;
-                break;
-            }
-        }
+        String index = tabName + "/" + key;
 
-        // if the component exists, write to it using the NetworkTable, and if not, create the component
-        if (hasComponent) {
-            NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setBoolean(value);
-        } else {
+        /* logic breakdown:
+         * if the key does not exist, create it
+         * if they exists but is not updated, update it
+         * else, the key exists and is up-to-date, so nothing needs to be done
+         */
+        if(!keyList.containsKey(index)) {
+            keyList.put(index, value);
             tab.add(key, value);
+        } else if(!keyList.get(index).equals(value)) {
+            keyList.put(index, value);
+            NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setBoolean(value);
         }
     }
 
@@ -91,22 +92,21 @@ public class LightningShuffleboard {
      * @implNote must be called periodically to update
      */
     public static void setString(String tabName, String key, String value) {
-        boolean hasComponent = false;
         ShuffleboardTab tab = Shuffleboard.getTab(tabName);
 
-        // iterate through the components in the tab, check if the component exists
-        for (int i = 0; i < tab.getComponents().size(); i++) {
-            if (tab.getComponents().get(i).getTitle() == key) {
-                hasComponent = true;
-                break;
-            }
-        }
+        String index = tabName + "/" + key;
 
-        // if the component exists, write to it using the NetworkTable, and if not, create the component
-        if (hasComponent) {
-            NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setString(value);
-        } else {
+        /* logic breakdown:
+         * if the key does not exist, create it
+         * if they exists but is not updated, update it
+         * else, the key exists and is up-to-date, so nothing needs to be done
+         */
+        if(!keyList.containsKey(index)) {
+            keyList.put(index, value);
             tab.add(key, value);
+        } else if(!keyList.get(index).equals(value)) {
+            keyList.put(index, value);
+            NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setString(value);
         }
     }
 
@@ -118,20 +118,16 @@ public class LightningShuffleboard {
      * @implNote will update automatically
      */
     public static void setDoubleSupplier(String tabName, String key, DoubleSupplier value) {
-        boolean hasComponent = false;
         ShuffleboardTab tab = Shuffleboard.getTab(tabName);
 
-        // iterate through the components in the tab, check if the component exists
-        for (int i = 0; i < tab.getComponents().size(); i++) {
-            if (tab.getComponents().get(i).getTitle() == key) {
-                hasComponent = true;
-                break;
-            }
-        }
+        String index = tabName + "/" + key;
 
-        // if the component doesnt exist, create it (since its a supplier, it will be updated automatically)
-        if (!hasComponent) {
-            tab.addDouble(key, value);
+        /* logic breakdown:
+         * if the key does not exist, create it. this is it because its a supplier
+         */
+        if(!keyList.containsKey(index)) {
+            keyList.put(index, value);
+            tab.add(key, value);
         }
     }
 
@@ -143,20 +139,16 @@ public class LightningShuffleboard {
      * @implNote will update automatically
      */
     public static void setBoolSupplier(String tabName, String key, BooleanSupplier value) {
-        boolean hasComponent = false;
         ShuffleboardTab tab = Shuffleboard.getTab(tabName);
 
-        // iterate through the components in the tab, check if the component exists
-        for (int i = 0; i < tab.getComponents().size(); i++) {
-            if (tab.getComponents().get(i).getTitle() == key) {
-                hasComponent = true;
-                break;
-            }
-        }
+        String index = tabName + "/" + key;
 
-        // if the component doesnt exist, create it (since its a supplier, it will be updated automatically)
-        if (!hasComponent) {
-            tab.addBoolean(key, value);
+        /* logic breakdown:
+         * if the key does not exist, create it. this is it because its a supplier
+         */
+        if(!keyList.containsKey(index)) {
+            keyList.put(index, value);
+            tab.add(key, value);
         }
     }
 
@@ -168,76 +160,44 @@ public class LightningShuffleboard {
      * @implNote will update automatically
      */
     public static void setStringSupplier(String tabName, String key, Supplier<String> value) {
-        boolean hasComponent = false;
         ShuffleboardTab tab = Shuffleboard.getTab(tabName);
 
-        // iterate through the components in the tab, check if the component exists
-        for (int i = 0; i < tab.getComponents().size(); i++) {
-            if (tab.getComponents().get(i).getTitle() == key) {
-                hasComponent = true;
-                break;
-            }
-        }
+        String index = tabName + "/" + key;
 
-        // if the component doesnt exist, create it (since its a supplier, it will be updated automatically)
-        if (!hasComponent) {
-            tab.addString(key, value);
+        /* logic breakdown:
+         * if the key does not exist, create it. this is it because its a supplier
+         */
+        if(!keyList.containsKey(index)) {
+            keyList.put(index, value);
+            tab.add(key, value);
         }
     }
 
     /**
-     * Creates and grabs a double from NT through shuffleboard
+     * Creates and grabs a double from NT through shuffleboard 
      * @param tabName the tab to grab the value from
      * @param key the name of the shuffleboard entry
      * @param defaultValue the initial entry value
      * @return the value of the shuffleboard entry
+     * 
+     * @implNote this causes some performance issues if used periodically.
      */
     public static double getDouble(String tabName, String key, double defaultValue) {
-        boolean hasComponent = false;
-        ShuffleboardTab tab = Shuffleboard.getTab(tabName);
+        String index = tabName + "/" + key;
 
-        // if the target exists, write to it using NTs, and if not, create the component
-        for (int i = 0; i < tab.getComponents().size(); i++) {
-            if (tab.getComponents().get(i).getTitle() == key) {
-                hasComponent = true;
-                break;
-            }
-        }
-
-        // if the component exists, get it using the NetworkTable, and if not, create the component
-        if (hasComponent) {
-            return NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).getDouble(defaultValue);
-        } else {
-            tab.add(key, defaultValue);
+        /* logic breakdown:
+         * if the key does not exist, create it
+         * if the key exists, update it
+         * this does create some overhead if used periodically
+         */
+        if(!keyList.containsKey(index)) {
+            keyList.put(index, defaultValue);
+            Shuffleboard.getTab(tabName).add(key, defaultValue);
             return defaultValue;
-        }
-    }
-
-    /**
-     * Creates and grabs a string from NT through shuffleboard
-     * @param tabName the tab to grab the value from
-     * @param key the name of the shuffleboard entry
-     * @param defaultValue the initial entry value
-     * @return the value of the shuffleboard entry
-     */
-    public static String getString(String tabName, String key, String defaultValue) {
-        boolean hasComponent = false;
-        ShuffleboardTab tab = Shuffleboard.getTab(tabName);
-
-        // if the target exists, write to it using NTs, and if not, create the component
-        for (int i = 0; i < tab.getComponents().size(); i++) {
-            if (tab.getComponents().get(i).getTitle() == key) {
-                hasComponent = true;
-                break;
-            }
-        }
-
-        // if the component exists, get it using the NetworkTable, and if not, create the component
-        if (hasComponent) {
-            return NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).getString(defaultValue);
         } else {
-            tab.add(key, defaultValue);
-            return defaultValue;
+            double value = NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).getDouble(defaultValue);
+            keyList.put(index, value);
+            return value;
         }
     }
 
@@ -247,27 +207,56 @@ public class LightningShuffleboard {
      * @param key the name of the shuffleboard entry
      * @param defaultValue the initial entry value
      * @return the value of the shuffleboard entry
+     * 
+     * @implNote this causes some performance issues if used periodically.
      */
     public static boolean getBool(String tabName, String key, boolean defaultValue) {
-        boolean hasComponent = false;
-        ShuffleboardTab tab = Shuffleboard.getTab(tabName);
+        String index = tabName + "/" + key;
 
-        // if the target exists, write to it using NTs, and if not, create the component
-        for (int i = 0; i < tab.getComponents().size(); i++) {
-            if (tab.getComponents().get(i).getTitle() == key) {
-                hasComponent = true;
-                break;
-            }
-        }
-
-        // if the component exists, get it using the NetworkTable, and if not, create the component
-        if (hasComponent) {
-            return NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).getBoolean(defaultValue);
-        } else {
-            tab.add(key, defaultValue);
+        /* logic breakdown:
+         * if the key does not exist, create it
+         * if the key exists, update it
+         * this does create some overhead if used periodically
+         */
+        if(!keyList.containsKey(index)) {
+            keyList.put(index, defaultValue);
+            Shuffleboard.getTab(tabName).add(key, defaultValue);
             return defaultValue;
+        } else {
+            boolean value = NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).getBoolean(defaultValue);
+            keyList.put(index, value);
+            return value;
         }
     }
+
+    /**
+     * Creates and grabs a string from NT through shuffleboard
+     * @param tabName the tab to grab the value from
+     * @param key the name of the shuffleboard entry
+     * @param defaultValue the initial entry value
+     * @return the value of the shuffleboard entry
+     * 
+     * @implNote this causes some performance issues if used periodically.
+     */
+    public static String getString(String tabName, String key, String defaultValue) {
+        String index = tabName + "/" + key;
+
+        /* logic breakdown:
+         * if the key does not exist, create it
+         * if the key exists, update it
+         * this does create some overhead if used periodically
+         */
+        if(!keyList.containsKey(index)) {
+            keyList.put(index, defaultValue);
+            Shuffleboard.getTab(tabName).add(key, defaultValue);
+            return defaultValue;
+        } else {
+            String value = NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).getString(defaultValue);
+            keyList.put(index, value);
+            return value;
+        }
+    }
+
     
     /**
      * Creates and sets a double array from NT through shuffleboard
@@ -276,46 +265,22 @@ public class LightningShuffleboard {
      * @param value the value of the shuffleboard entry
      * @implNote must be called periodically to update
      */
-    public static void setDoubleArray(String tabName, String key, Supplier<double[]> value) {
-        boolean hasComponent = false;
+    public static void setDoubleArray(String tabName, String key, double[] value) {
         ShuffleboardTab tab = Shuffleboard.getTab(tabName);
 
-        // iterate through the components in the tab, check if the component exists
-        for (int i = 0; i < tab.getComponents().size(); i++) {
-            if (tab.getComponents().get(i).getTitle() == key) {
-                hasComponent = true;
-                break;
-            }
-        }
+        String index = tabName + "/" + key;
 
-        // if the component exists, write to it using the NetworkTable, and if not, create the component
-        if (!hasComponent) {
-            tab.addDoubleArray(key, value);
-        }
-    }
-
-    /**
-     * Creates and sets a string array from NT through shuffleboard
-     * @param tabName the tab to set the value to
-     * @param key the name of the shuffleboard entry
-     * @param value the value of the shuffleboard entry
-     * @implNote must be called periodically to update
-     */
-    public static void setStringArray(String tabName, String key, Supplier<String[]> value) {
-        boolean hasComponent = false;
-        ShuffleboardTab tab = Shuffleboard.getTab(tabName);
-
-        // iterate through the components in the tab, check if the component exists
-        for (int i = 0; i < tab.getComponents().size(); i++) {
-            if (tab.getComponents().get(i).getTitle() == key) {
-                hasComponent = true;
-                break;
-            }
-        }
-
-        // if the component exists, write to it using the NetworkTable, and if not, create the component
-        if (!hasComponent) {
-            tab.addStringArray(key, value);
+        /* logic breakdown:
+         * if the key does not exist, create it
+         * if they exists but is not updated, update it
+         * else, the key exists and is up-to-date, so nothing needs to be done
+         */
+        if(!keyList.containsKey(index)) {
+            keyList.put(index, value);
+            tab.add(key, value);
+        } else if(!keyList.get(index).equals(value)) {
+            keyList.put(index, value);
+            NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setDoubleArray(value);
         }
     }
 
@@ -326,23 +291,51 @@ public class LightningShuffleboard {
      * @param value the value of the shuffleboard entry
      * @implNote must be called periodically to update
      */
-    public static void setBoolArray(String tabName, String key, Supplier<boolean[]> value) {
-        boolean hasComponent = false;
+    public static void setBoolArray(String tabName, String key, boolean[] value) {
         ShuffleboardTab tab = Shuffleboard.getTab(tabName);
 
-        // iterate through the components in the tab, check if the component exists
-        for (int i = 0; i < tab.getComponents().size(); i++) {
-            if (tab.getComponents().get(i).getTitle() == key) {
-                hasComponent = true;
-                break;
-            }
-        }
+        String index = tabName + "/" + key;
 
-        // if the component exists, write to it using the NetworkTable, and if not, create the component
-        if (!hasComponent) {
-            tab.addBooleanArray(key, value);
+        /* logic breakdown:
+         * if the key does not exist, create it
+         * if they exists but is not updated, update it
+         * else, the key exists and is up-to-date, so nothing needs to be done
+         */
+        if(!keyList.containsKey(index)) {
+            keyList.put(index, value);
+            tab.add(key, value);
+        } else if(!keyList.get(index).equals(value)) {
+            keyList.put(index, value);
+            NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setBooleanArray(value);
         }
     }
+
+    /**
+     * Creates and sets a string array from NT through shuffleboard
+     * @param tabName the tab to set the value to
+     * @param key the name of the shuffleboard entry
+     * @param value the value of the shuffleboard entry
+     * @implNote must be called periodically to update
+     */
+    public static void setStringArray(String tabName, String key, String[] value) {
+        ShuffleboardTab tab = Shuffleboard.getTab(tabName);
+
+        String index = tabName + "/" + key;
+
+        /* logic breakdown:
+         * if the key does not exist, create it
+         * if they exists but is not updated, update it
+         * else, the key exists and is up-to-date, so nothing needs to be done
+         */
+        if(!keyList.containsKey(index)) {
+            keyList.put(index, value);
+            tab.add(key, value);
+        } else if(!keyList.get(index).equals(value)) {
+            keyList.put(index, value);
+            NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setStringArray(value);
+        }
+    }
+
 
     /**
      * Set a {@link <a href="https://docs.wpilib.org/en/stable/docs/software/telemetry/robot-telemetry-with-sendable.html">Sendable</a>} object to NT through shuffleboard
@@ -351,43 +344,15 @@ public class LightningShuffleboard {
      * @param value the value of the shuffleboard entry
      */
     public static void send(String tabName, String key, Sendable value) {
-        boolean hasComponent = false;
         ShuffleboardTab tab = Shuffleboard.getTab(tabName);
 
-        // iterate through the components in the tab, check if the component exists
-        for (int i = 0; i < tab.getComponents().size(); i++) {
-            if (tab.getComponents().get(i).getTitle() == key) {
-                hasComponent = true;
-                break;
-            }
-        }
+        String index = tabName + "/" + key;
 
-        // if the component doesnt exist, create it (since its a supplier, it will be updated automatically)
-        if (!hasComponent) {
-            tab.add(key, value);
-        }
-    }
-
-    /**
-     * Set a generic object to NT through shuffleboard
-     * @param tabName the tab this shuffleboard entry will be placed in
-     * @param key the name of the shuffleboard entry
-     * @param value the value of the shuffleboard entry
-     */
-    public static void set(String tabName, String key, Object value) {
-        boolean hasComponent = false;
-        ShuffleboardTab tab = Shuffleboard.getTab(tabName);
-
-        // iterate through the components in the tab, check if the component exists
-        for (int i = 0; i < tab.getComponents().size(); i++) {
-            if (tab.getComponents().get(i).getTitle() == key) {
-                hasComponent = true;
-                break;
-            }
-        }
-
-        // if the component doesnt exist, create it (since its a supplier, it will be updated automatically)
-        if (!hasComponent) {
+        /* logic breakdown:
+         * if the key does not exist, create it. this is it because its a supplier
+         */
+        if(!keyList.containsKey(index)) {
+            keyList.put(index, value);
             tab.add(key, value);
         }
     }
@@ -413,7 +378,32 @@ public class LightningShuffleboard {
 
 
     /**
-     * @deprecated use {@link #set(String, String, Sendable)} instead
+     * Set a generic object to NT through shuffleboard
+     * @param tabName the tab this shuffleboard entry will be placed in
+     * @param key the name of the shuffleboard entry
+     * @param value the value of the shuffleboard entry
+     */
+    public static void set(String tabName, String key, Object value) {
+        ShuffleboardTab tab = Shuffleboard.getTab(tabName);
+
+        String index = tabName + "/" + key;
+
+        /* logic breakdown:
+         * if the key does not exist, create it
+         * if they exists but is not updated, update it
+         * else, the key exists and is up-to-date, so nothing needs to be done
+         */
+        if(!keyList.containsKey(index)) {
+            keyList.put(index, value);
+            tab.add(key, value);
+        } else if(!keyList.get(index).equals(value)) {
+            keyList.put(index, value);
+            NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getEntry(key).setValue(value);
+        }
+    }
+
+    /**
+     * @deprecated use {@link #send(String, String, Sendable)} instead
      * 
      * Set a {@link <a href="https://docs.wpilib.org/en/stable/docs/software/telemetry/robot-telemetry-with-sendable.html">Sendable</a>} object to NT through shuffleboard
      * @param tabName the tab this shuffleboard entry will be placed in
@@ -421,19 +411,15 @@ public class LightningShuffleboard {
      * @param value the value of the shuffleboard entry
      */
     public static void set(String tabName, String key, Sendable value) {
-        boolean hasComponent = false;
         ShuffleboardTab tab = Shuffleboard.getTab(tabName);
 
-        // iterate through the components in the tab, check if the component exists
-        for (int i = 0; i < tab.getComponents().size(); i++) {
-            if (tab.getComponents().get(i).getTitle() == key) {
-                hasComponent = true;
-                break;
-            }
-        }
+        String index = tabName + "/" + key;
 
-        // if the component doesnt exist, create it (since its a supplier, it will be updated automatically)
-        if (!hasComponent) {
+        /* logic breakdown:
+         * if the key does not exist, create it. this is it because its a supplier
+         */
+        if(!keyList.containsKey(index)) {
+            keyList.put(index, value);
             tab.add(key, value);
         }
     }
