@@ -19,9 +19,10 @@ jobs:
           with:
             repository: frc-862/thunder-actionstest
             ref: ''
-            submodules: 'true'
         - name: Set Correct HEAD
           run: |
+                echo "PLEASE WORK I BEGGGG"
+                git submodule update --init
                 cd src/main/java/frc/thunder
                 git fetch
                 git checkout $GITHUB_THUNDER_BRANCH
