@@ -6,8 +6,8 @@ on:
 jobs:
     Build:
         runs-on: ubuntu-latest
+        container: wpilib/roborio-cross-ubuntu:2025-22.04
         steps:
-        # container: wpilib/roborio-cross-ubuntu:2025-22.04
         - name: Checkout Latest Thunder
           uses: actions/checkout@v3
         - name: Store Branch & Head
