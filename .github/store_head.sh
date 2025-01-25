@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo git rev-parse HEAD > $THUNDER_HEAD
+THUNDER_HEAD=$(echo git rev-parse HEAD)

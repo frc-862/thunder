@@ -10,10 +10,10 @@ jobs:
         # container: wpilib/roborio-cross-ubuntu:2025-22.04
         - name: Checkout Thunder
           uses: actions/checkout@v3
-        - name: Set Execution Permissions for Script
-          run: chmod +x .github/store_head.sh
+        # - name: Set Execution Permissions for Script
+        #   run: chmod +x .github/store_head.sh
         - name: Store Head
-          run: THUNDER_HEAD=$(echo git rev-parse HEAD)
+          run: echo "GITHUB_THUNDER_HEAD=$(echo git rev-parse HEAD)" >> $GITHUB_ENV
         - name: Checkout and Initialize Thunder Test Repository
           uses: actions/checkout@v3
           with:
@@ -21,7 +21,7 @@ jobs:
             ref: ''
             submodules: 'true'
         - name: Initialize Thunder in Test Repository
-          run: echo $THUNDER_HEAD
+          run: echo $GITHUB_THUNDER_HEAD
         # - name: Set Execution Permissions
         #   run: chmod +x ./gradlew
         # - name: Gradle Build Test
