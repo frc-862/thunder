@@ -13,14 +13,14 @@ jobs:
             repository: frc-862/thunder-actionstest
             ref: ''
             submodules: 'true'
+        - name: Set Execution Permissions
+          run: chmod +x ./gradlew && chmod +x ./set_submodule.sh
         - name: Find Commit
-          run: echo "Commit: ${{ github.sha }}"
+          run: ./set_submodule.sh
         - name: Init JDK
           uses: actions/setup-java@v3
           with:
             distribution: 'zulu'
             java-version: '17'
-        - name: Set Execution Permissions
-          run: chmod +x ./gradlew
         - name: Gradle Build Test
           run: ./gradlew build
