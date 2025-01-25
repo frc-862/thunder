@@ -20,8 +20,12 @@ jobs:
             repository: frc-862/thunder-actionstest
             ref: ''
             submodules: 'true'
-        - name: Initialize Thunder in Test Repository
-          run: echo $GITHUB_THUNDER_HEAD
+        - name: Set Correct HEAD
+            run: |
+                cd src/main/java/frc/thunder
+                git checkout $GITHUB_THUNDER_HEAD
+        - name: Check Thunder Head
+          run: git rev-parse HEAD
         # - name: Set Execution Permissions
         #   run: chmod +x ./gradlew
         # - name: Gradle Build Test
