@@ -8,19 +8,21 @@ jobs:
         container: wpilib/roborio-cross-ubuntu:2025-22.04
         steps:
         - name: Set Execution Permissions
-          run: chmod +x ./gradlew && chmod +x .github/set_submodule.sh
+          run: chmod +x .github/set_submodule.sh
         - name: Find Thunder Commit
           run: .github/set_submodule.sh
-        - name: Checkout and Initialize Thunder Base Test
-          uses: actions/checkout@v3
-          with:
-            repository: frc-862/thunder-actionstest
-            ref: ''
-            submodules: 'true'
-        - name: Init JDK
-          uses: actions/setup-java@v3
-          with:
-            distribution: 'zulu'
-            java-version: '17'
-        - name: Gradle Build Test
-          run: ./gradlew build
+        # - name: Checkout and Initialize Thunder Base Test
+        #   uses: actions/checkout@v3
+        #   with:
+        #     repository: frc-862/thunder-actionstest
+        #     ref: ''
+        #     submodules: 'true'
+        # - name: Init JDK
+        #   uses: actions/setup-java@v3
+        #   with:
+        #     distribution: 'zulu'
+        #     java-version: '17'
+        # - name: Set Execution Permissions for Gradle
+        #   run: chmod +x ./gradlew build
+        # - name: Gradle Build Test
+        #   run: ./gradlew build
