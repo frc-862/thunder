@@ -22,16 +22,24 @@ import java.util.HashMap;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import frc.thunder.util.Tuple;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class LightningShuffleboard {
     private static HashMap<String, Object> keyList = new HashMap<String, Object>();
-    
+
+    //seperate hm for poses in order to retain publishers.
+    private static HashMap<String, StructPublisher<Pose2d>> poseList = new HashMap<String, StructPublisher<Pose2d>>();
+
     /**
      * Creates and sets a double to NT through shuffleboard
      * @param tabName the tab this shuffleboard entry will be placed in
@@ -336,6 +344,31 @@ public class LightningShuffleboard {
         }
     }
 
+    /**
+     * Creates and sets a Pose2d from NT through shuffleboard in AdvantageScope Struct formar
+     * @param tabName the tab to set the value to
+     * @param key the name of the shuffleboard entry
+     * @param value the value of the shuffleboard entry
+     * @implNote must be called periodically to update
+     */
+    public static void setPose2d(String tabName, String key, Pose2d value) {
+        ShuffleboardTab tab = Shuffleboard.getTab(tabName);
+
+        String index = tabName + "/" + key;
+
+        /* logic breakdown:
+         * if the key does not exist, create it
+         * if they exists but is not updated, update it
+         * else, the key exists and is up-to-date, so nothing needs to be done
+         */
+        if(!keyList.containsKey(index)) {
+            keyList.put(index, value);
+            poseList.put(index, NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable(tabName).getStructTopic(key, Pose2d.struct).publish());
+        } else if(!keyList.get(index).equals(value)) {
+            keyList.put(index, value);
+            poseList.get(index).accept(value);
+        }
+    }
 
     /**
      * Set a {@link <a href="https://docs.wpilib.org/en/stable/docs/software/telemetry/robot-telemetry-with-sendable.html">Sendable</a>} object to NT through shuffleboard
