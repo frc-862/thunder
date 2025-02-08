@@ -23,7 +23,7 @@ public abstract class Thunderbolt extends SubsystemBase {
 	AddressableLED leds;
 	AddressableLEDBuffer ledBuffer;
 
-	public PriorityQueue<LEDStates> states;
+	PriorityQueue<LEDStates> states;
 	ScheduledExecutorService scheduler;
 
 	/**
@@ -48,11 +48,11 @@ public abstract class Thunderbolt extends SubsystemBase {
 		states = new PriorityQueue<>();
 
 		scheduler = Executors.newSingleThreadScheduledExecutor();
-		scheduler.scheduleAtFixedRate(this::run, 0, (long) (updateFreq * 100), java.util.concurrent.TimeUnit.MILLISECONDS);
+		scheduler.scheduleAtFixedRate(this::cycle, 0, (long) (updateFreq * 1000), java.util.concurrent.TimeUnit.MILLISECONDS);
 
 	}
 
-	private enum Colors {
+	protected enum Colors {
 		RED(0),
 		ORANGE(5),
 		YELLOW(15),
@@ -73,7 +73,10 @@ public abstract class Thunderbolt extends SubsystemBase {
 		}
 	}
 
-	public void run() {
+	/**
+	 * This method is scheduled on a separate thread to update the LEDs periodically
+	 */
+	public void cycle() {
 		LEDStates state = states.peek();
 		if (state != null) {
 			updateLEDs(state);
@@ -94,6 +97,8 @@ public abstract class Thunderbolt extends SubsystemBase {
 
 	/**
 	 * Sets the LEDs to their default state
+	 * 
+	 * Override this method to set the LEDs default state
 	 */
 	protected abstract void defaultLEDs();
 
@@ -115,8 +120,7 @@ public abstract class Thunderbolt extends SubsystemBase {
 	 */
 	protected void rainbow() {
 		for (int i = 0; i < length; i++) {
-			ledBuffer.setHSV(i, (i + (int) (Timer.getFPGATimestamp() * 20)) % ledBuffer.getLength() * 180 / 14, 255,
-					100);
+			ledBuffer.setHSV(i, (i + (int) (Timer.getFPGATimestamp() * 20)) % ledBuffer.getLength() * 180 / 14, 255,100);
 		}
 	}
 
