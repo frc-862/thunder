@@ -52,6 +52,34 @@ import frc.thunder.util.Tuple;
  */
 // @SuppressWarnings({ "unchecked", "rawtypes" })
 public class LightningLogger {
+    /** MASTER TO-DO LIST
+     * TEST:
+      * does DataLog functionality work?
+      * edge cases (e.g. null values)
+      * LOGGING:
+        * boolean
+        * string
+        * double array
+        * boolean array
+        * string array
+      * GRABBING:
+        * double
+        * boolean
+        * string
+        * double array
+        * boolean array
+        * string array
+      
+     * FEATURES:
+      * more documentation
+      * do i have to suppress warnings?
+      * allow debug flags to be dynamically registered in-code
+      
+     * KNOWN ISSUES:
+      * FAST logging doesn't work
+      * DEBUG flags don't publish
+     */
+
 
     /**
      * Enum representing the log levels. All log levels log to DataLog. <p>
@@ -78,7 +106,7 @@ public class LightningLogger {
 
     private static final NetworkTableInstance ntInstance = NetworkTableInstance.getDefault();
     private static final DataLog dataLogManager = DataLogManager.getLog();
-    private static long FAST_UPDATE_FREQ = 500; //ms
+    private static double FAST_UPDATE_FREQ = 0.5; //s
     private static LoggingThread loggingThread;
 
     public static void initialize() {
@@ -115,7 +143,7 @@ public class LightningLogger {
         @Override
         public void run() {
             while (true) {
-                long startTime = (long) Timer.getFPGATimestamp();
+                double startTime = Timer.getFPGATimestamp();
 
                 // publish a value to the network table every 0.5 seconds from its registrationTime, iff shouldLog is true
                 for (var entry : values.entrySet()) {
@@ -123,16 +151,20 @@ public class LightningLogger {
                     LoggableValue value = entry.getValue();
 
                     // if shouldLog is true, and it's been a 0.5 second interval since the value was registered, publish to NT
-                    if (value.freq.equals(UpdateFrequency.FAST) && shouldLog(key) && (startTime - value.registrationTime) % FAST_UPDATE_FREQ == 0) {
+                    if (value.freq.equals(UpdateFrequency.FAST)) {
                         value.publishToNT();
-                        value.publishToDataLog();
+                        System.out.println("MUSTAAARRD: " + (startTime - value.registrationTime));
                     }
+                    // System.out.println("meoowowow");
                 }
 
                 // sleep for the remainder of the loop if possible; else, report a logging loop overrun
-                long endTime = (long) Timer.getFPGATimestamp();
-                long processingTime = endTime - startTime;
-                long sleepTime = FAST_UPDATE_FREQ - processingTime;
+                double endTime = Timer.getFPGATimestamp();
+
+                //total number of seconds the loop took
+                double processingTime = endTime - startTime;
+                long sleepTime = Math.round((FAST_UPDATE_FREQ - processingTime) * 1000); //convert to ms
+
 
                 if (sleepTime > 0) {
                     try {
@@ -147,32 +179,48 @@ public class LightningLogger {
             }
         }
 
-        
+        // primary logging functions
+
+        /**
+         * This method accepts a value to be logged and registers it if not already registered.
+         * If the log level is DEBUG and there is no entry in the debug flag map for the tab, it registers the debug flag.
+         * If the update frequency is PERIODIC and the value should be logged, it publishes the value to the network table.
+         *
+         * @param tab       The name of the tab where the value will be logged.
+         * @param key       The key associated with the value.
+         * @param value     The value to be logged.
+         * @param freq      The frequency at which the value should be updated.
+         * @param logLevel  The log level of the value.
+         */
         public synchronized void accept(String tab, String key, Object value, UpdateFrequency freq, LogLevel logLevel) {
             Tuple<String, String> tuple = new Tuple<String, String>(tab, key);
+            LoggableValue loggableValue;
+
+            // if the value is not already registered, register it
             if (!values.containsKey(tuple)) {
-                System.out.println("REGISTERING NEW LOG");
+                loggableValue = registerValue(tuple, value, freq, logLevel);
 
-                registerValue(tuple, value, freq, logLevel);
-
-                // if there's no entry in the debug flag map for this tab, register it
-                registerDebug(tab, false);
+                // if there's no entry in the debug flag map for this tab, create one
+                if(logLevel.equals(LogLevel.DEBUG)) {
+                    registerDebug(tab, false);
+                }
             } else {
-                values.get(tuple).accept(value);
+                // if the value is already registered, update it
+                loggableValue = values.get(tuple).accept(value);
             }
-
-            LoggableValue lv = values.get(tuple);
-            System.out.println(lv.value);
 
             //TODO: periodically grabbing from NT like this might cause some lag; investigate
-            if(freq == UpdateFrequency.PERIODIC && shouldLog(tuple)) {
-                lv.publishToNT();
+            if(freq == UpdateFrequency.PERIODIC) {
+                loggableValue.publishToNT();
             }
+
+            loggableValue.publishToDataLog();
         }
 
         public void accept(String tab, String key, Object value) throws IllegalArgumentException {
             accept(tab, key, value, UpdateFrequency.PERIODIC, LogLevel.IMPORTANT);
         }
+
 
         public void accept(String tab, String key, Object value, LogLevel logLevel) throws IllegalArgumentException {
             accept(tab, key, value, UpdateFrequency.PERIODIC, logLevel);
@@ -182,6 +230,28 @@ public class LightningLogger {
             accept(tab, key, value, updateFrequency, logLevel);
         }
 
+
+        private LoggableValue registerValue(Tuple<String, String> tuple, Object value, UpdateFrequency freq, LogLevel logLevel) throws IllegalArgumentException {
+            LoggableValue loggableValue = LoggableValue.create(value, freq, logLevel, tuple);
+            values.put(tuple, loggableValue);
+            return loggableValue;
+        }
+
+        private boolean shouldLog(Tuple<String, String> key) {
+            //primary logic for determining whether or not to log a value to NT
+            /**
+             * if the debug flag is set to true for the tab, and the log level is DEBUG, log the value to NT
+             * if the log level is IMPORTANT and the robot is not connected to the FMS, log the value to NT
+             * if the log level is CRITICAL, log the value to NT
+             */
+            var value = values.get(key);
+            return debugFlags.get(key.k).grabFromNT() && value.logLevel == LogLevel.DEBUG
+                || value.logLevel == LogLevel.IMPORTANT && !DriverStation.isFMSAttached()
+                || value.logLevel == LogLevel.CRITICAL;
+        }
+
+
+        //functions relating to grabbing values from NT and setting debug flags
         public synchronized <T> T grab(String tab, String key, T defaultValue) {
             Tuple<String, String> tuple = new Tuple<String, String>(tab, key);
             if (!subscribables.containsKey(tuple)) {
@@ -193,7 +263,7 @@ public class LightningLogger {
 
         public void registerDebug(String tab, Boolean value) {
             if (!debugFlags.containsKey(tab)) {
-                debugFlags.put(tab, SubscribeableValue.createDebug(tab, value));
+                debugFlags.put(tab, SubscribeableValue.createDebug(tab, Boolean.FALSE));
             }
         }
 
@@ -201,16 +271,7 @@ public class LightningLogger {
             subscribables.put(tuple, SubscribeableValue.createSubscribable(defaultValue, tuple));
         }
 
-        private void registerValue(Tuple<String, String> tuple, Object value, UpdateFrequency freq, LogLevel logLevel) throws IllegalArgumentException {
-            values.put(tuple, LoggableValue.create(value, freq, logLevel, tuple));
-        }
 
-        private boolean shouldLog(Tuple<String, String> key) {
-            var value = values.get(key);
-            return debugFlags.get(key.k).grabFromNT() && value.logLevel == LogLevel.DEBUG
-                || value.logLevel == LogLevel.IMPORTANT && !DriverStation.isFMSAttached()
-                || value.logLevel == LogLevel.CRITICAL;
-        }
     }       
     
 
@@ -284,13 +345,9 @@ public class LightningLogger {
          * suppresses unchecked warning as the type of the publisher is ensured to be the same as the type of the value in the constructor 
          * @param value the value to be sent to the network table, has to be part of {@link DataType}
          */
-        public boolean accept(T value) {
-            if(!lastSentValue.equals(value)) {
-                this.value = value;
-                return true;                
-            } else {
-                return false;
-            }
+        public LoggableValue accept(T value) {
+            this.value = value;
+            return this;
         }
 
         public void publishToNT() {
@@ -361,7 +418,7 @@ public class LightningLogger {
 
     private static final class SubscribeableValue<T> {
         public T defaultValue;
-        public Subscriber subscriber;
+        private Subscriber subscriber;
         public final DataType type;
 
 
