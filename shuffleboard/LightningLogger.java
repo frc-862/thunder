@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+import org.opencv.core.Mat.Tuple2;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.BooleanArrayPublisher;
 import edu.wpi.first.networktables.BooleanArraySubscriber;
@@ -48,7 +50,7 @@ import frc.thunder.util.Tuple;
  * The LightningLogger class is responsible for logging and publishing data to the network table and data log.
  * It supports different data types and update frequencies.
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+// @SuppressWarnings({ "unchecked", "rawtypes" })
 public class LightningLogger {
 
     /**
@@ -79,8 +81,7 @@ public class LightningLogger {
     private static long FAST_UPDATE_FREQ = 500; //ms
     private static LoggingThread loggingThread;
 
-    public static void initialize(double updateFrequency) {
-        FAST_UPDATE_FREQ = (long) updateFrequency;
+    public static void initialize() {
         loggingThread = new LoggingThread();
 
         loggingThread.start();
@@ -95,6 +96,421 @@ public class LightningLogger {
         for (Tuple<String, Boolean> flag : flags) {
             loggingThread.registerDebug(flag.k, flag.v);
         }
+    }
+
+
+    private static class LoggingThread extends Thread {
+        private static Map<Tuple<String, String>, LoggableValue> values = new HashMap<Tuple<String, String>, LoggableValue>();
+        private static HashMap<Tuple<String, String>, SubscribeableValue> subscribables = new HashMap<Tuple<String, String>, SubscribeableValue>();
+
+        // maps tab name to a boolean representing whether or not to log debug data
+        private static HashMap<String, SubscribeableValue<Boolean>> debugFlags = new HashMap<String, SubscribeableValue<Boolean>>();
+
+
+
+        public LoggingThread() {
+            super();
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+                long startTime = (long) Timer.getFPGATimestamp();
+
+                // publish a value to the network table every 0.5 seconds from its registrationTime, iff shouldLog is true
+                for (var entry : values.entrySet()) {
+                    Tuple<String, String> key = entry.getKey();
+                    LoggableValue value = entry.getValue();
+
+                    // if shouldLog is true, and it's been a 0.5 second interval since the value was registered, publish to NT
+                    if (value.freq.equals(UpdateFrequency.FAST) && shouldLog(key) && (startTime - value.registrationTime) % FAST_UPDATE_FREQ == 0) {
+                        value.publishToNT();
+                        value.publishToDataLog();
+                    }
+                }
+
+                // sleep for the remainder of the loop if possible; else, report a logging loop overrun
+                long endTime = (long) Timer.getFPGATimestamp();
+                long processingTime = endTime - startTime;
+                long sleepTime = FAST_UPDATE_FREQ - processingTime;
+
+                if (sleepTime > 0) {
+                    try {
+                        Thread.sleep(sleepTime);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                } else {
+                    System.out.println("[WARNING] Logging loop overrun: " + -sleepTime + "ms over");
+                }
+            }
+        }
+
+        
+        public synchronized void accept(String tab, String key, Object value, UpdateFrequency freq, LogLevel logLevel) {
+            Tuple<String, String> tuple = new Tuple<String, String>(tab, key);
+            if (!values.containsKey(tuple)) {
+                System.out.println("REGISTERING NEW LOG");
+
+                registerValue(tuple, value, freq, logLevel);
+
+                // if there's no entry in the debug flag map for this tab, register it
+                registerDebug(tab, false);
+            } else {
+                values.get(tuple).accept(value);
+            }
+
+            LoggableValue lv = values.get(tuple);
+            System.out.println(lv.value);
+
+            //TODO: periodically grabbing from NT like this might cause some lag; investigate
+            if(freq == UpdateFrequency.PERIODIC && shouldLog(tuple)) {
+                lv.publishToNT();
+            }
+        }
+
+        public void accept(String tab, String key, Object value) throws IllegalArgumentException {
+            accept(tab, key, value, UpdateFrequency.PERIODIC, LogLevel.IMPORTANT);
+        }
+
+        public void accept(String tab, String key, Object value, LogLevel logLevel) throws IllegalArgumentException {
+            accept(tab, key, value, UpdateFrequency.PERIODIC, logLevel);
+        }
+
+        public void accept(String tab, String key, Object value, LogLevel logLevel, UpdateFrequency updateFrequency) throws IllegalArgumentException {
+            accept(tab, key, value, updateFrequency, logLevel);
+        }
+
+        public synchronized <T> T grab(String tab, String key, T defaultValue) {
+            Tuple<String, String> tuple = new Tuple<String, String>(tab, key);
+            if (!subscribables.containsKey(tuple)) {
+                registerSubscribable(tuple, defaultValue);
+            }
+
+            return (T) subscribables.get(tuple).grabFromNT();
+        }
+
+        public void registerDebug(String tab, Boolean value) {
+            if (!debugFlags.containsKey(tab)) {
+                debugFlags.put(tab, SubscribeableValue.createDebug(tab, value));
+            }
+        }
+
+        private void registerSubscribable(Tuple<String, String> tuple, Object defaultValue) {
+            subscribables.put(tuple, SubscribeableValue.createSubscribable(defaultValue, tuple));
+        }
+
+        private void registerValue(Tuple<String, String> tuple, Object value, UpdateFrequency freq, LogLevel logLevel) throws IllegalArgumentException {
+            values.put(tuple, LoggableValue.create(value, freq, logLevel, tuple));
+        }
+
+        private boolean shouldLog(Tuple<String, String> key) {
+            var value = values.get(key);
+            return debugFlags.get(key.k).grabFromNT() && value.logLevel == LogLevel.DEBUG
+                || value.logLevel == LogLevel.IMPORTANT && !DriverStation.isFMSAttached()
+                || value.logLevel == LogLevel.CRITICAL;
+        }
+    }       
+    
+
+    private static class LoggableValue<T> {
+        private T value;
+        private T lastSentValue;
+        private final Publisher publisher;
+        public final UpdateFrequency freq;
+        private final DataType type;
+        private final DataLogEntry dataLog;
+        public final long registrationTime;
+        public LogLevel logLevel;
+
+        private LoggableValue(T value, UpdateFrequency freq, LogLevel logLevel, Tuple<String, String> tuple) {
+            this.value = value;
+            this.lastSentValue = value;
+            this.freq = freq;
+            this.registrationTime = (long) Timer.getFPGATimestamp();
+            this.logLevel = logLevel;
+
+            String logName = "/" + tuple.k + "/" + tuple.v;
+
+            NetworkTable table = ntInstance.getTable("Shuffleboard").getSubTable(tuple.k);
+
+            // basic typechecking, creating LogEntries of the correct type, and mapping the java types to our enum
+            if(value instanceof Double) {
+                dataLog = new DoubleLogEntry(dataLogManager, logName, registrationTime);
+                publisher = table.getDoubleTopic(tuple.v).publish();
+                type = DataType.DOUBLE;
+            } else if(value instanceof Boolean) {
+                dataLog = new BooleanLogEntry(dataLogManager, logName, registrationTime);
+                publisher = table.getBooleanTopic(tuple.v).publish();
+                type = DataType.BOOLEAN;
+            } else if(value instanceof String) {
+                dataLog = new StringLogEntry(dataLogManager, logName, registrationTime);
+                publisher = table.getStringTopic(tuple.v).publish();
+                type = DataType.STRING;
+            } else if(value instanceof double[]) {
+                dataLog = new DoubleArrayLogEntry(dataLogManager, logName, registrationTime);
+                publisher = table.getDoubleArrayTopic(tuple.v).publish();
+                type = DataType.DOUBLE_ARRAY;
+            } else if(value instanceof boolean[]) {
+                dataLog = new BooleanArrayLogEntry(dataLogManager, logName, registrationTime);
+                publisher = table.getBooleanArrayTopic(tuple.v).publish();
+                type = DataType.BOOLEAN_ARRAY;
+            } else if(value instanceof String[]) {
+                dataLog = new StringArrayLogEntry(dataLogManager, logName, registrationTime);
+                publisher = table.getStringArrayTopic(tuple.v).publish();
+                type = DataType.STRING_ARRAY;
+            } else if(value instanceof Pose2d) {
+                dataLog = StructLogEntry.create(dataLogManager, logName, Pose2d.struct, registrationTime);
+                publisher = table.getStructTopic(tuple.v, Pose2d.struct).publish();
+                type = DataType.POSE2D;
+            } else {
+                // any type issue should be caught here.
+                // also, this should literally never be thrown; this class is inacessable publicly, and whoever's editing this should be smart about it
+                // with that being said, ensure any newly implemented loggable types are thoroughly tested
+                throw new IllegalArgumentException("Invalid data type");
+            }
+        }
+
+
+        public static <T> LoggableValue<T> create(T value, UpdateFrequency freq, LogLevel logLevel, Tuple<String, String> tuple) throws IllegalArgumentException{
+            return new LoggableValue<>(value, freq, logLevel, tuple);
+        }
+
+        /**
+         * Accepts a value and sends it to the network table if it is different from the last sent value <p>
+         * only use this function when updating to NT <p>
+         * 
+         * suppresses unchecked warning as the type of the publisher is ensured to be the same as the type of the value in the constructor 
+         * @param value the value to be sent to the network table, has to be part of {@link DataType}
+         */
+        public boolean accept(T value) {
+            if(!lastSentValue.equals(value)) {
+                this.value = value;
+                return true;                
+            } else {
+                return false;
+            }
+        }
+
+        public void publishToNT() {
+            if(hasUpdate()) {
+                switch(type) {
+                    case DOUBLE:
+                        ((DoublePublisher) publisher).accept((Double) value);
+                        break;
+                    case BOOLEAN:
+                        ((BooleanPublisher) publisher).accept((Boolean) value);
+                        break;
+                    case STRING:
+                        ((StringPublisher) publisher).accept((String) value);
+                        break;
+                    case DOUBLE_ARRAY:
+                        ((DoubleArrayPublisher) publisher).accept((double[]) value);
+                        break;
+                    case BOOLEAN_ARRAY:
+                        ((BooleanArrayPublisher) publisher).accept((boolean[]) value);
+                        break;
+                    case STRING_ARRAY:
+                        ((StringArrayPublisher) publisher).accept((String[]) value);
+                        break;
+                    case POSE2D:
+                        ((StructPublisher<Pose2d>) publisher).accept((Pose2d) value);
+                        break;                 
+                }
+
+
+                lastSentValue = value;
+            }
+        }
+    
+        public void publishToDataLog() {
+            if(hasUpdate()) {
+                switch(type) {
+                    case DOUBLE:
+                        ((DoubleLogEntry) dataLog).append((double) value, (long) Timer.getFPGATimestamp());
+                        break;
+                    case BOOLEAN:
+                        ((BooleanLogEntry) dataLog).append((boolean) value, (long) Timer.getFPGATimestamp());
+                        break;
+                    case STRING:
+                        ((StringLogEntry) dataLog).append((String) value, (long) Timer.getFPGATimestamp());
+                        break;
+                    case DOUBLE_ARRAY:
+                        ((DoubleArrayLogEntry) dataLog).append((double[]) value, (long) Timer.getFPGATimestamp());
+                        break;
+                    case BOOLEAN_ARRAY:
+                        ((BooleanArrayLogEntry) dataLog).append((boolean[]) value, (long) Timer.getFPGATimestamp());
+                        break;
+                    case STRING_ARRAY:
+                        ((StringArrayLogEntry) dataLog).append((String[]) value, (long) Timer.getFPGATimestamp());
+                        break;
+                    case POSE2D:
+                        ((StructLogEntry<Pose2d>) dataLog).append((Pose2d) value, (long) Timer.getFPGATimestamp());
+                        break;                  
+                }
+
+                lastSentValue = value;
+            }
+        }
+
+        public boolean hasUpdate() {
+            return !lastSentValue.equals(value);
+        }
+    }
+
+    private static final class SubscribeableValue<T> {
+        public T defaultValue;
+        public Subscriber subscriber;
+        public final DataType type;
+
+
+        private SubscribeableValue(T defaultValue, Tuple<String, String> tuple) {
+            this.defaultValue = defaultValue;
+
+            NetworkTable table = ntInstance.getTable("Shuffleboard").getSubTable(tuple.k);
+
+            // basic typechecking, creating LogEntries of the correct type, and mapping the java types to our enum
+            if(defaultValue instanceof Double) {
+                subscriber = table.getDoubleTopic(tuple.v).subscribe((Double) defaultValue);
+                type = DataType.DOUBLE;
+            } else if(defaultValue instanceof Boolean) {
+                subscriber = table.getBooleanTopic(tuple.v).subscribe((Boolean) defaultValue);
+                type = DataType.BOOLEAN;
+            } else if(defaultValue instanceof String) {
+                subscriber = table.getStringTopic(tuple.v).subscribe((String) defaultValue);
+                type = DataType.STRING;
+            } else if(defaultValue instanceof double[]) {
+                subscriber = table.getDoubleArrayTopic(tuple.v).subscribe((double[]) defaultValue);
+                type = DataType.DOUBLE_ARRAY;
+            } else if(defaultValue instanceof boolean[]) {
+                subscriber = table.getBooleanArrayTopic(tuple.v).subscribe((boolean[]) defaultValue);
+                type = DataType.BOOLEAN_ARRAY;
+            } else if(defaultValue instanceof String[]) {
+                subscriber = table.getStringArrayTopic(tuple.v).subscribe((String[]) defaultValue);
+                type = DataType.STRING_ARRAY;
+            } else {
+                // any type issue should be caught here.
+                // also, this should literally never be thrown; this class is inacessable publicly, and whoever's editing this should be smart about it
+                // with that being said, ensure any newly implemented loggable types are thoroughly tested
+                throw new IllegalArgumentException("Invalid data type");
+            }
+        }
+
+        public static <T> SubscribeableValue<T> createSubscribable(T value, Tuple<String, String> tuple) throws IllegalArgumentException{
+            return new SubscribeableValue<>(value, tuple);
+        }
+
+        // creates a debug flag subscribable value
+        public static SubscribeableValue<Boolean> createDebug(String tabName, Boolean value) throws IllegalArgumentException{
+            return new SubscribeableValue<>(value, new Tuple<String, String>("Debug", "Debug " + tabName));
+        }
+
+        public T grabFromNT() {
+            switch(type) {
+                case DOUBLE: return (T) (Double) ((DoubleSubscriber) subscriber).get((Double) defaultValue);
+                case BOOLEAN: return (T) (Boolean) ((BooleanSubscriber) subscriber).get((Boolean) defaultValue);
+                case STRING: return (T) (String) ((StringSubscriber) subscriber).get((String) defaultValue);
+                case DOUBLE_ARRAY: return (T) (double[]) ((DoubleArraySubscriber) subscriber).get((double[]) defaultValue);
+                case BOOLEAN_ARRAY: return (T) (boolean[]) ((BooleanArraySubscriber) subscriber).get((boolean[]) defaultValue);
+                case STRING_ARRAY: return (T) (String[]) ((StringArraySubscriber) subscriber).get((String[]) defaultValue);
+                default: throw new IllegalArgumentException("Invalid data type");
+            }
+        }
+    }
+
+
+    //onslaught of repeating setters and getters below
+
+    /**
+     * Sets a double value to be logged with a specific log level and update frequency.
+     * 
+     * @param tab the tab name
+     * @param key the key name
+     * @param value the double value
+     * @param logLevel the log level
+     * @param updateFrequency the update frequency
+     */
+    public static void setDouble(String tab, String key, double value, LogLevel logLevel, UpdateFrequency updateFrequency) {
+        loggingThread.accept(tab, key, value, logLevel, updateFrequency);
+    }
+
+    /**
+     * Sets a boolean value to be logged with a specific log level and update frequency.
+     * 
+     * @param tab the tab name
+     * @param key the key name
+     * @param value the boolean value
+     * @param logLevel the log level
+     * @param updateFrequency the update frequency
+     */
+    public static void setBoolean(String tab, String key, boolean value, LogLevel logLevel, UpdateFrequency updateFrequency) {
+        loggingThread.accept(tab, key, value, logLevel, updateFrequency);
+    }
+
+    /**
+     * Sets a string value to be logged with a specific log level and update frequency.
+     * 
+     * @param tab the tab name
+     * @param key the key name
+     * @param value the string value
+     * @param logLevel the log level
+     * @param updateFrequency the update frequency
+     */
+    public static void setString(String tab, String key, String value, LogLevel logLevel, UpdateFrequency updateFrequency) {
+        loggingThread.accept(tab, key, value, logLevel, updateFrequency);
+    }
+
+    /**
+     * Sets a double array value to be logged with a specific log level and update frequency.
+     * 
+     * @param tab the tab name
+     * @param key the key name
+     * @param value the double array value
+     * @param logLevel the log level
+     * @param updateFrequency the update frequency
+     */
+    public static void setDoubleArray(String tab, String key, double[] value, LogLevel logLevel, UpdateFrequency updateFrequency) {
+        loggingThread.accept(tab, key, value, logLevel, updateFrequency);
+    }
+
+    /**
+     * Sets a boolean array value to be logged with a specific log level and update frequency.
+     * 
+     * @param tab the tab name
+     * @param key the key name
+     * @param value the boolean array value
+     * @param logLevel the log level
+     * @param updateFrequency the update frequency
+     */
+    public static void setBooleanArray(String tab, String key, boolean[] value, LogLevel logLevel, UpdateFrequency updateFrequency) {
+        loggingThread.accept(tab, key, value, logLevel, updateFrequency);
+    }
+
+    /**
+     * Sets a string array value to be logged with a specific log level and update frequency.
+     * 
+     * @param tab the tab name
+     * @param key the key name
+     * @param value the string array value
+     * @param logLevel the log level
+     * @param updateFrequency the update frequency
+     */
+    public static void setStringArray(String tab, String key, String[] value, LogLevel logLevel, UpdateFrequency updateFrequency) {
+        loggingThread.accept(tab, key, value, logLevel, updateFrequency);
+    }
+
+    /**
+     * Sets a Pose2d value to be logged with a specific log level and update frequency.
+     * 
+     * @param tab the tab name
+     * @param key the key name
+     * @param value the Pose2d value
+     * @param logLevel the log level
+     * @param updateFrequency the update frequency
+     */
+    public static void setPose2d(String tab, String key, Pose2d value, LogLevel logLevel, UpdateFrequency updateFrequency) {
+        loggingThread.accept(tab, key, value, logLevel, updateFrequency);
     }
 
 
@@ -343,322 +759,5 @@ public class LightningLogger {
      */
     public static Pose2d getPose2d(String tab, String key, Pose2d defaultValue) {
         return loggingThread.grab(tab, key, defaultValue);
-    }
-
-
-    private static class LoggingThread extends Thread {
-        private static Map<Tuple<String, String>, LoggableValue> values = new HashMap<Tuple<String, String>, LoggableValue>();
-        private static HashMap<Tuple<String, String>, SubscribeableValue> subscribables = new HashMap<Tuple<String, String>, SubscribeableValue>();
-
-        // maps tab name to a boolean representing whether or not to log debug data
-        private static HashMap<String, SubscribeableValue<Boolean>> debugFlags = new HashMap<String, SubscribeableValue<Boolean>>();
-
-
-
-        public LoggingThread() {
-            super();
-        }
-
-        @Override
-        public void run() {
-            while (true) {
-                long startTime = (long) Timer.getFPGATimestamp();
-
-                // publish a value to the network table every 0.5 seconds from its registrationTime, iff shouldLog is true
-                for (var entry : values.entrySet()) {
-                    Tuple<String, String> key = entry.getKey();
-                    LoggableValue value = entry.getValue();
-
-                    // if shouldLog is true, and it's been a 0.5 second interval since the value was registered, publish to NT
-                    if (shouldLog(key) && (startTime - value.registrationTime) % FAST_UPDATE_FREQ == 0) {
-                        value.publishToNT();
-                        value.publishToDataLog();
-                    }
-                }
-
-                // sleep for the remainder of the loop if possible; else, report a logging loop overrun
-                long endTime = (long) Timer.getFPGATimestamp();
-                long processingTime = endTime - startTime;
-                long sleepTime = FAST_UPDATE_FREQ - processingTime;
-
-                if (sleepTime > 0) {
-                    try {
-                        Thread.sleep(sleepTime);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        break;
-                    }
-                } else {
-                    System.out.println("[WARNING] Logging loop overrun: " + -sleepTime + "ms over");
-                }
-            }
-        }
-
-        
-        public synchronized void accept(String tab, String key, Object value, UpdateFrequency freq, LogLevel logLevel) throws IllegalArgumentException {
-            Tuple<String, String> tuple = new Tuple<String, String>(tab, key);
-            
-            if (!values.containsKey(tuple)) {
-                registerValue(tuple, value, freq, logLevel);
-
-                // if there's no entry in the debug flag map for this tab, register it
-                registerDebug(tab, false);
-            } else {
-                values.get(tuple).accept(value);
-            }
-
-            LoggableValue lv = values.get(tuple);
-            
-            //TODO: periodically grabbing from NT like this might cause some lag; investigate
-            if(freq == UpdateFrequency.PERIODIC && debugFlags.get(tab).grabFromNT()) {
-                lv.publishToNT();
-            } else if(lv.hasUpdate()) {
-                // queue.add(new Tuple(tuple, lv));
-            }
-        }
-
-        public void accept(String tab, String key, Object value) throws IllegalArgumentException {
-            accept(tab, key, value, UpdateFrequency.FAST, LogLevel.IMPORTANT);
-        }
-
-        public void accept(String tab, String key, Object value, LogLevel logLevel) throws IllegalArgumentException {
-            accept(tab, key, value, UpdateFrequency.FAST, logLevel);
-        }
-
-        public synchronized <T> T grab(String tab, String key, T defaultValue) {
-            Tuple<String, String> tuple = new Tuple<String, String>(tab, key);
-            if (!subscribables.containsKey(tuple)) {
-                registerSubscribable(tuple, defaultValue);
-            }
-
-            return (T) subscribables.get(tuple).grabFromNT();
-        }
-
-        public void registerDebug(String tab, Boolean value) {
-            if (!debugFlags.containsKey(tab)) {
-                debugFlags.put(tab, SubscribeableValue.createDebug(tab, value));
-            }
-        }
-
-        private void registerSubscribable(Tuple<String, String> tuple, Object defaultValue) {
-            subscribables.put(tuple, SubscribeableValue.createSubscribable(defaultValue, tuple));
-        }
-
-        private void registerValue(Tuple<String, String> tuple, Object value, UpdateFrequency freq, LogLevel logLevel) throws IllegalArgumentException {
-            values.put(tuple, LoggableValue.create(value, freq, logLevel, tuple));
-        }
-
-        private boolean shouldLog(Tuple<String, String> key) {
-            var value = values.get(key);
-            return debugFlags.get(key.k).grabFromNT() && value.logLevel == LogLevel.DEBUG
-                || value.logLevel == LogLevel.IMPORTANT && !DriverStation.isFMSAttached()
-                || value.logLevel == LogLevel.CRITICAL;
-        }
-    }       
-    
-
-    private static class LoggableValue<T> {
-        public T value;
-        public T lastSentValue;
-        public final Publisher publisher;
-        public final UpdateFrequency freq;
-        private final DataType type;
-        private final DataLogEntry dataLog;
-        public final long registrationTime;
-        public LogLevel logLevel;
-
-        private LoggableValue(T value, UpdateFrequency freq, LogLevel logLevel, Tuple<String, String> tuple) {
-            this.value = value;
-            this.lastSentValue = value;
-            this.freq = freq;
-            this.registrationTime = (long) Timer.getFPGATimestamp();
-            this.logLevel = logLevel;
-
-            String logName = "/" + tuple.k + "/" + tuple.v;
-
-            NetworkTable table = ntInstance.getTable("Shuffleboard").getSubTable(tuple.k);
-
-            // basic typechecking, creating LogEntries of the correct type, and mapping the java types to our enum
-            if(value instanceof Double) {
-                dataLog = new DoubleLogEntry(dataLogManager, logName, registrationTime);
-                publisher = table.getDoubleTopic(tuple.v).publish();
-                type = DataType.DOUBLE;
-            } else if(value instanceof Boolean) {
-                dataLog = new BooleanLogEntry(dataLogManager, logName, registrationTime);
-                publisher = table.getBooleanTopic(tuple.v).publish();
-                type = DataType.BOOLEAN;
-            } else if(value instanceof String) {
-                dataLog = new StringLogEntry(dataLogManager, logName, registrationTime);
-                publisher = table.getStringTopic(tuple.v).publish();
-                type = DataType.STRING;
-            } else if(value instanceof double[]) {
-                dataLog = new DoubleArrayLogEntry(dataLogManager, logName, registrationTime);
-                publisher = table.getDoubleArrayTopic(tuple.v).publish();
-                type = DataType.DOUBLE_ARRAY;
-            } else if(value instanceof boolean[]) {
-                dataLog = new BooleanArrayLogEntry(dataLogManager, logName, registrationTime);
-                publisher = table.getBooleanArrayTopic(tuple.v).publish();
-                type = DataType.BOOLEAN_ARRAY;
-            } else if(value instanceof String[]) {
-                dataLog = new StringArrayLogEntry(dataLogManager, logName, registrationTime);
-                publisher = table.getStringArrayTopic(tuple.v).publish();
-                type = DataType.STRING_ARRAY;
-            } else if(value instanceof Pose2d) {
-                dataLog = StructLogEntry.create(dataLogManager, logName, Pose2d.struct, registrationTime);
-                publisher = table.getStructTopic(tuple.v, Pose2d.struct).publish();
-                type = DataType.POSE2D;
-            } else {
-                // any type issue should be caught here.
-                // also, this should literally never be thrown; this class is inacessable publicly, and whoever's editing this should be smart about it
-                // with that being said, ensure any newly implemented loggable types are thoroughly tested
-                throw new IllegalArgumentException("Invalid data type");
-            }
-        }
-
-
-        public static <T> LoggableValue<T> create(T value, UpdateFrequency freq, LogLevel logLevel, Tuple<String, String> tuple) throws IllegalArgumentException{
-            return new LoggableValue<>(value, freq, logLevel, tuple);
-        }
-
-        /**
-         * Accepts a value and sends it to the network table if it is different from the last sent value <p>
-         * only use this function when updating to NT <p>
-         * 
-         * suppresses unchecked warning as the type of the publisher is ensured to be the same as the type of the value in the constructor 
-         * @param value the value to be sent to the network table, has to be part of {@link DataType}
-         */
-        public boolean accept(T value) {
-            if(!lastSentValue.equals(value)) {
-                this.value = value;
-                return true;                
-            } else {
-                return false;
-            }
-        }
-
-        public void publishToNT() {
-            if(hasUpdate()) {
-                switch(type) {
-                    case DOUBLE:
-                        ((DoublePublisher) publisher).accept((Double) value);
-                        break;
-                    case BOOLEAN:
-                        ((BooleanPublisher) publisher).accept((Boolean) value);
-                        break;
-                    case STRING:
-                        ((StringPublisher) publisher).accept((String) value);
-                        break;
-                    case DOUBLE_ARRAY:
-                        ((DoubleArrayPublisher) publisher).accept((double[]) value);
-                        break;
-                    case BOOLEAN_ARRAY:
-                        ((BooleanArrayPublisher) publisher).accept((boolean[]) value);
-                        break;
-                    case STRING_ARRAY:
-                        ((StringArrayPublisher) publisher).accept((String[]) value);
-                        break;
-                    case POSE2D:
-                        ((StructPublisher<Pose2d>) publisher).accept((Pose2d) value);
-                        break;                 
-                }
-
-
-                lastSentValue = value;
-            }
-        }
-    
-        public void publishToDataLog() {
-            if(hasUpdate()) {
-                switch(type) {
-                    case DOUBLE:
-                        ((DoubleLogEntry) dataLog).append((double) value, (long) Timer.getFPGATimestamp());
-                        break;
-                    case BOOLEAN:
-                        ((BooleanLogEntry) dataLog).append((boolean) value, (long) Timer.getFPGATimestamp());
-                        break;
-                    case STRING:
-                        ((StringLogEntry) dataLog).append((String) value, (long) Timer.getFPGATimestamp());
-                        break;
-                    case DOUBLE_ARRAY:
-                        ((DoubleArrayLogEntry) dataLog).append((double[]) value, (long) Timer.getFPGATimestamp());
-                        break;
-                    case BOOLEAN_ARRAY:
-                        ((BooleanArrayLogEntry) dataLog).append((boolean[]) value, (long) Timer.getFPGATimestamp());
-                        break;
-                    case STRING_ARRAY:
-                        ((StringArrayLogEntry) dataLog).append((String[]) value, (long) Timer.getFPGATimestamp());
-                        break;
-                    case POSE2D:
-                        ((StructLogEntry<Pose2d>) dataLog).append((Pose2d) value, (long) Timer.getFPGATimestamp());
-                        break;                  
-                }
-
-                lastSentValue = value;
-            }
-        }
-
-        public boolean hasUpdate() {
-            return !lastSentValue.equals(value);
-        }
-    }
-
-    private static final class SubscribeableValue<T> {
-        public T defaultValue;
-        public Subscriber subscriber;
-        public final DataType type;
-
-
-        private SubscribeableValue(T defaultValue, Tuple<String, String> tuple) {
-            this.defaultValue = defaultValue;
-
-            NetworkTable table = ntInstance.getTable("Shuffleboard").getSubTable(tuple.k);
-
-            // basic typechecking, creating LogEntries of the correct type, and mapping the java types to our enum
-            if(defaultValue instanceof Double) {
-                subscriber = table.getDoubleTopic(tuple.v).subscribe((Double) defaultValue);
-                type = DataType.DOUBLE;
-            } else if(defaultValue instanceof Boolean) {
-                subscriber = table.getBooleanTopic(tuple.v).subscribe((Boolean) defaultValue);
-                type = DataType.BOOLEAN;
-            } else if(defaultValue instanceof String) {
-                subscriber = table.getStringTopic(tuple.v).subscribe((String) defaultValue);
-                type = DataType.STRING;
-            } else if(defaultValue instanceof double[]) {
-                subscriber = table.getDoubleArrayTopic(tuple.v).subscribe((double[]) defaultValue);
-                type = DataType.DOUBLE_ARRAY;
-            } else if(defaultValue instanceof boolean[]) {
-                subscriber = table.getBooleanArrayTopic(tuple.v).subscribe((boolean[]) defaultValue);
-                type = DataType.BOOLEAN_ARRAY;
-            } else if(defaultValue instanceof String[]) {
-                subscriber = table.getStringArrayTopic(tuple.v).subscribe((String[]) defaultValue);
-                type = DataType.STRING_ARRAY;
-            } else {
-                // any type issue should be caught here.
-                // also, this should literally never be thrown; this class is inacessable publicly, and whoever's editing this should be smart about it
-                // with that being said, ensure any newly implemented loggable types are thoroughly tested
-                throw new IllegalArgumentException("Invalid data type");
-            }
-        }
-
-        public static <T> SubscribeableValue<T> createSubscribable(T value, Tuple<String, String> tuple) throws IllegalArgumentException{
-            return new SubscribeableValue<>(value, tuple);
-        }
-
-        // creates a debug flag subscribable value
-        public static SubscribeableValue<Boolean> createDebug(String tabName, Boolean value) throws IllegalArgumentException{
-            return new SubscribeableValue<>(value, new Tuple<String, String>("Debug", "Debug " + tabName));
-        }
-
-        public T grabFromNT() {
-            switch(type) {
-                case DOUBLE: return (T) (Double) ((DoubleSubscriber) subscriber).get((Double) defaultValue);
-                case BOOLEAN: return (T) (Boolean) ((BooleanSubscriber) subscriber).get((Boolean) defaultValue);
-                case STRING: return (T) (String) ((StringSubscriber) subscriber).get((String) defaultValue);
-                case DOUBLE_ARRAY: return (T) (double[]) ((DoubleArraySubscriber) subscriber).get((double[]) defaultValue);
-                case BOOLEAN_ARRAY: return (T) (boolean[]) ((BooleanArraySubscriber) subscriber).get((boolean[]) defaultValue);
-                case STRING_ARRAY: return (T) (String[]) ((StringArraySubscriber) subscriber).get((String[]) defaultValue);
-                default: throw new IllegalArgumentException("Invalid data type");
-            }
-        }
     }
 }
