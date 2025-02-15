@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.Constants.LEDConstants.LEDStates;
 
 public abstract class Lightningstrip {
@@ -27,14 +29,30 @@ public abstract class Lightningstrip {
 		this.leds = leds;
     }
 
-	public void enableState(LEDStates state) {
-        if (states.contains(state)) {
-            enabledStates.add(state);
-        }
+    /**
+	 * @param state the state to enable
+	 * @return a command that enables the state
+	 */
+	public Command enableState(LEDStates state) {
+		return new StartEndCommand(() -> {
+			if (states.contains(state)) {
+                enabledStates.add(state);
+            }
+			states.add(state);
+		}, () -> {
+			enabledStates.remove(state);
+		}).ignoringDisable(true);
 	}
 
-    public void disableState(LEDStates state) {
-        enabledStates.remove(state);
+    /**
+     * Updates the LED strip
+     */
+    public void update() {
+        if (!enabledStates.isEmpty()) {
+            updateLEDs(enabledStates.peek());
+        } else {
+            defaultLEDs();
+        }
     }
 
     /**
@@ -44,19 +62,26 @@ public abstract class Lightningstrip {
 	 * 
 	 * @param state the state to update the LEDs to
 	 */
-	protected abstract void updateLEDs(Lightningbolt leds, LEDStates state);
+	public abstract void updateLEDs(LEDStates state);
 
 	/**
 	 * Sets the LEDs to their default state
 	 * 
 	 * Override this method to set the LEDs default state
 	 */
-	protected abstract void defaultLEDs(Lightningbolt leds);
+	public abstract void defaultLEDs();
+
+    /**
+     * Sets the LED buffer to a solid color
+     * 
+     * @param color the color to set the LEDs to
+     */
+    public void color(Colors color) {
+        leds.setSolidHSV(color, length, startIndex);
+    }
 
 	/**
      * Sets the LED buffer to a rainbow pattern
-     * @param length the number of LEDs to apply the effect to
-     * @param startIndex the starting index of the effect
      */
     public void rainbow() {
         for (int i = startIndex; i < startIndex + length && i < leds.getLength(); i++) {
@@ -66,38 +91,32 @@ public abstract class Lightningstrip {
 
     /**
      * @param segmentSize size of each color segment
-     * @param length the number of LEDs to apply the effect to
-     * @param startIndex the starting index of the effect
      */
     public void swirl(Colors color1, Colors color2, int segmentSize) {
         for (int i = startIndex; i < startIndex + length && i < leds.getLength(); i++) {
             if (((i + (int) (Timer.getFPGATimestamp() * 10)) / segmentSize) % 2 == 0) {
-                leds.setHSV(i, color1.getHue(), 255, 255);
+                leds.setHSV(i, color1);
             } else {
-                leds.setHSV(i, color2.getHue(), 255, 255);
+                leds.setHSV(i, color2);
             }
         }
     }
 
     /**
      * @param hue the hue to blink
-     * @param length the number of LEDs to apply the effect to
-     * @param startIndex the starting index of the effect
      */
     public void blink(Colors color) {
         if ((int) (Timer.getFPGATimestamp() * 10) % 2 == 0) {
-            leds.setSolidHSV(color.getHue(), 255, 255, length, startIndex);
+            leds.setSolidHSV(color, length, startIndex);
         } else {
-            leds.setSolidHSV(0, 0, 0, length, startIndex);
+            leds.setSolidHSV(Colors.BLACK, length, startIndex);
         }
     }
 
     /**
      * @param hue the hue to pulse
-     * @param length the number of LEDs to apply the effect to
-     * @param startIndex the starting index of the effect
      */
-    public void pulse(Colors color, int length, int startIndex) {
-        leds.setSolidHSV(color.getHue(), 255, (int) Math.abs((Math.sin(Timer.getFPGATimestamp() * 2) * 255)), length, startIndex);
+    public void pulse(Colors color) {
+        leds.setSolidHSV(color.getHue(), color.getSaturation(), (int) Math.abs((Math.sin(Timer.getFPGATimestamp() * 2) * color.getValue())), length, startIndex);
     }
 }
