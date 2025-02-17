@@ -11,33 +11,38 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * <p>This class extends SubsystemBase, and your LEDs subsystem should extend this.</p>
+ * <p>Create new ThunderStrips and pass them into Thunderbolt using addStrip()</p>
+ * 
+ * <h3> !Requires an enum located at frc.robot.Constants.LEDConstants.LEDStates! <h3/>
+ */
 public abstract class Thunderbolt extends SubsystemBase {
-	public Lightningbolt leds;
+	public LightningLEDs leds;
 
-	private List<Lightningstrip> strips;
+	private List<ThunderStrip> strips;
 	private ScheduledExecutorService scheduler;
 
 	/**
 	 * Constructor for Thunderbolt<br>
 	 * 
-	 * <STRONG>Requires an enum located at frc.robot.Constants.LEDConstants.LEDStates</STRONG>
+	 * <h3>!Requires an enum located at frc.robot.Constants.LEDConstants.LEDStates!</h3>
 	 * 
 	 * @param pwmPort the PWM port the LEDs are connected to
-	 * @param length the number of LEDs
+	 * @param length the total length of LEDs
 	 * @param updateFreq the frequency to update the LEDs
 	 * 
 	 */
 	public Thunderbolt(int pwmPort, int length, double updateFreq) {
-		leds = new Lightningbolt(pwmPort, length);
+		leds = new LightningLEDs(pwmPort, length);
 
 		strips =new ArrayList<>();
 
 		scheduler = Executors.newSingleThreadScheduledExecutor();
 		scheduler.scheduleAtFixedRate(this::update, 0, (long) (updateFreq * 1000), java.util.concurrent.TimeUnit.MILLISECONDS);
-
 	}
 
-	public void addStrip(Lightningstrip strip) {
+	public void addStrip(ThunderStrip strip) {
 		strips.add(strip);
 	}
 
@@ -45,7 +50,7 @@ public abstract class Thunderbolt extends SubsystemBase {
 	 * This method is scheduled on a separate thread to update the LEDs periodically
 	 */
 	public void update() {
-		for (Lightningstrip strip : strips) {
+		for (ThunderStrip strip : strips) {
 			strip.update();
 		}
 		leds.update();

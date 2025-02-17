@@ -3,10 +3,13 @@ package frc.thunder.leds;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 
-public class Lightningbolt extends AddressableLED {
+/**
+ * Child of AddresableLED, allows for more control of the LEDs
+ */
+public class LightningLEDs extends AddressableLED {
     private final AddressableLEDBuffer buffer;
 
-    public Lightningbolt(int pwmPort, int length) {
+    public LightningLEDs(int pwmPort, int length) {
         super(pwmPort);
 
         setLength(length);
@@ -27,7 +30,7 @@ public class Lightningbolt extends AddressableLED {
         buffer.setHSV(index, h, s, v);
     }
 
-    public void setHSV(int index, Colors color) {
+    public void setHSV(int index, LightningColors color) {
         buffer.setHSV(index, color.getHue(), color.getSaturation(), color.getValue());
     }
 
@@ -49,7 +52,7 @@ public class Lightningbolt extends AddressableLED {
      * @param length the number of LEDs to apply the effect to
      * @param startIndex the starting index of the effect
      */
-    public void setSolidHSV(Colors color, int length, int startIndex) {
+    public void setSolidHSV(LightningColors color, int length, int startIndex) {
         for (var i = startIndex; i < startIndex + length && i < buffer.getLength(); i++) {
             setHSV(i, color);
         }
