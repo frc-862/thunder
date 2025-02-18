@@ -8,23 +8,27 @@ import java.util.PriorityQueue;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.LEDConstants.LEDStates;
 
-public abstract class Lightningstrip {
+/**
+ * ThunderStrips are using to control sections of the LEDs, you should create new ThunderStrips and Override the abstract updateLEDs and defaultLEDs
+ */
+public abstract class ThunderStrip {
     private final int length;
     private final int startIndex;
 
-	private final PriorityQueue<LEDStates> enabledStates;
-    private final List<LEDStates> states = new ArrayList<>();
+	private final PriorityQueue<LEDStates> states;
+    private final List<LEDStates> unusedStates = new ArrayList<>();
 
-	private final Lightningbolt leds;
+	private final LightningLEDs leds;
 
-    public Lightningstrip(int length, int startIndex, Lightningbolt leds, LEDStates ...states) {
+    public ThunderStrip(int length, int startIndex, LightningLEDs leds, LEDStates ...unusedStates) {
         this.length = length;
         this.startIndex = startIndex;
 		
-		enabledStates = new PriorityQueue<>();
-        this.states.addAll(Arrays.asList(states));
+		states = new PriorityQueue<>();
+        this.unusedStates.addAll(Arrays.asList(unusedStates));
 
 		this.leds = leds;
     }
@@ -35,23 +39,39 @@ public abstract class Lightningstrip {
 	 */
 	public Command enableState(LEDStates state) {
 		return new StartEndCommand(() -> {
-			if (states.contains(state)) {
-                enabledStates.add(state);
+			if (!unusedStates.contains(state)) {
+                states.add(state);
             }
-			states.add(state);
 		}, () -> {
-			enabledStates.remove(state);
+			states.remove(state);
 		}).ignoringDisable(true);
+	}
+
+    /**
+	 * @param state the state to enable
+     * @param duration the duration to enable the state for
+	 * @return a command that enables the state
+	 */
+	public Command enableStateFor(LEDStates state, int duration) {
+		return new StartEndCommand(() -> {
+			if (!unusedStates.contains(state)) {
+                states.add(state);
+            }
+		}, () -> {
+			states.remove(state);
+		})
+        .withDeadline(new WaitCommand(duration))
+        .ignoringDisable(true);
 	}
 
     /**
      * Updates the LED strip
      */
     public void update() {
-        if (!enabledStates.isEmpty()) {
-            updateLEDs(enabledStates.peek());
-        } else {
+        if (states.isEmpty()) {
             defaultLEDs();
+        } else {
+            updateLEDs(states.peek());
         }
     }
 
@@ -76,7 +96,7 @@ public abstract class Lightningstrip {
      * 
      * @param color the color to set the LEDs to
      */
-    public void color(Colors color) {
+    public void solid(LightningColors color) {
         leds.setSolidHSV(color, length, startIndex);
     }
 
@@ -92,7 +112,7 @@ public abstract class Lightningstrip {
     /**
      * @param segmentSize size of each color segment
      */
-    public void swirl(Colors color1, Colors color2, int segmentSize) {
+    public void swirl(LightningColors color1, LightningColors color2, int segmentSize) {
         for (int i = startIndex; i < startIndex + length && i < leds.getLength(); i++) {
             if (((i + (int) (Timer.getFPGATimestamp() * 10)) / segmentSize) % 2 == 0) {
                 leds.setHSV(i, color1);
@@ -105,18 +125,18 @@ public abstract class Lightningstrip {
     /**
      * @param hue the hue to blink
      */
-    public void blink(Colors color) {
+    public void blink(LightningColors color) {
         if ((int) (Timer.getFPGATimestamp() * 10) % 2 == 0) {
             leds.setSolidHSV(color, length, startIndex);
         } else {
-            leds.setSolidHSV(Colors.BLACK, length, startIndex);
+            leds.setSolidHSV(LightningColors.BLACK, length, startIndex);
         }
     }
 
     /**
      * @param hue the hue to pulse
      */
-    public void pulse(Colors color) {
+    public void pulse(LightningColors color) {
         leds.setSolidHSV(color.getHue(), color.getSaturation(), (int) Math.abs((Math.sin(Timer.getFPGATimestamp() * 2) * color.getValue())), length, startIndex);
     }
 }
