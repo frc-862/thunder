@@ -7,6 +7,7 @@ import java.util.PriorityQueue;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.LEDConstants.LEDStates;
@@ -68,15 +69,19 @@ public abstract class ThunderStrip {
      * Sets the current state of the LED strip
      * 
      * @param state the state to set
+     * @param enabled whether to enable or disable the state
+     * @return an InstantCommand that sets the state
      */
-    public void setState(LEDStates state, boolean enabled) {
-        if (enabled) {
-            if (!unusedStates.contains(state)) {
-                states.add(state);
+    public Command setState(LEDStates state, boolean enabled) {
+        return new InstantCommand(() -> {
+            if (enabled) {
+                if (!unusedStates.contains(state)) {
+                    states.add(state);
+                }
+            } else {
+                states.remove(state);
             }
-        } else {
-            states.remove(state);
-        }
+        });
     }
 
     /**
