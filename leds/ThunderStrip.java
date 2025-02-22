@@ -48,21 +48,43 @@ public abstract class ThunderStrip {
 	}
 
     /**
-	 * @param state the state to enable
+     * @param state the state to enable
      * @param duration the duration to enable the state for
-	 * @return a command that enables the state
-	 */
-	public Command enableStateFor(LEDStates state, int duration) {
-		return new StartEndCommand(() -> {
-			if (!unusedStates.contains(state)) {
+     * @return a command that enables the state
+     */
+    public Command enableStateFor(LEDStates state, int duration) {
+        return new StartEndCommand(() -> {
+            if (!unusedStates.contains(state)) {
                 states.add(state);
             }
-		}, () -> {
-			states.remove(state);
-		})
+        }, () -> {
+            states.remove(state);
+        })
         .withDeadline(new WaitCommand(duration))
         .ignoringDisable(true);
-	}
+    }
+
+    /**
+     * Sets the current state of the LED strip
+     * 
+     * @param state the state to set
+     */
+    public void setState(LEDStates state, boolean enabled) {
+        if (enabled) {
+            if (!unusedStates.contains(state)) {
+                states.add(state);
+            }
+        } else {
+            states.remove(state);
+        }
+    }
+
+    /**
+     * @return the current state of the LED strip
+     */
+    public LEDStates getState() {
+        return states.peek();
+    }
 
     /**
      * Updates the LED strip
@@ -71,7 +93,7 @@ public abstract class ThunderStrip {
         if (states.isEmpty()) {
             defaultLEDs();
         } else {
-            updateLEDs(states.peek());
+            updateLEDs(getState());
         }
     }
 
