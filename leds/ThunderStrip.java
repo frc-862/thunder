@@ -153,7 +153,7 @@ public abstract class ThunderStrip {
      * @param hue the hue to blink
      */
     public void blink(LightningColors color) {
-        if ((int) (Timer.getFPGATimestamp() * 10) % 2 == 0) {
+        if ((int) (Timer.getFPGATimestamp() * 20) % 2 == 0) { // Increased the multiplier to 20 for faster strobe
             leds.setSolidHSV(color, length, startIndex);
         } else {
             leds.setSolidHSV(LightningColors.BLACK, length, startIndex);
