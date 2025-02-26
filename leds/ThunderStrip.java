@@ -7,6 +7,7 @@ import java.util.PriorityQueue;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.LEDConstants.LEDStates;
@@ -48,21 +49,47 @@ public abstract class ThunderStrip {
 	}
 
     /**
-	 * @param state the state to enable
+     * @param state the state to enable
      * @param duration the duration to enable the state for
-	 * @return a command that enables the state
-	 */
-	public Command enableStateFor(LEDStates state, int duration) {
-		return new StartEndCommand(() -> {
-			if (!unusedStates.contains(state)) {
+     * @return a command that enables the state
+     */
+    public Command enableStateFor(LEDStates state, int duration) {
+        return new StartEndCommand(() -> {
+            if (!unusedStates.contains(state)) {
                 states.add(state);
             }
-		}, () -> {
-			states.remove(state);
-		})
+        }, () -> {
+            states.remove(state);
+        })
         .withDeadline(new WaitCommand(duration))
         .ignoringDisable(true);
-	}
+    }
+
+    /**
+     * Sets the current state of the LED strip
+     * 
+     * @param state the state to set
+     * @param enabled whether to enable or disable the state
+     * @return an InstantCommand that sets the state
+     */
+    public Command setState(LEDStates state, boolean enabled) {
+        return new InstantCommand(() -> {
+            if (enabled) {
+                if (!unusedStates.contains(state)) {
+                    states.add(state);
+                }
+            } else {
+                states.remove(state);
+            }
+        });
+    }
+
+    /**
+     * @return the current state of the LED strip
+     */
+    public LEDStates getState() {
+        return states.peek();
+    }
 
     /**
      * Updates the LED strip
@@ -71,7 +98,7 @@ public abstract class ThunderStrip {
         if (states.isEmpty()) {
             defaultLEDs();
         } else {
-            updateLEDs(states.peek());
+            updateLEDs(getState());
         }
     }
 
@@ -126,7 +153,7 @@ public abstract class ThunderStrip {
      * @param hue the hue to blink
      */
     public void blink(LightningColors color) {
-        if ((int) (Timer.getFPGATimestamp() * 10) % 2 == 0) {
+        if ((int) (Timer.getFPGATimestamp() * 20) % 2 == 0) { // Increased the multiplier to 20 for faster strobe
             leds.setSolidHSV(color, length, startIndex);
         } else {
             leds.setSolidHSV(LightningColors.BLACK, length, startIndex);
