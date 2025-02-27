@@ -81,7 +81,7 @@ public abstract class ThunderStrip {
             } else {
                 states.remove(state);
             }
-        });
+        }).ignoringDisable(true);
     }
 
     /**
@@ -131,8 +131,8 @@ public abstract class ThunderStrip {
      * Sets the LED buffer to a rainbow pattern
      */
     public void rainbow() {
-        for (int i = startIndex; i < startIndex + length && i < leds.getLength(); i++) {
-            leds.setHSV(i, (i + (int) (Timer.getFPGATimestamp() * 20)) % leds.getLength() * 180 / 14, 255, 100);
+        for (double i = startIndex; i < startIndex + length && i < leds.getLength(); i++) {
+            leds.setHSV((int) i, (int) ((i - startIndex) * 180 / length + Timer.getFPGATimestamp() * 60) % 180, 255, 255);
         }
     }
 
