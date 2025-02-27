@@ -81,7 +81,7 @@ public abstract class ThunderStrip {
             } else {
                 states.remove(state);
             }
-        });
+        }).ignoringDisable(true);
     }
 
     /**
