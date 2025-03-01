@@ -141,7 +141,7 @@ public abstract class ThunderStrip {
      */
     public void swirl(LightningColors color1, LightningColors color2, int segmentSize) {
         for (int i = startIndex; i < startIndex + length && i < leds.getLength(); i++) {
-            if (((i + (int) (Timer.getFPGATimestamp() * 10)) / segmentSize) % 2 == 0) {
+            if (((i + (int) (Timer.getFPGATimestamp() * 20)) / segmentSize) % 2 == 0) {
                 leds.setHSV(i, color1);
             } else {
                 leds.setHSV(i, color2);
