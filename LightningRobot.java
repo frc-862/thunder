@@ -102,7 +102,7 @@ public class LightningRobot extends TimedRobot {
         } else if (Paths.get("/u/logs").toFile().exists()) {
             DataLogManager.start("/u/logs");
         } else {
-            DataLogManager.start("/home/lvuser/datalog");
+            DataLogManager.start("/home/lvuser/logs");
         }
 
         // Start logging driverstation
