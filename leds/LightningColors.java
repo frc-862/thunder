@@ -2,7 +2,7 @@ package frc.thunder.leds;
 
 public enum LightningColors {
     BLACK(0, 0, 0),
-    WHITE(0, 255, 255),
+    WHITE(0, 0, 255),
     RED(0, 255, 255),
     ORANGE(5, 255, 255),
     YELLOW(15, 255, 255),
@@ -10,7 +10,7 @@ public enum LightningColors {
     LIGHT_BLUE(100, 255, 255),
     BLUE(120, 255, 255),
     PURPLE(140, 255, 255),
-    PINK(160, 255, 255);
+    PINK(165, 255, 255);
 
     private final int hue;
     private final int saturation;
