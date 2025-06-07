@@ -5,14 +5,21 @@
 package frc.thunder.AutoSimulatedMotors;
 
 
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
+import com.ctre.phoenix.motorcontrol.TalonSRXSimCollection;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.simulation.LinearSystemSim;
 import frc.robot.Robot;
 
 /** Add your docs here. */
-public class ThunderTalonSRX extends Talon{
+public class ThunderTalonSRX extends TalonSRX{
     
-    private double power;
-    private boolean isInverted = false;
+    private TalonSRXSimCollection simMotor;
+    private Notifier notifier;
 
     /**
      * Creates a new ThunderTalon.
@@ -21,53 +28,31 @@ public class ThunderTalonSRX extends Talon{
      */
     public ThunderTalonSRX(int channel) {
         super(channel);
+
+        simMotor = super.getSimCollection();
+
+        if (Robot.isSimulation()){
+            simMotor = super.getSimCollection();
+
+            
+            LinearSystemSim<N2, N1, N2> physicsSim = new LinearSystemSim<N2, N1, N2>(LinearSystemId.createDCMotorSystem(
+                0.55, 0.9));
+
+            notifier = new Notifier(() -> {
+                
+                physicsSim.setInput(simMotor.getMotorOutputLeadVoltage());
+                physicsSim.update(0.02);
+
+                // Note: Inverts my cause weird behavior in simulation
+
+                simMotor.setAnalogVelocity((int) Math.round(physicsSim.getOutput(0)));
+            });
+
+            notifier.startPeriodic(0.02);
+        } 
     }
 
-    /**
-    * Set the PWM value.
-    *
-    * <p>The PWM value is set using a range of -1.0 to 1.0, appropriately scaling the value for the
-    * FPGA.
-    *
-    * <p>In simulation, this method will store the power value instead of sending to the hardware.
-    *
-    * @param speed The speed value between -1.0 and 1.0 to set.
-    */
-    @Override
-    public void set(double power) {
-
-        if (Robot.isSimulation()) this.power = isInverted ? -power : power;
-        else super.set(power);
+    public void close() {
+        if (notifier != null) notifier.stop();
     }
-
-    /**
-    * Get the recently set value of the PWM. This value is affected by the inversion property. If you
-    * want the value that is sent directly to the MotorController, use {@link
-    * edu.wpi.first.wpilibj.PWM#getSpeed()} instead.
-
-    * <p>In simulation, this method will return the stored power value instead of reading from the hardware
-    *
-    * @return The most recently set value for the PWM between -1.0 and 1.0.
-    */
-    @Override
-    public double get() {
-        if (Robot.isSimulation()) return power;
-        else return super.get();
-    }
-
-    @Override
-    public void stopMotor(){
-        // Don't use set(0) as that will feed the watch kitty
-
-        if (Robot.isSimulation()) power = 0.0;
-        else super.stopMotor();
-    }
-
-    @Override
-    public void setInverted(boolean isInverted) {
-
-        if (Robot.isSimulation()) this.isInverted = isInverted;
-        else super.setInverted(isInverted);
-    }
-
 }

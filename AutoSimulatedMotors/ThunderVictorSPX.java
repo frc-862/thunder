@@ -4,5 +4,60 @@
 
 package frc.thunder.AutoSimulatedMotors;
 
+
+import com.ctre.phoenix.motorcontrol.VictorSPXSimCollection;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.simulation.LinearSystemSim;
+import frc.robot.Robot;
+
 /** Add your docs here. */
-public class ThunderVictorSPX {}
+public class ThunderVictorSPX extends VictorSPX{
+    
+    private VictorSPXSimCollection simMotor;
+    private Notifier notifier;
+    private double velocity = 0;
+
+    /**
+     * Creates a new ThunderTalon.
+     *
+     * @param channel The PWM channel that the TalonSRX is connected to.
+     */
+    public ThunderVictorSPX(int channel) {
+        super(channel);
+
+        simMotor = super.getSimCollection();
+
+        if (Robot.isSimulation()){
+            simMotor = super.getSimCollection();
+
+            
+            LinearSystemSim<N2, N1, N2> physicsSim = new LinearSystemSim<N2, N1, N2>(LinearSystemId.createDCMotorSystem(
+                0.55, 0.9));
+
+            notifier = new Notifier(() -> {
+                
+                physicsSim.setInput(simMotor.getMotorOutputLeadVoltage());
+                physicsSim.update(0.02);
+
+                // Note: Inverts my cause weird behavior in simulation
+
+                velocity = physicsSim.getOutput(0);
+            });
+
+            notifier.startPeriodic(0.02);
+        } 
+    }
+
+    public void close() {
+        if (notifier != null) notifier.stop();
+    }
+
+    public double getSimVelocity() {
+        return velocity;
+    }
+}

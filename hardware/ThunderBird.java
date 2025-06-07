@@ -1,15 +1,11 @@
 package frc.thunder.hardware;
 
 import com.ctre.phoenix6.StatusCode;
-import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
-import com.ctre.phoenix6.configs.ParentConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
-import frc.thunder.tuning.SlotConfiguration;
 
 public class ThunderBird extends TalonFX {
     private TalonFXConfiguration config;
