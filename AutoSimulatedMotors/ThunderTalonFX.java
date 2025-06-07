@@ -42,7 +42,8 @@ public class ThunderTalonFX extends ThunderBird{
                 physicsSim.update(0.02);
 
 
-                simMotor.setRotorVelocity(physicsSim.getOutput(0));
+                simMotor.setRotorVelocity(physicsSim.getOutput(1));
+                simMotor.setRawRotorPosition(physicsSim.getOutput(0));
             });
 
             notifier.startPeriodic(0.02);
